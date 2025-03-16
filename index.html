@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdurakhmon Kamilov - Frontend Developer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            min-height: 100vh;
+        }
+        
+        .intro-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        h1 {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+        
+        .bio {
+            border-left: 3px solid #fff;
+            padding-left: 20px;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        
+        .projects-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .projects-title {
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+        
+        .projects-list {
+            list-style-type: none;
+        }
+        
+        .projects-list li {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .projects-list li a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        
+        .projects-list li a:hover {
+            border-color: #fff;
+        }
+        
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #f00;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: right;
+            padding: 20px;
+            font-size: 14px;
+        }
+        
+        .mode-toggle {
+            background-color: #333;
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 50px;
+            }
+            
+            .projects-title {
+                font-size: 36px;
+            }
+        }
+        
+        body.light-mode {
+            background-color: white;
+            color: #000;
+        }
+        
+        body.light-mode .projects-list li a {
+            color: #000;
+        }
+        
+        body.light-mode .mode-toggle {
+            background-color: #ddd;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro-section">
+            <h1>Welcome.</h1>
+            <div class="bio">
+                <p>Hello, My name is Abdurakhmon and my id is 2417515.</p>
+		<p>It's my second year at Dong-A university</p>
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2 class="projects-title">Projects</h2>
+            <ul class="projects-list">
+                <li><span class="dot"></span><a href="https://docs.google.com/document/d/1JSBPkXl_SRYdCyEo5RYXZ1wYJgUFFNRge3Hm1JNtai0/edit?tab=t.0">1st assignment(Find me)</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <button class="mode-toggle">Light mode</button>
+        <p>©2023 Abdurakhmon Kamilov</p>
+    </footer>
+
+    <script>
+        document.querySelector('.mode-toggle').addEventListener('click', function() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                this.textContent = 'Dark mode';
+            } else {
+                this.textContent = 'Light mode';
+            }
+        });
+    </script>
+</body>
+</html>
