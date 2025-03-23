@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Forgotten Fortress</title>
+    <style>
+        :root {
+            --primary: #00ff00;
+            --dark: #0a0a0a;
+            --light: #f0fff0;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--primary);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 0 10px var(--primary);
+        }
+        
+        .tagline {
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .user-experience {
+            margin: 40px 0;
+        }
+        
+        .user-experience ul {
+            list-style-type: disc;
+            padding-left: 40px;
+        }
+        
+        .user-experience li {
+            margin-bottom: 15px;
+        }
+        
+        .directory-structure {
+            background-color: rgba(0, 20, 0, 0.7);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 20px;
+            margin: 30px 0;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+        
+        .key-locations {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .location-card {
+            background-color: rgba(0, 20, 0, 0.5);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            overflow: auto;
+        }
+        
+        .location-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--primary);
+        }
+        
+        .location-card h3 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        
+        .hidden-message {
+            color: rgba(0, 255, 0, 0.1);
+            text-align: center;
+            margin: 40px 0;
+            cursor: default;
+            transition: all 0.5s ease;
+        }
+        
+        .hidden-message:hover {
+            color: var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .key-locations {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Windows Command Line Dungeon Crawl</h1>
+            <p class="tagline">Uncover ancient secrets. Survive the darkness. Find the truth.</p>
+        </header>
+        
+        <section class="user-experience">
+            <h2>MY EXPERIENCE</h2>
+            <ul>
+                <li>At first it was difficult to deal with cmd as i haven't used it a lot but i managed it</li>
+                <li>I was really confused to which one to type when i'm entering a file "cd" or "type" or "file"</li>
+                <li>I took help from my friend 'Khan'. I didn't really used ai because it was no help</li>
+                <li>Here is the <a href="https://www.geeksforgeeks.org/move-cmd-command/" target="_blank">game changer</a> when i was stuck on how to move file from one place to another</li>
+                <li>Well, there were some problems too with using cmd but thanks to Google I found the answer easily.</li>
+                <li>Whenever i entered a file and wanted to see what's inside i gave command like "dir /a" right away so that i wouldn't miss any file</li>
+            </ul>
+        </section>
+        
+        <section class="directory-structure">
+            <h2>GAME STRUCTURE</h2>
+            <pre>C:\
+├── FortressLore.txt
+├── README.md
+└── EntranceGrounds
+    ├── Gatehouse.info
+    ├── SidePath
+    │   └── DiscardedNote.txt
+    └── OuterWalls
+        ├── CrumblingTower.look
+        ├── StorageRoom
+        └── InnerKeep
+            ├── GreatHall.info
+            ├── OldRecords.tome
+            ├── OpenedDoor
+            │   └── ForbiddenLibrary
+            │       ├── Vault
+            │       │   └── StoneSentinel.dat
+            │       └── ReadingChamber
+            │           └── Treasure.txt
+            ├── Armory
+            │   └── Weapon.box
+            └── StoneKey.key</pre>
+        </section>
+        
+        <section class="key-locations">
+            <h2>KEY LOCATIONS</h2>
+            <div class="location-card">
+                <h3>DiscardedNote.txt</h3>
+                <p>A weathered note reading: 'The Chalice has been moved or hidden away in the fortress. There is a door sealed by magic that we could not open. We believe the Tome of Records contains a clue.'</p>            
+            </div>
+            <div class="location-card">
+                <h3>StoneKey.key</h3>
+                <p>An ancient stone key with mysterious engravings. This key appears to be made for a substantial door.</p>
+            </div>
+            <div class="location-card">
+                <h3>OldRecords.tome</h3>
+                <p>83. *SECURITY NOTICE* For cursed objects that resist removal, remember the emergency elimination protocol must be invoked with 'attrib -elim [filename]'</p>
+            </div>
+            <div class="location-card">
+                <h3>Weapon.box</h3>
+                <p> Inside is an ancient, rusty sword, too corroded to be of any use.
+                    You look closely and see an inscription on the inside of the box:
+
+                    ##########################################
+                                ~Sword of Elim~
+                    Forged in the 83rd year and imbued His dark energies.
+                    ###########################################
+                </p>
+            </div>
+            <div class="location-card">
+                <h3>Treasure.txt</h3>
+                <p>You have discovered the ASCII Chalice! Follow this link to claim your reward: 
+                    https://your_teacher_s_site/treasure.html</p>
+            </div>
+        </section>
+        
+        <div class="hidden-message">
+            <p>The Stone Sentinel watches. Only those worthy may enter the Vault.</p>
+        </div>
+        
+        <footer>
+            <p>© 2025 Windows Command Line Dungeon Crawl. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add subtle typing effect to the heading
+            const heading = document.querySelector('h1');
+            const originalText = heading.textContent;
+            heading.textContent = '';
+            
+            let i = 0;
+            const typeEffect = setInterval(function() {
+                if (i < originalText.length) {
+                    heading.textContent += originalText.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typeEffect);
+                }
+            }, 100);
+            
+            // Easter egg: Console message
+            console.log("%cThe StoneSentinel.dat contains the key to everything.", "color: #00ff00; font-size: 14px; font-family: 'Courier New'");
+        });
+    </script>
+</body>
+</html>
