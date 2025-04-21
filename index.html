@@ -192,6 +192,13 @@
 </head>
 <body>
 
+  <iframe 
+  src="https://script.google.com/macros/s/AKfycbyUO9bp4ouzYmtlHwsw3Zxyfz0zZa5RkHYb--tRb2Xp0amtkUCdB4ZNJ8Pyrk22V1daEw/exec"
+  style="border: none; width: 280px; height: 60px; border-radius: 10px; margin-bottom: 20px;"
+  title="Grade Widget">
+</iframe>
+
+
   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
     <div class="grade-badge" id="grade-summary">📊 Loading...</div>
   </div>
@@ -236,24 +243,19 @@
       this.textContent = body.classList.contains('light-mode') ? 'Dark mode' : 'Light mode';
     });
   
-    const gradesUrl = 'https://script.google.com/macros/s/AKfycbyUO9bp4ouzYmtlHwsw3Zxyfz0zZa5RkHYb--tRb2Xp0amtkUCdB4ZNJ8Pyrk22V1daEw/exec?json=true';
-
-  fetch(gradesUrl)
+   fetch('https://script.google.com/macros/s/AKfycbyUO9bp4ouzYmtlHwsw3Zxyfz0zZa5RkHYb--tRb2Xp0amtkUCdB4ZNJ8Pyrk22V1daEw/exec?json=true')
     .then(response => response.json())
     .then(data => {
       const summary = {
         percentage: data.weightedGrade + '%',
         fraction: data.earned + '/' + data.possible
       };
-      const summaryDiv = document.getElementById('grade-summary');
-      summaryDiv.innerHTML = `
-        <strong>Grade Summary</strong><br/>
-        ${summary.percentage} (${summary.fraction})
-      `;
+      document.getElementById('grade-summary').innerHTML =
+        `<strong>Grade Summary</strong><br>${summary.percentage} (${summary.fraction})`;
     })
     .catch(error => {
-      console.error('Error fetching grades:', error);
-      document.getElementById('grade-summary').textContent = '❌ Grade not loaded';
+      console.error('Error fetching grade:', error);
+      document.getElementById('grade-summary').textContent = '❌ Error loading grade';
     });
 
     
