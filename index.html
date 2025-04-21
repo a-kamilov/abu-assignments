@@ -236,7 +236,7 @@
       this.textContent = body.classList.contains('light-mode') ? 'Dark mode' : 'Light mode';
     });
 
-    fetch("https://script.google.com/macros/s/AKfycbyUO9bp4ouzYmtlHwsw3Zxyfz0zZa5RkHYb--tRb2Xp0amtkUCdB4ZNJ8Pyrk22V1daEw/exec")
+    fetch("https://script.google.com/macros/s/AKfycbyUO9bp4ouzYmtlHwsw3Zxyfz0zZa5RkHYb--tRb2Xp0amtkUCdB4ZNJ8Pyrk22V1daEw/exec?json=true")
       .then(res => res.json())
       .then(data => {
         document.getElementById("grade-badge").innerText =
