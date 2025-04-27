@@ -177,10 +177,25 @@
 </head>
 <body>
 
- <div style="position: absolute; top: 50px; right: 50px; background-color: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); width: 250px; text-align: center;">
-    <h2 style="font-size: 20px;">📊 Current Course Grade</h2>
-    <h1 id="finalGrade" style="font-size: 40px; color: #4285f4;">Loading...</h1>
-    <p id="pointsEarned" style="font-size: 16px;">Points Earned: ...</p>
+<div id="gradeCard" style="
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    background-color: var(--card-bg, #f0f0f0);
+    color: var(--card-text, #000000);
+    width: 230px;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+">
+    <h3 style="font-size: 18px; margin-bottom: 10px;">
+        📊 Current Course Grade
+    </h3>
+    <h1 id="finalGrade" style="font-size: 36px; margin: 0; color: #4285f4;">Loading...</h1>
+    <p id="pointsEarned" style="margin-top: 8px; font-size: 14px;">Points Earned: ...</p>
 </div>
 
 
@@ -236,6 +251,20 @@
     document.getElementById('finalGrade').textContent = "Error!";
     console.error(error);
   });
+
+function detectTheme() {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const gradeCard = document.getElementById('gradeCard');
+    if (isDark) {
+        gradeCard.style.setProperty('--card-bg', '#1e1e1e');
+        gradeCard.style.setProperty('--card-text', '#ffffff');
+    } else {
+        gradeCard.style.setProperty('--card-bg', '#f0f0f0');
+        gradeCard.style.setProperty('--card-text', '#000000');
+    }
+}
+detectTheme();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectTheme);
     
   </script>
 </body>
