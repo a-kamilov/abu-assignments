@@ -252,20 +252,7 @@
     console.error(error);
   });
 
-function detectTheme() {
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const gradeCard = document.getElementById('gradeCard');
-    if (isDark) {
-        gradeCard.style.setProperty('--card-bg', '#1e1e1e');
-        gradeCard.style.setProperty('--card-text', '#ffffff');
-    } else {
-        gradeCard.style.setProperty('--card-bg', '#f0f0f0');
-        gradeCard.style.setProperty('--card-text', '#000000');
-    }
-}
-detectTheme();
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectTheme);
-    
+
   </script>
 </body>
 </html>
