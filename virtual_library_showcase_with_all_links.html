@@ -1,0 +1,1469 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Library Showcase</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fafbfd, #dce3ed);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #30475e;
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .section {
+      padding: 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      color: #30475e;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .table-container {
+      overflow-x: auto;
+      max-height: 300px;
+      overflow-y: scroll;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #a0c4ff;
+    }
+    .highlight {
+      background-color: #fff4d6;
+      border-left: 5px solid #f9c74f;
+      padding: 10px;
+      margin: 20px 0;
+    }
+    ul {
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📚 Virtual Library Database Project</h1>
+    <p>Author: Abu</p>
+  </header>
+
+  <div class="section">
+    <h2>🎯 Objective</h2>
+    <p>Build and structure a digital library using CSV tables, with proper PK-FK relationships and logical schema design.</p>
+
+    <div class="highlight">
+      <strong>Skills Demonstrated:</strong> Data structure design, relational database understanding, CSV handling, normalization.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📁 Books Table</h2>
+    <p style="margin-top: -10px; font-size: 15px;">
+      🔗 Explore the full interactive system here:
+      <a href="https://abu-assignments.netlify.app/library_management.html" target="_blank">
+        Library Management System
+      </a><br>
+      📁 View full project documentation here:
+      <a href="https://drive.google.com/drive/folders/1jzSHDe7gz137THYquP4C2ZnXqbs_BpUq?usp=sharing" target="_blank">
+        Project Files & Screenshots (Google Drive)
+      </a>
+    </p>
+    <div class="table-container">
+      <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Book_ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Genre</th>
+      <th>Publication_date</th>
+      <th>Available</th>
+      <th>Last_checkout_date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Pride and Prejudice</td>
+      <td>Jane Austen</td>
+      <td>Classics</td>
+      <td>1813</td>
+      <td>True</td>
+      <td>UZ001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Moby Dick</td>
+      <td>Herman Melville</td>
+      <td>Classics</td>
+      <td>1851</td>
+      <td>True</td>
+      <td>UZ012</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>1984</td>
+      <td>George Orwell</td>
+      <td>Classics</td>
+      <td>1949</td>
+      <td>True</td>
+      <td>UZ023</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>To Kill a Mockingbird</td>
+      <td>Harper Lee</td>
+      <td>Classics</td>
+      <td>1960</td>
+      <td>True</td>
+      <td>UZ034</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The Great Gatsby</td>
+      <td>F. Scott Fitzgerald</td>
+      <td>Classics</td>
+      <td>1925</td>
+      <td>True</td>
+      <td>UZ045</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Charlotte's Web</td>
+      <td>E.B. White</td>
+      <td>Children's Books</td>
+      <td>1952</td>
+      <td>True</td>
+      <td>UZ002</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The Very Hungry Caterpillar</td>
+      <td>Eric Carle</td>
+      <td>Children's Books</td>
+      <td>1969</td>
+      <td>True</td>
+      <td>UZ013</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Matilda</td>
+      <td>Roald Dahl</td>
+      <td>Children's Books</td>
+      <td>1988</td>
+      <td>True</td>
+      <td>UZ024</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Where the Wild Things Are</td>
+      <td>Maurice Sendak</td>
+      <td>Children's Books</td>
+      <td>1963</td>
+      <td>True</td>
+      <td>UZ035</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Goodnight Moon</td>
+      <td>Margaret Wise Brown</td>
+      <td>Children's Books</td>
+      <td>1947</td>
+      <td>True</td>
+      <td>UZ046</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Harry Potter and the Sorcerer's Stone</td>
+      <td>J.K. Rowling</td>
+      <td>Young Adult / Fantasy</td>
+      <td>1997</td>
+      <td>True</td>
+      <td>UZ003</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>The Hunger Games</td>
+      <td>Suzanne Collins</td>
+      <td>Young Adult / Fantasy</td>
+      <td>2008</td>
+      <td>True</td>
+      <td>UZ014</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Eragon</td>
+      <td>Christopher Paolini</td>
+      <td>Young Adult / Fantasy</td>
+      <td>2002</td>
+      <td>True</td>
+      <td>UZ025</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Percy Jackson: The Lightning Thief</td>
+      <td>Rick Riordan</td>
+      <td>Young Adult / Fantasy</td>
+      <td>2005</td>
+      <td>True</td>
+      <td>UZ036</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>A Wrinkle in Time</td>
+      <td>Madeleine L'Engle</td>
+      <td>Young Adult / Fantasy</td>
+      <td>1962</td>
+      <td>True</td>
+      <td>UZ047</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>The Girl with the Dragon Tattoo</td>
+      <td>Stieg Larsson</td>
+      <td>Mystery / Thriller</td>
+      <td>2005</td>
+      <td>True</td>
+      <td>UZ004</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>Gone Girl</td>
+      <td>Gillian Flynn</td>
+      <td>Mystery / Thriller</td>
+      <td>2012</td>
+      <td>True</td>
+      <td>UZ015</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>The Da Vinci Code</td>
+      <td>Dan Brown</td>
+      <td>Mystery / Thriller</td>
+      <td>2003</td>
+      <td>True</td>
+      <td>UZ026</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>And Then There Were None</td>
+      <td>Agatha Christie</td>
+      <td>Mystery / Thriller</td>
+      <td>1939</td>
+      <td>True</td>
+      <td>UZ037</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>The Silence of the Lambs</td>
+      <td>Thomas Harris</td>
+      <td>Mystery / Thriller</td>
+      <td>1988</td>
+      <td>True</td>
+      <td>UZ048</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>Dune</td>
+      <td>Frank Herbert</td>
+      <td>Science Fiction</td>
+      <td>1965</td>
+      <td>True</td>
+      <td>UZ005</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>Ender's Game</td>
+      <td>Orson Scott Card</td>
+      <td>Science Fiction</td>
+      <td>1985</td>
+      <td>True</td>
+      <td>UZ016</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>Snow Crash</td>
+      <td>Neal Stephenson</td>
+      <td>Science Fiction</td>
+      <td>1992</td>
+      <td>True</td>
+      <td>UZ027</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>Neuromancer</td>
+      <td>William Gibson</td>
+      <td>Science Fiction</td>
+      <td>1984</td>
+      <td>True</td>
+      <td>UZ038</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>The Left Hand of Darkness</td>
+      <td>Ursula K. Le Guin</td>
+      <td>Science Fiction</td>
+      <td>1969</td>
+      <td>True</td>
+      <td>UZ049</td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>Sapiens: A Brief History of Humankind</td>
+      <td>Yuval Noah Harari</td>
+      <td>Non-Fiction</td>
+      <td>2011</td>
+      <td>True</td>
+      <td>UZ006</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>Educated</td>
+      <td>Tara Westover</td>
+      <td>Non-Fiction</td>
+      <td>2018</td>
+      <td>True</td>
+      <td>UZ017</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>The Immortal Life of Henrietta Lacks</td>
+      <td>Rebecca Skloot</td>
+      <td>Non-Fiction</td>
+      <td>2010</td>
+      <td>True</td>
+      <td>UZ028</td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td>Atomic Habits</td>
+      <td>James Clear</td>
+      <td>Non-Fiction</td>
+      <td>2018</td>
+      <td>True</td>
+      <td>UZ039</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>Outliers</td>
+      <td>Malcolm Gladwell</td>
+      <td>Non-Fiction</td>
+      <td>2008</td>
+      <td>True</td>
+      <td>UZ050</td>
+    </tr>
+    <tr>
+      <td>31</td>
+      <td>Meditations</td>
+      <td>Marcus Aurelius</td>
+      <td>Philosophy / Self-Help</td>
+      <td>180</td>
+      <td>True</td>
+      <td>UZ007</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>The Art of War</td>
+      <td>Sun Tzu</td>
+      <td>Philosophy / Self-Help</td>
+      <td>500</td>
+      <td>True</td>
+      <td>UZ018</td>
+    </tr>
+    <tr>
+      <td>33</td>
+      <td>The Subtle Art of Not Giving a Fck*</td>
+      <td>Mark Manson</td>
+      <td>Philosophy / Self-Help</td>
+      <td>2016</td>
+      <td>True</td>
+      <td>UZ029</td>
+    </tr>
+    <tr>
+      <td>34</td>
+      <td>Man's Search for Meaning</td>
+      <td>Viktor E. Frankl</td>
+      <td>Philosophy / Self-Help</td>
+      <td>1946</td>
+      <td>True</td>
+      <td>UZ040</td>
+    </tr>
+    <tr>
+      <td>35</td>
+      <td>Thinking, Fast and Slow</td>
+      <td>Daniel Kahneman</td>
+      <td>Philosophy / Self-Help</td>
+      <td>2011</td>
+      <td>True</td>
+      <td>UZ008</td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td>Me Before You</td>
+      <td>Jojo Moyes</td>
+      <td>Romance</td>
+      <td>2012</td>
+      <td>True</td>
+      <td>UZ019</td>
+    </tr>
+    <tr>
+      <td>37</td>
+      <td>The Notebook</td>
+      <td>Nicholas Sparks</td>
+      <td>Romance</td>
+      <td>1996</td>
+      <td>True</td>
+      <td>UZ030</td>
+    </tr>
+    <tr>
+      <td>38</td>
+      <td>It Ends With Us</td>
+      <td>Colleen Hoover</td>
+      <td>Romance</td>
+      <td>2016</td>
+      <td>True</td>
+      <td>UZ041</td>
+    </tr>
+    <tr>
+      <td>39</td>
+      <td>Outlander</td>
+      <td>Diana Gabaldon</td>
+      <td>Romance</td>
+      <td>1991</td>
+      <td>True</td>
+      <td>UZ009</td>
+    </tr>
+    <tr>
+      <td>40</td>
+      <td>The Time Traveler's Wife</td>
+      <td>Audrey Niffenegger</td>
+      <td>Romance</td>
+      <td>2003</td>
+      <td>True</td>
+      <td>UZ020</td>
+    </tr>
+    <tr>
+      <td>41</td>
+      <td>The Alchemist</td>
+      <td>Paulo Coelho</td>
+      <td>World Literature / Translated Works</td>
+      <td>1988</td>
+      <td>True</td>
+      <td>UZ031</td>
+    </tr>
+    <tr>
+      <td>42</td>
+      <td>Kafka on the Shore</td>
+      <td>Haruki Murakami</td>
+      <td>World Literature / Translated Works</td>
+      <td>2002</td>
+      <td>True</td>
+      <td>UZ042</td>
+    </tr>
+    <tr>
+      <td>43</td>
+      <td>One Hundred Years of Solitude</td>
+      <td>Gabriel García Márquez</td>
+      <td>World Literature / Translated Works</td>
+      <td>1967</td>
+      <td>True</td>
+      <td>UZ010</td>
+    </tr>
+    <tr>
+      <td>44</td>
+      <td>The Shadow of the Wind</td>
+      <td>Carlos Ruiz Zafón</td>
+      <td>World Literature / Translated Works</td>
+      <td>2001</td>
+      <td>True</td>
+      <td>UZ021</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>Pachinko</td>
+      <td>Min Jin Lee</td>
+      <td>World Literature / Translated Works</td>
+      <td>2017</td>
+      <td>True</td>
+      <td>UZ032</td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td>The Midnight Library</td>
+      <td>Matt Haig</td>
+      <td>Modern &amp; Popular Fiction</td>
+      <td>2020</td>
+      <td>True</td>
+      <td>UZ043</td>
+    </tr>
+    <tr>
+      <td>47</td>
+      <td>Where the Crawdads Sing</td>
+      <td>Delia Owens</td>
+      <td>Modern &amp; Popular Fiction</td>
+      <td>2018</td>
+      <td>True</td>
+      <td>UZ011</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>The Seven Husbands of Evelyn Hugo</td>
+      <td>Taylor Jenkins Reid</td>
+      <td>Modern &amp; Popular Fiction</td>
+      <td>2017</td>
+      <td>True</td>
+      <td>UZ022</td>
+    </tr>
+    <tr>
+      <td>49</td>
+      <td>Project Hail Mary</td>
+      <td>Andy Weir</td>
+      <td>Modern &amp; Popular Fiction</td>
+      <td>2021</td>
+      <td>True</td>
+      <td>UZ033</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>Tomorrow, and Tomorrow, and Tomorrow</td>
+      <td>Gabrielle Zevin</td>
+      <td>Modern &amp; Popular Fiction</td>
+      <td>2022</td>
+      <td>True</td>
+      <td>UZ044</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+    <h2>✍️ Authors Table</h2>
+    <div class="table-container">
+      <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Author</th>
+      <th>Birth_Year</th>
+      <th>Death_Year</th>
+      <th>Nationality</th>
+      <th>Notable_Awards</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Jane Austen</td>
+      <td>1775</td>
+      <td>1817</td>
+      <td>British</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Herman Melville</td>
+      <td>1819</td>
+      <td>1891</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>George Orwell</td>
+      <td>1903</td>
+      <td>1950</td>
+      <td>British</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Harper Lee</td>
+      <td>1926</td>
+      <td>2016</td>
+      <td>American</td>
+      <td>Pulitzer Prize</td>
+    </tr>
+    <tr>
+      <td>F. Scott Fitzgerald</td>
+      <td>1896</td>
+      <td>1940</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>E.B. White</td>
+      <td>1899</td>
+      <td>1985</td>
+      <td>American</td>
+      <td>Presidential Medal of Freedom</td>
+    </tr>
+    <tr>
+      <td>Eric Carle</td>
+      <td>1929</td>
+      <td>2021</td>
+      <td>American</td>
+      <td>NEA Foundation Award</td>
+    </tr>
+    <tr>
+      <td>Roald Dahl</td>
+      <td>1916</td>
+      <td>1990</td>
+      <td>British</td>
+      <td>World Fantasy Award</td>
+    </tr>
+    <tr>
+      <td>Maurice Sendak</td>
+      <td>1928</td>
+      <td>2012</td>
+      <td>American</td>
+      <td>Caldecott Medal</td>
+    </tr>
+    <tr>
+      <td>Margaret Wise Brown</td>
+      <td>1910</td>
+      <td>1952</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>J.K. Rowling</td>
+      <td>1965</td>
+      <td>0</td>
+      <td>British</td>
+      <td>Order of the British Empire</td>
+    </tr>
+    <tr>
+      <td>Suzanne Collins</td>
+      <td>1962</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Christopher Paolini</td>
+      <td>1983</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Rick Riordan</td>
+      <td>1964</td>
+      <td>0</td>
+      <td>American</td>
+      <td>Mark Twain Award</td>
+    </tr>
+    <tr>
+      <td>Madeleine L'Engle</td>
+      <td>1918</td>
+      <td>2007</td>
+      <td>American</td>
+      <td>Newbery Medal</td>
+    </tr>
+    <tr>
+      <td>Stieg Larsson</td>
+      <td>1954</td>
+      <td>2004</td>
+      <td>Swedish</td>
+      <td>Glass Key Award</td>
+    </tr>
+    <tr>
+      <td>Gillian Flynn</td>
+      <td>1971</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Dan Brown</td>
+      <td>1964</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Agatha Christie</td>
+      <td>1890</td>
+      <td>1976</td>
+      <td>British</td>
+      <td>Order of the British Empire</td>
+    </tr>
+    <tr>
+      <td>Thomas Harris</td>
+      <td>1940</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Frank Herbert</td>
+      <td>1920</td>
+      <td>1986</td>
+      <td>American</td>
+      <td>Nebula Award</td>
+    </tr>
+    <tr>
+      <td>Orson Scott Card</td>
+      <td>1951</td>
+      <td>0</td>
+      <td>American</td>
+      <td>Hugo Award</td>
+    </tr>
+    <tr>
+      <td>Neal Stephenson</td>
+      <td>1959</td>
+      <td>0</td>
+      <td>American</td>
+      <td>Hugo Award</td>
+    </tr>
+    <tr>
+      <td>William Gibson</td>
+      <td>1948</td>
+      <td>0</td>
+      <td>American-Canadian</td>
+      <td>Nebula Award</td>
+    </tr>
+    <tr>
+      <td>Ursula K. Le Guin</td>
+      <td>1929</td>
+      <td>2018</td>
+      <td>American</td>
+      <td>National Book Award</td>
+    </tr>
+    <tr>
+      <td>Yuval Noah Harari</td>
+      <td>1976</td>
+      <td>0</td>
+      <td>Israeli</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Tara Westover</td>
+      <td>1986</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Rebecca Skloot</td>
+      <td>1972</td>
+      <td>0</td>
+      <td>American</td>
+      <td>National Academies Communication Award</td>
+    </tr>
+    <tr>
+      <td>James Clear</td>
+      <td>1986</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Malcolm Gladwell</td>
+      <td>1963</td>
+      <td>0</td>
+      <td>Canadian</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Marcus Aurelius</td>
+      <td>121</td>
+      <td>180</td>
+      <td>Roman</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Sun Tzu</td>
+      <td>544</td>
+      <td>496</td>
+      <td>Chinese</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Mark Manson</td>
+      <td>1984</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Viktor E. Frankl</td>
+      <td>1905</td>
+      <td>1997</td>
+      <td>Austrian</td>
+      <td>Austrian Honor for Science and Art</td>
+    </tr>
+    <tr>
+      <td>Daniel Kahneman</td>
+      <td>1934</td>
+      <td>0</td>
+      <td>Israeli-American</td>
+      <td>Nobel Prize in Economics</td>
+    </tr>
+    <tr>
+      <td>Jojo Moyes</td>
+      <td>1969</td>
+      <td>0</td>
+      <td>British</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Nicholas Sparks</td>
+      <td>1965</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Colleen Hoover</td>
+      <td>1979</td>
+      <td>0</td>
+      <td>American</td>
+      <td>Goodreads Choice Award</td>
+    </tr>
+    <tr>
+      <td>Diana Gabaldon</td>
+      <td>1952</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Audrey Niffenegger</td>
+      <td>1963</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Paulo Coelho</td>
+      <td>1947</td>
+      <td>0</td>
+      <td>Brazilian</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Haruki Murakami</td>
+      <td>1949</td>
+      <td>0</td>
+      <td>Japanese</td>
+      <td>Franz Kafka Prize</td>
+    </tr>
+    <tr>
+      <td>Gabriel Garcia Marquez</td>
+      <td>1927</td>
+      <td>2014</td>
+      <td>Colombian</td>
+      <td>Nobel Prize in Literature</td>
+    </tr>
+    <tr>
+      <td>Carlos Ruiz Zafon</td>
+      <td>1964</td>
+      <td>2020</td>
+      <td>Spanish</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Min Jin Lee</td>
+      <td>1968</td>
+      <td>0</td>
+      <td>Korean-American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Matt Haig</td>
+      <td>1975</td>
+      <td>0</td>
+      <td>British</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Delia Owens</td>
+      <td>1949</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Taylor Jenkins Reid</td>
+      <td>1983</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Andy Weir</td>
+      <td>1972</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Gabrielle Zevin</td>
+      <td>1977</td>
+      <td>0</td>
+      <td>American</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+    <h2>🧑‍💼 Borrowers Table</h2>
+    <div class="table-container">
+      <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Last_checkout_date</th>
+      <th>Full_Name</th>
+      <th>Age</th>
+      <th>Occupation</th>
+      <th>Phone_Number</th>
+      <th>Email</th>
+      <th>Address</th>
+      <th>Membership_Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UZ001</td>
+      <td>Aziza Karimova</td>
+      <td>28</td>
+      <td>Teacher</td>
+      <td>998901234567</td>
+      <td>aziza.karimova@gmail.com</td>
+      <td>23 Mustaqillik Avenue, Tashkent</td>
+      <td>1/15/2023</td>
+    </tr>
+    <tr>
+      <td>UZ002</td>
+      <td>Dilshod Rahimov</td>
+      <td>34</td>
+      <td>Engineer</td>
+      <td>998912345678</td>
+      <td>dilshod.rahimov@mail.ru</td>
+      <td>45 Amir Temur Street, Samarkand</td>
+      <td>5/22/2022</td>
+    </tr>
+    <tr>
+      <td>UZ003</td>
+      <td>Gulnora Tashmatova</td>
+      <td>19</td>
+      <td>Student</td>
+      <td>998923456789</td>
+      <td>gulnora.tash@edu.uz</td>
+      <td>12 Navoi Street, Bukhara</td>
+      <td>9/7/2023</td>
+    </tr>
+    <tr>
+      <td>UZ004</td>
+      <td>Rustam Alimov</td>
+      <td>42</td>
+      <td>Businessman</td>
+      <td>998934567890</td>
+      <td>rustam.alimov@biznet.uz</td>
+      <td>78 Uzbekistan Avenue, Andijan</td>
+      <td>11/30/2021</td>
+    </tr>
+    <tr>
+      <td>UZ005</td>
+      <td>Feruza Nazarova</td>
+      <td>31</td>
+      <td>Doctor</td>
+      <td>998945678901</td>
+      <td>feruza.nazarova@medcenter.uz</td>
+      <td>56 Sharof Rashidov Street, Tashkent</td>
+      <td>8/14/2022</td>
+    </tr>
+    <tr>
+      <td>UZ006</td>
+      <td>Jahongir Yusupov</td>
+      <td>27</td>
+      <td>Software Developer</td>
+      <td>998956789012</td>
+      <td>jahongir.dev@techuz.com</td>
+      <td>34 Silicon Valley, Tashkent</td>
+      <td>3/2/2023</td>
+    </tr>
+    <tr>
+      <td>UZ007</td>
+      <td>Malika Umarova</td>
+      <td>23</td>
+      <td>Pharmacist</td>
+      <td>998967890123</td>
+      <td>malika.umarova@pharma.uz</td>
+      <td>67 Health Street, Namangan</td>
+      <td>12/19/2022</td>
+    </tr>
+    <tr>
+      <td>UZ008</td>
+      <td>Bobur Mahmudov</td>
+      <td>38</td>
+      <td>Architect</td>
+      <td>998978901234</td>
+      <td>bobur.architect@design.uz</td>
+      <td>89 Construction Avenue, Fergana</td>
+      <td>7/25/2021</td>
+    </tr>
+    <tr>
+      <td>UZ009</td>
+      <td>Sabina Iskandarova</td>
+      <td>25</td>
+      <td>Journalist</td>
+      <td>998989012345</td>
+      <td>sabina.news@media.uz</td>
+      <td>12 Press Street, Khiva</td>
+      <td>5/11/2023</td>
+    </tr>
+    <tr>
+      <td>UZ010</td>
+      <td>Otabek Sattarov</td>
+      <td>29</td>
+      <td>Lawyer</td>
+      <td>998990123456</td>
+      <td>otabek.law@legal.uz</td>
+      <td>43 Justice Road, Nukus</td>
+      <td>2/28/2022</td>
+    </tr>
+    <tr>
+      <td>UZ011</td>
+      <td>Nodira Khamidova</td>
+      <td>36</td>
+      <td>Professor</td>
+      <td>998901234568</td>
+      <td>nodira.prof@university.uz</td>
+      <td>21 Academic Street, Karshi</td>
+      <td>10/15/2022</td>
+    </tr>
+    <tr>
+      <td>UZ012</td>
+      <td>Timur Azizov</td>
+      <td>22</td>
+      <td>Graphic Designer</td>
+      <td>998912345679</td>
+      <td>timur.design@creative.uz</td>
+      <td>67 Art Avenue, Termez</td>
+      <td>7/9/2023</td>
+    </tr>
+    <tr>
+      <td>UZ013</td>
+      <td>Zarina Bakirova</td>
+      <td>33</td>
+      <td>Accountant</td>
+      <td>998923456790</td>
+      <td>zarina.finance@accounts.uz</td>
+      <td>34 Banking Street, Urgench</td>
+      <td>9/20/2021</td>
+    </tr>
+    <tr>
+      <td>UZ014</td>
+      <td>Shavkat Pulatov</td>
+      <td>45</td>
+      <td>Chef</td>
+      <td>998934567891</td>
+      <td>shavkat.chef@cuisine.uz</td>
+      <td>56 Culinary Road, Jizzakh</td>
+      <td>4/30/2023</td>
+    </tr>
+    <tr>
+      <td>UZ015</td>
+      <td>Dilnoza Rahmonova</td>
+      <td>26</td>
+      <td>Marketing Specialist</td>
+      <td>998945678902</td>
+      <td>dilnoza.market@brand.uz</td>
+      <td>78 Advertising Lane, Kokand</td>
+      <td>6/12/2022</td>
+    </tr>
+    <tr>
+      <td>UZ016</td>
+      <td>Akmal Yuldashev</td>
+      <td>39</td>
+      <td>Civil Engineer</td>
+      <td>998956789013</td>
+      <td>akmal.civil@construct.uz</td>
+      <td>90 Building Street, Margilan</td>
+      <td>1/7/2022</td>
+    </tr>
+    <tr>
+      <td>UZ017</td>
+      <td>Lola Turaeva</td>
+      <td>24</td>
+      <td>Dental Hygienist</td>
+      <td>998967890124</td>
+      <td>lola.dental@smile.uz</td>
+      <td>23 Health Avenue, Navoiy</td>
+      <td>8/18/2023</td>
+    </tr>
+    <tr>
+      <td>UZ018</td>
+      <td>Bekzod Usmanov</td>
+      <td>41</td>
+      <td>University Lecturer</td>
+      <td>998978901235</td>
+      <td>bekzod.edu@academy.uz</td>
+      <td>45 Knowledge Street, Gulistan</td>
+      <td>12/3/2021</td>
+    </tr>
+    <tr>
+      <td>UZ019</td>
+      <td>Munira Abdurazakova</td>
+      <td>30</td>
+      <td>Fashion Designer</td>
+      <td>998989012346</td>
+      <td>munira.fashion@style.uz</td>
+      <td>67 Trend Avenue, Angren</td>
+      <td>11/25/2022</td>
+    </tr>
+    <tr>
+      <td>UZ020</td>
+      <td>Iskandar Rakhimov</td>
+      <td>32</td>
+      <td>Data Analyst</td>
+      <td>998990123457</td>
+      <td>iskandar.data@analytics.uz</td>
+      <td>89 Tech Park, Chirchiq</td>
+      <td>2/14/2023</td>
+    </tr>
+    <tr>
+      <td>UZ021</td>
+      <td>Dilfuza Ergasheva</td>
+      <td>27</td>
+      <td>Pediatrician</td>
+      <td>998901234569</td>
+      <td>dilfuza.peds@hospital.uz</td>
+      <td>12 Child Care Road, Zarafshan</td>
+      <td>4/9/2022</td>
+    </tr>
+    <tr>
+      <td>UZ022</td>
+      <td>Umid Khasanov</td>
+      <td>35</td>
+      <td>Film Director</td>
+      <td>998912345680</td>
+      <td>umid.films@cinema.uz</td>
+      <td>34 Movie Street, Bekabad</td>
+      <td>6/27/2023</td>
+    </tr>
+    <tr>
+      <td>UZ023</td>
+      <td>Zilola Muratova</td>
+      <td>21</td>
+      <td>Ballet Dancer</td>
+      <td>998923456791</td>
+      <td>zilola.dance@arts.uz</td>
+      <td>56 Performance Avenue, Almalyk</td>
+      <td>10/8/2021</td>
+    </tr>
+    <tr>
+      <td>UZ024</td>
+      <td>Ravshan Ibragimov</td>
+      <td>40</td>
+      <td>Financial Advisor</td>
+      <td>998934567892</td>
+      <td>ravshan.finance@advisor.uz</td>
+      <td>78 Investment Road, Navbahor</td>
+      <td>7/19/2022</td>
+    </tr>
+    <tr>
+      <td>UZ025</td>
+      <td>Makhbuba Tashpulatova</td>
+      <td>29</td>
+      <td>Translator</td>
+      <td>998945678903</td>
+      <td>makhbuba.translate@language.uz</td>
+      <td>90 Multilingual Street, Shakhrisabz</td>
+      <td>1/30/2023</td>
+    </tr>
+    <tr>
+      <td>UZ026</td>
+      <td>Ulugbek Sharipov</td>
+      <td>44</td>
+      <td>Veterinarian</td>
+      <td>998956789014</td>
+      <td>ulugbek.vet@animal.uz</td>
+      <td>23 Pet Care Lane, Yangiyul</td>
+      <td>3/15/2022</td>
+    </tr>
+    <tr>
+      <td>UZ027</td>
+      <td>Kamola Abdullaeva</td>
+      <td>26</td>
+      <td>Psychologist</td>
+      <td>998967890125</td>
+      <td>kamola.psych@mental.uz</td>
+      <td>45 Wellness Road, Beruniy</td>
+      <td>8/26/2021</td>
+    </tr>
+    <tr>
+      <td>UZ028</td>
+      <td>Farhod Nizomov</td>
+      <td>33</td>
+      <td>Agricultural Engineer</td>
+      <td>998978901236</td>
+      <td>farhod.agri@farming.uz</td>
+      <td>67 Harvest Street, Uchquduk</td>
+      <td>10/2/2023</td>
+    </tr>
+    <tr>
+      <td>UZ029</td>
+      <td>Sevara Yusupova</td>
+      <td>31</td>
+      <td>Environmental Scientist</td>
+      <td>998989012347</td>
+      <td>sevara.eco@green.uz</td>
+      <td>89 Sustainability Avenue, Kattakurgan</td>
+      <td>9/14/2022</td>
+    </tr>
+    <tr>
+      <td>UZ030</td>
+      <td>Sardor Inomov</td>
+      <td>25</td>
+      <td>Sports Coach</td>
+      <td>998990123458</td>
+      <td>sardor.coach@fitness.uz</td>
+      <td>12 Athletic Road, Denau</td>
+      <td>5/23/2023</td>
+    </tr>
+    <tr>
+      <td>UZ031</td>
+      <td>Kamila Safarova</td>
+      <td>37</td>
+      <td>Historian</td>
+      <td>998901234570</td>
+      <td>kamila.history@heritage.uz</td>
+      <td>34 Archive Street, Qarshi</td>
+      <td>11/11/2021</td>
+    </tr>
+    <tr>
+      <td>UZ032</td>
+      <td>Javlon Mirzaev</td>
+      <td>28</td>
+      <td>Music Teacher</td>
+      <td>998912345681</td>
+      <td>javlon.music@melody.uz</td>
+      <td>56 Symphony Avenue, Shahrisabz</td>
+      <td>8/3/2022</td>
+    </tr>
+    <tr>
+      <td>UZ033</td>
+      <td>Nafisa Tursunova</td>
+      <td>34</td>
+      <td>Interior Designer</td>
+      <td>998923456792</td>
+      <td>nafisa.interior@decor.uz</td>
+      <td>78 Elegance Road, Urganch</td>
+      <td>4/17/2023</td>
+    </tr>
+    <tr>
+      <td>UZ034</td>
+      <td>Oybek Khalilov</td>
+      <td>42</td>
+      <td>Restaurant Owner</td>
+      <td>998934567893</td>
+      <td>oybek.food@cuisine.uz</td>
+      <td>90 Gastronomy Street, Samarqand</td>
+      <td>1/28/2022</td>
+    </tr>
+    <tr>
+      <td>UZ035</td>
+      <td>Saodat Jumaeva</td>
+      <td>23</td>
+      <td>Research Assistant</td>
+      <td>998945678904</td>
+      <td>saodat.research@science.uz</td>
+      <td>23 Laboratory Lane, Bukhara</td>
+      <td>7/9/2021</td>
+    </tr>
+    <tr>
+      <td>UZ036</td>
+      <td>Eldor Nabiev</td>
+      <td>39</td>
+      <td>TV Producer</td>
+      <td>998956789015</td>
+      <td>eldor.tv@media.uz</td>
+      <td>45 Broadcast Road, Namangan</td>
+      <td>9/15/2023</td>
+    </tr>
+    <tr>
+      <td>UZ037</td>
+      <td>Nigora Zakirova</td>
+      <td>32</td>
+      <td>Optometrist</td>
+      <td>998967890126</td>
+      <td>nigora.eyes@vision.uz</td>
+      <td>67 Optical Avenue, Andijan</td>
+      <td>10/26/2022</td>
+    </tr>
+    <tr>
+      <td>UZ038</td>
+      <td>Alisher Tashmatov</td>
+      <td>46</td>
+      <td>Urban Planner</td>
+      <td>998978901237</td>
+      <td>alisher.urban@city.uz</td>
+      <td>89 Metropolitan Street, Tashkent</td>
+      <td>5/7/2022</td>
+    </tr>
+    <tr>
+      <td>UZ039</td>
+      <td>Madina Kabirova</td>
+      <td>24</td>
+      <td>Digital Marketer</td>
+      <td>998989012348</td>
+      <td>madina.digital@online.uz</td>
+      <td>12 Social Media Road, Navoiy</td>
+      <td>2/18/2023</td>
+    </tr>
+    <tr>
+      <td>UZ040</td>
+      <td>Nodir Musaev</td>
+      <td>30</td>
+      <td>Physical Therapist</td>
+      <td>998990123459</td>
+      <td>nodir.therapy@rehab.uz</td>
+      <td>34 Recovery Street, Nukus</td>
+      <td>12/29/2021</td>
+    </tr>
+    <tr>
+      <td>UZ041</td>
+      <td>Sitora Usmonova</td>
+      <td>35</td>
+      <td>Museum Curator</td>
+      <td>998901234571</td>
+      <td>sitora.museum@culture.uz</td>
+      <td>56 Heritage Avenue, Xiva</td>
+      <td>7/4/2022</td>
+    </tr>
+    <tr>
+      <td>UZ042</td>
+      <td>Tohir Rahmonov</td>
+      <td>27</td>
+      <td>App Developer</td>
+      <td>998912345682</td>
+      <td>tohir.apps@mobile.uz</td>
+      <td>78 Coding Road, Fergana</td>
+      <td>11/15/2023</td>
+    </tr>
+    <tr>
+      <td>UZ043</td>
+      <td>Zamira Abduraimova</td>
+      <td>43</td>
+      <td>Chef Patissier</td>
+      <td>998923456793</td>
+      <td>zamira.pastry@bakery.uz</td>
+      <td>90 Confectionery Street, Jizzakh</td>
+      <td>3/26/2022</td>
+    </tr>
+    <tr>
+      <td>UZ044</td>
+      <td>Tohir Rahmonov</td>
+      <td>20</td>
+      <td>Photography Student</td>
+      <td>998934567894</td>
+      <td>akbar.photo@image.uz</td>
+      <td>23 Camera Lane, Termez</td>
+      <td>8/7/2021</td>
+    </tr>
+    <tr>
+      <td>UZ045</td>
+      <td>Nilufar Ergasheva</td>
+      <td>38</td>
+      <td>Human Resources Manager</td>
+      <td>998945678905</td>
+      <td>nilufar.hr@corporate.uz</td>
+      <td>45 Business Road, Angren</td>
+      <td>6/19/2023</td>
+    </tr>
+    <tr>
+      <td>UZ046</td>
+      <td>Jamshid Kamolov</td>
+      <td>33</td>
+      <td>Electrical Engineer</td>
+      <td>998956789016</td>
+      <td>jamshid.electric@power.uz</td>
+      <td>67 Energy Avenue, Chirchiq</td>
+      <td>9/30/2022</td>
+    </tr>
+    <tr>
+      <td>UZ047</td>
+      <td>Aziza Tulyaganova</td>
+      <td>22</td>
+      <td>Fashion Blogger</td>
+      <td>998967890127</td>
+      <td>aziza.fashion@trends.uz</td>
+      <td>89 Style Street, Bekabad</td>
+      <td>10/11/2021</td>
+    </tr>
+    <tr>
+      <td>UZ048</td>
+      <td>Firuz Nasrullaev</td>
+      <td>36</td>
+      <td>Dentist</td>
+      <td>998978901238</td>
+      <td>firuz.dental@teeth.uz</td>
+      <td>12 Smile Lane, Almalyk</td>
+      <td>1/22/2023</td>
+    </tr>
+    <tr>
+      <td>UZ049</td>
+      <td>Barno Akbarova</td>
+      <td>29</td>
+      <td>Environmental Lawyer</td>
+      <td>998989012349</td>
+      <td>barno.enviro@legal.uz</td>
+      <td>34 Ecology Road, Gulistan</td>
+      <td>11/5/2022</td>
+    </tr>
+    <tr>
+      <td>UZ050</td>
+      <td>Davron Kurbanov</td>
+      <td>41</td>
+      <td>Radio Host</td>
+      <td>998990123460</td>
+      <td>davron.radio@broadcast.uz</td>
+      <td>56 FM Avenue, Zarafshan</td>
+      <td>2/16/2022</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔗 ER Diagram Summary</h2>
+    <p><strong>PK-FK Relationships:</strong></p>
+    <ul>
+      <li><code>Books.Author</code> → <code>Authors.Author</code></li>
+      <li><code>Books.Last_checkout_date</code> → <code>Borrowers.Last_checkout_date</code></li>
+    </ul>
+
+    <div class="highlight">
+      ✅ All tables are validated via site, with correct relationships (blue lines) visible in the ER diagram screenshot.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🧠 What did I learn from this assignment?</h2>
+    <ul>
+      <li>Being specific and talking in detail to AI, because I'll be out of messages really quickly.</li>
+      <li>Strengthening my know-how of working with .csv files.</li>
+      <li>Answer to what is the primary key, foreign key. Why do we need it and so on.</li>
+    </ul>
+  </div>
+
+</body>
+</html>
