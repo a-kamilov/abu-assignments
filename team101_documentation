@@ -56,22 +56,22 @@
 <tr>
 <td>Khan (2417655)</td>
 <td>Developer</td>
-<td></td>
+<td>Assisted main developer, co-debugged site and script issues</td>
 </tr>
 <tr>
 <td>Abu(2417515)</td>
 <td>Developer</td>
-<td></td>
+<td>Developed main website functionality using AI and CryptoJS</td>
 </tr>
 <tr>
 <td>Samandar(2417574)</td>
 <td>Documentor</td>
-<td></td>
+<td>Managed documentation, summarized progress and coordinated communication</td>
 </tr>
 <tr>
-<td>Nusratulloh(2417563)</td>
+<td>Norman(2417563)</td>
 <td>UI/UX designer</td>
-<td></td>
+<td>Designed UI layout, suggested modern aesthetics and guided user experience</td>
 </tr>
 </table>
 <h2>📌 2. Research Algorithms (Required) Documented Cryptographic Algorithms</h2>
@@ -210,8 +210,6 @@
 <td>Red-teaming was done by team members and ChatGPT as an external reviewer. Feedback praised the smooth functionality and beginner-friendly features, and suggested improvements like a result log, user accounts, and visual enhancements. Based on this, we improved UI clarity and layout, though user accounts were postponed due to technical constraints.</td>
 </tr>
 </table>
-<p>Individual Team Member Reflections</p>
-<p>Each member writes one paragraph.</p>
 <table>
 <tr>
 <th>Name</th>
@@ -230,12 +228,8 @@
 <td>I did the role of the documentation of the website. First of all i discussed with boys every problem and what we have to do. The main problem is like a limit of the claude.ai and also it has got a limit on putting words as well as codes for the website. However we had a Chatchpt with subscription but Chatchpt can not work like how claude ai worked without subscription. Even if we had subscription we asked lots of times to Chpt to make us code which works but the Chpt can not make which works for us and after trying for more than seven times we got the code which works but before that we used two accounts to make one website code because of the limitation of the claude.ai we couldn&#x27;t make code for the website but we got a idea because of limit we put on claude.ai half of the code so it can continue working and making website code which was ready to show our teacher but we mistaken it is not that easy to make a website code which really works so we continue working with Chatchpt and we finally got the code which we asked from it.</td>
 </tr>
 <tr>
-<td>Nusratulloh</td>
+<td>Norman</td>
 <td>I mostly worked with the Design of the project and provided some concepts that looked very much like professional websites. However, due to some difficulties the project we worked on had changed over time. We carefully selected our color palette to create a professional and modern cryptography website. We also wanted to give some understanding by providing directions throughout the website interface.</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
 </tr>
 </table>
 <p>
