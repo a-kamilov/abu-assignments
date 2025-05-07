@@ -284,6 +284,30 @@
 </footer>
 
 <script>
+  <--grade-->
+  function unlockGrades() {
+    const password = document.getElementById("password").value;
+    google.script.run.withSuccessHandler(function(isValid) {
+      if (isValid) {
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("gradeCard").style.display = "block";
+
+        // Fetch grade info
+        google.script.run.withSuccessHandler(function(data) {
+          document.getElementById('finalGrade').textContent = data.finalGrade + "%";
+          document.getElementById('pointsEarned').textContent = `(${data.earnedPoints} / ${data.totalPoints})`;
+        }).getGradeData();
+
+      } else {
+        alert("Wrong password.");
+      }
+    }).checkPassword(password);
+  }
+
+
+
+
+  
   document.querySelector('.mode-toggle').addEventListener('click', function () {
     const body = document.body;
     body.classList.toggle('light-mode');
