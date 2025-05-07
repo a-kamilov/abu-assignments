@@ -140,7 +140,7 @@
       box-shadow: 0 0 8px var(--card-border, #00ffff);
       background-color: var(--card-bg, #1a1a1a);
       color: var(--card-text, #ffffff);
-      width: 170px;
+      width: 200px;
       text-align: center;
       z-index: 1000;
       transition: background-color 0.3s, color 0.3s;
@@ -160,6 +160,11 @@
     #gradeCard p {
       font-size: 12px;
       margin-top: 6px;
+    }
+
+    .breakdown p {
+      margin: 2px 0;
+      font-size: 12px;
     }
 
     @media (max-width: 768px) {
@@ -210,6 +215,9 @@
   <h3>Grade Summary</h3>
   <h1 id="finalGrade">Loading...</h1>
   <p id="pointsEarned">( ... / ... )</p>
+  <div class="breakdown" id="breakdownContainer">
+    <!-- Breakdown percentages will be inserted here -->
+  </div>
 </div>
 
 <div class="container">
@@ -224,12 +232,12 @@
   <div class="projects-section">
     <h2 class="projects-title">Projects</h2>
     <ul class="projects-list">
-        <li><span class="dot"></span><a href="https://docs.google.com/document/d/1JSBPkXl_SRYdCyEo5RYXZ1wYJgUFFNRge3Hm1JNtai0/edit?tab=t.0">2st assignment (Find me)</a></li>
-        <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/dungeon-crawl.html">3rd assignment (Dungeon Crawl)</a></li>
-        <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/vlibrary_showcase">4th assignment (Virtual Library)</a></li>
-        <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/team101_documentation.html">6th assignment (Cryptography Project)</a></li>
-        <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/appscript_info.html">7th assignment (App script)</a></li>
-      </ul>
+      <li><span class="dot"></span><a href="https://docs.google.com/document/d/1JSBPkXl_SRYdCyEo5RYXZ1wYJgUFFNRge3Hm1JNtai0/edit?tab=t.0">2st assignment (Find me)</a></li>
+      <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/dungeon-crawl.html">3rd assignment (Dungeon Crawl)</a></li>
+      <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/vlibrary_showcase">4th assignment (Virtual Library)</a></li>
+      <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/team101_documentation.html">6th assignment (Cryptography Project)</a></li>
+      <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/appscript_info.html">7th assignment (App script)</a></li>
+    </ul>
   </div>
 </div>
 
@@ -259,6 +267,15 @@
     .then(data => {
       document.getElementById('finalGrade').textContent = data.finalGrade + "%";
       document.getElementById('pointsEarned').textContent = `(${data.earnedPoints} / ${data.totalPoints})`;
+
+      const breakdown = data.breakdown;
+      const breakdownContainer = document.getElementById('breakdownContainer');
+      breakdownContainer.innerHTML = `
+        <p>Assignment: ${breakdown.assignment}%</p>
+        <p>Quiz: ${breakdown.quiz}%</p>
+        <p>Attendance: ${breakdown.attendance}%</p>
+        <p>Project: ${breakdown.project}%</p>
+      `;
     })
     .catch(error => {
       document.getElementById('finalGrade').textContent = "Error!";
