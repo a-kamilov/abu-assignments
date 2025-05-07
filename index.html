@@ -202,10 +202,46 @@
     body.light-mode .social-links a {
       color: #000;
     }
+      <--password-->
+    #login-section {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #111;
+      padding: 16px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      z-index: 1001;
+    }
+
+    #login-section input {
+      padding: 6px;
+      margin-right: 8px;
+    }
+
+    #login-section button {
+      padding: 6px 12px;
+      background: #00ffff;
+      border: none;
+      color: #000;
+      cursor: pointer;
+    }
+
+    #gradeCard {
+      display: none;
+    }
+
+    
   </style>
 </head>
 <body>
 
+  <div id="login-section">
+  <input type="password" id="password" placeholder="Enter password" />
+  <button onclick="unlockGrades()">Unlock</button>
+</div>
+
+<!-- Hidden Grade Box -->
 <div id="gradeCard">
   <h3>Grade Summary</h3>
   <h1 id="finalGrade">Loading...</h1>
