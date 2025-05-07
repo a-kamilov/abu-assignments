@@ -130,6 +130,37 @@
       margin-left: 15px;
     }
 
+    /* Password and Grade Card Styles */
+    #login-section {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #111;
+      padding: 16px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      z-index: 1001;
+    }
+
+    #login-section input {
+      padding: 6px;
+      margin-right: 8px;
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 4px;
+    }
+
+    #login-section button {
+      padding: 6px 12px;
+      background: #00ffff;
+      border: none;
+      color: #000;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
     #gradeCard {
       position: fixed;
       top: 20px;
@@ -144,6 +175,7 @@
       text-align: center;
       z-index: 1000;
       transition: background-color 0.3s, color 0.3s;
+      display: none; /* Initially hidden */
     }
 
     #gradeCard h3 {
@@ -160,6 +192,28 @@
     #gradeCard p {
       font-size: 12px;
       margin-top: 6px;
+    }
+
+    #viewGradesBtn {
+      background-color: #333;
+      border: none;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+      display: block;
+    }
+
+    body.light-mode #login-section {
+      background: #f0f0f0;
+      border-color: #333;
+    }
+
+    body.light-mode #login-section input {
+      background: #fff;
+      color: #000;
+      border-color: #ccc;
     }
 
     @media (max-width: 768px) {
@@ -202,145 +256,120 @@
     body.light-mode .social-links a {
       color: #000;
     }
-      <--password-->
-    #login-section {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #111;
-      padding: 16px;
-      border: 2px solid #fff;
-      border-radius: 10px;
-      z-index: 1001;
-    }
-
-    #login-section input {
-      padding: 6px;
-      margin-right: 8px;
-    }
-
-    #login-section button {
-      padding: 6px 12px;
-      background: #00ffff;
-      border: none;
-      color: #000;
-      cursor: pointer;
-    }
-
-    #gradeCard {
-      display: none;
-    }
-
-    
   </style>
 </head>
 <body>
 
+  <!-- Password Login Section -->
   <div id="login-section">
-  <input type="password" id="password" placeholder="Enter password" />
-  <button onclick="unlockGrades()">Unlock</button>
-</div>
-
-<!-- Hidden Grade Box -->
-<div id="gradeCard">
-  <h3>Grade Summary</h3>
-  <h1 id="finalGrade">Loading...</h1>
-  <p id="pointsEarned">( ... / ... )</p>
-</div>
-
-<div class="container">
-  <div class="intro-section">
-    <h1>Welcome.</h1>
-    <div class="bio">
-      <p>Hello, My name is Abdurakhmon and my id is 2417515.</p>
-      <p>It's my second year at Dong-A university</p>
-    </div>
+    <input type="password" id="password" placeholder="Enter password" />
+    <button onclick="unlockGrades()">Unlock</button>
   </div>
 
-  <div class="projects-section">
-    <h2 class="projects-title">Projects</h2>
-    <ul class="projects-list">
+  <!-- Hidden Grade Box -->
+  <div id="gradeCard">
+    <h3>Grade Summary</h3>
+    <h1 id="finalGrade">Loading...</h1>
+    <p id="pointsEarned">( ... / ... )</p>
+  </div>
+
+  <div class="container">
+    <div class="intro-section">
+      <h1>Welcome.</h1>
+      <div class="bio">
+        <p>Hello, My name is Abdurakhmon and my id is 2417515.</p>
+        <p>It's my second year at Dong-A university</p>
+        <button id="viewGradesBtn" onclick="showLoginSection()">View My Grades</button>
+      </div>
+    </div>
+
+    <div class="projects-section">
+      <h2 class="projects-title">Projects</h2>
+      <ul class="projects-list">
         <li><span class="dot"></span><a href="https://docs.google.com/document/d/1JSBPkXl_SRYdCyEo5RYXZ1wYJgUFFNRge3Hm1JNtai0/edit?tab=t.0">2st assignment (Find me)</a></li>
         <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/dungeon-crawl.html">3rd assignment (Dungeon Crawl)</a></li>
         <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/vlibrary_showcase.html">4th assignment (Virtual Library)</a></li>
         <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/team101_documentation.html">6th assignment (Cryptography Project)</a></li>
         <li><span class="dot"></span><a href="https://abu-assignments.netlify.app/appscript_info.html">7th assignment (App script)</a></li>
       </ul>
+    </div>
   </div>
-</div>
 
-<footer>
-  <div class="social-links">
-    <a href="https://github.com/a-kamilov/" target="_blank" aria-label="GitHub Profile">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor">
-        <path d="M12 0c-6.626 0-12 5.373-12 12...Z" />
-      </svg>
-    </a>
-  </div>
-  <div class="footer-right">
-    <button class="mode-toggle">Light mode</button>
-    <p>©2025 Abdurakhmon Kamilov</p>
-  </div>
-</footer>
+  <footer>
+    <div class="social-links">
+      <a href="https://github.com/a-kamilov/" target="_blank" aria-label="GitHub Profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12...Z" />
+        </svg>
+      </a>
+    </div>
+    <div class="footer-right">
+      <button class="mode-toggle">Light mode</button>
+      <p>©2025 Abdurakhmon Kamilov</p>
+    </div>
+  </footer>
 
-<script>
-  <--grade-->
-  function unlockGrades() {
-    const password = document.getElementById("password").value;
-    google.script.run.withSuccessHandler(function(isValid) {
-      if (isValid) {
-        document.getElementById("login-section").style.display = "none";
-        document.getElementById("gradeCard").style.display = "block";
+  <script>
+    // Initially hide the login section
+    document.getElementById("login-section").style.display = "none";
+    
+    // Function to show login section
+    function showLoginSection() {
+      document.getElementById("login-section").style.display = "block";
+      document.getElementById("viewGradesBtn").style.display = "none";
+    }
+    
+    // Function to check password and show grades
+    function unlockGrades() {
+      const password = document.getElementById("password").value;
+      google.script.run.withSuccessHandler(function(isValid) {
+        if (isValid) {
+          document.getElementById("login-section").style.display = "none";
+          document.getElementById("gradeCard").style.display = "block";
 
-        // Fetch grade info
-        google.script.run.withSuccessHandler(function(data) {
-          document.getElementById('finalGrade').textContent = data.finalGrade + "%";
-          document.getElementById('pointsEarned').textContent = `(${data.earnedPoints} / ${data.totalPoints})`;
-        }).getGradeData();
+          // Fetch grade info
+          google.script.run.withSuccessHandler(function(data) {
+            document.getElementById('finalGrade').textContent = data.finalGrade + "%";
+            document.getElementById('pointsEarned').textContent = `(${data.earnedPoints} / ${data.totalPoints})`;
+          }).getGradeData();
 
-      } else {
-        alert("Wrong password.");
+        } else {
+          alert("Wrong password. Please try again.");
+        }
+      }).checkPassword(password);
+    }
+
+    // Allow pressing Enter key to submit password
+    document.getElementById("password").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        unlockGrades();
       }
-    }).checkPassword(password);
-  }
-
-
-
-
-  
-  document.querySelector('.mode-toggle').addEventListener('click', function () {
-    const body = document.body;
-    body.classList.toggle('light-mode');
-    this.textContent = body.classList.contains('light-mode') ? 'Dark mode' : 'Light mode';
-  });
-
-  fetch("https://script.google.com/macros/s/AKfycbxnSG-uVlYCI9Jko1FF-0DT1pLHrfS1y5yUl5n-_DyFy_FjgG0ZQEoUk_k0TM9RPrNq/exec")
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById('finalGrade').textContent = data.finalGrade + "%";
-      document.getElementById('pointsEarned').textContent = `(${data.earnedPoints} / ${data.totalPoints})`;
-    })
-    .catch(error => {
-      document.getElementById('finalGrade').textContent = "Error!";
-      console.error(error);
     });
 
-  function detectTheme() {
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const gradeCard = document.getElementById('gradeCard');
-    if (isDark) {
-      gradeCard.style.setProperty('--card-bg', '#1a1a1a');
-      gradeCard.style.setProperty('--card-text', '#ffffff');
-      gradeCard.style.setProperty('--card-border', '#00ffff');
-    } else {
-      gradeCard.style.setProperty('--card-bg', '#f0f0f0');
-      gradeCard.style.setProperty('--card-text', '#000000');
-      gradeCard.style.setProperty('--card-border', '#00aaaa');
+    // Dark/Light mode toggle
+    document.querySelector('.mode-toggle').addEventListener('click', function () {
+      const body = document.body;
+      body.classList.toggle('light-mode');
+      this.textContent = body.classList.contains('light-mode') ? 'Dark mode' : 'Light mode';
+    });
+
+    // Theme detection for grade card
+    function detectTheme() {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const gradeCard = document.getElementById('gradeCard');
+      if (isDark) {
+        gradeCard.style.setProperty('--card-bg', '#1a1a1a');
+        gradeCard.style.setProperty('--card-text', '#ffffff');
+        gradeCard.style.setProperty('--card-border', '#00ffff');
+      } else {
+        gradeCard.style.setProperty('--card-bg', '#f0f0f0');
+        gradeCard.style.setProperty('--card-text', '#000000');
+        gradeCard.style.setProperty('--card-border', '#00aaaa');
+      }
     }
-  }
-  detectTheme();
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectTheme);
-</script>
+    detectTheme();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectTheme);
+  </script>
 
 </body>
 </html>
