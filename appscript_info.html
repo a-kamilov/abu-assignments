@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -63,21 +64,6 @@
       margin-top: 20px;
       border-radius: 6px;
     }
-    pre {
-      background-color: #f4f4f4;
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-family: 'Courier New', Courier, monospace;
-      border: 1px solid #ccc;
-      overflow-x: auto;
-    }
-    code {
-      font-family: 'Courier New', Courier, monospace;
-      background-color: #f4f4f4;
-      padding: 2px 4px;
-      border-radius: 4px;
-    }
   </style>
 </head>
 <body>
@@ -90,7 +76,7 @@
   <div class="section">
     <h2>🧠 Teach It Like Feynman – What Is Apps Script?</h2>
     <p>Google Apps Script is a cloud-based JavaScript platform that lets you extend and automate tasks across Google Workspace (like Sheets, Docs, and Gmail).</p>
-    
+
     <h3>📌 The 5Ws</h3>
     <ul>
       <li><strong>What:</strong> A JavaScript-based language for Google Workspace automation</li>
@@ -99,79 +85,49 @@
       <li><strong>When:</strong> When Google tools need extra functionality or automation</li>
       <li><strong>Where:</strong> Runs in the cloud via script.google.com or inside Google Docs/Sheets</li>
     </ul>
-  </div>
 
-  <div class="section">
-    <h2>🎥 What I Learned From a YouTube Deep Dive</h2>
-    <p>After watching <a href="https://youtu.be/gxyAgAjr7_Q?si=29fhKpc50x-RX0Jk" target="_blank">this Apps Script video</a>, I dug deeper and organized my key takeaways below.</p>
-
-    <h3>🔍 What Even Is Apps Script?</h3>
-    <p>Apps Script is kind of a built-in programming tool inside Google Sheets. It lets you automate boring stuff, create custom functions, and even build simple apps. Super useful if you’re handling repetitive spreadsheet tasks.</p>
-
-    <h3>⚙️ Why Use It?</h3>
-    <ul>
-      <li>Skip repetitive copy-pasting and formatting</li>
-      <li>Create your own formulas beyond built-in ones</li>
-      <li>Add custom menus and buttons for easier control</li>
-      <li>Connect Sheets with Gmail, Calendar, and other Google tools</li>
-      <li>Overall, it turns Sheets into a more powerful platform</li>
-    </ul>
+    <h3>📹 Video I Watched</h3>
+    <p>Check out this YouTube video where I deep-dived further into Apps Script concepts: 
+      <a href="https://youtu.be/gxyAgAjr7_Q?si=29fhKpc50x-RX0Jk" target="_blank">What Even Is Apps Script?</a></p>
 
     <h3>💡 Cool Stuff I Learned</h3>
     <ul>
-      <li><strong>Custom Functions</strong> - You can literally make your own formulas. The example we did was a goofy one:
-        <pre>
-function Amen(input) {
+      <li><strong>Custom Functions:</strong> You can literally make your own formulas. Example:
+        <pre><code>function Amen(input) {
   return input + " is awesome 😀";
-}
-        </pre>
-        If you type =Amen(E1) into a cell, it takes the value in E1 and adds “is awesome” to it. It’s simple, but it shows how you can make personalized functions for anything — like converting units, formatting text, etc.
+}</code></pre>
+        If you type =Amen(E1) into a cell, it takes the value in E1 and adds “is awesome” to it.
       </li>
-      <li><strong>Named Functions (But With UI)</strong> - Instead of using code, you can also go to Data > Named Functions in Sheets to create your own. What’s cool is that these come with a little description popup when you use them, which makes them super user-friendly. Small tip:
-        <ul>
-          <li>In code, you use + to combine text</li>
-          <li>In Sheet formulas, you use &</li>
-        </ul>
-      </li>
-      <li><strong>Custom Menus</strong> - You can make your own menu that shows up every time you open the spreadsheet! Here's how:
-        <pre>
-function onOpen() {
+      <li><strong>Named Functions (But With UI):</strong> Create user-friendly named functions through Sheets' menu. Use <code>&</code> instead of <code>+</code> for concatenation in formulas.</li>
+      <li><strong>Custom Menus:</strong> Add a custom menu to Sheets that runs a function when clicked:
+        <pre><code>function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('Amen')
     .addItem('Dark mode', 'darkMode')
     .addToUi();
-}
-        </pre>
-        This adds a new menu called "Amen" at the top, and when you click the "Dark mode" item, it runs a function (more on that next).
+}</code></pre>
       </li>
-      <li><strong>Auto Formatting with a Function</strong> - The darkMode() function changes the look of the whole sheet in one click:
-        <pre>
-function darkMode() {
+      <li><strong>Auto Formatting with a Function:</strong> Apply dark mode with one click:
+        <pre><code>function darkMode() {
   SpreadsheetApp.getActive()
     .getRange('A1:Z1000')
     .setBackground('#2d2d2d')
     .setFontColor('#ffffff');
-}
-        </pre>
-        No need to manually highlight and style cells — just one click and you’re in dark mode.
+}</code></pre>
       </li>
     </ul>
 
     <h3>🧪 Coding Concepts That Showed Up</h3>
     <ul>
-      <li><strong>Functions</strong> - Reusable blocks of code. They take inputs and give outputs. Apps Script is full of these.</li>
-      <li><strong>Method Chaining</strong> - Looks like this:
-        <pre>
-SpreadsheetApp.getActive().getRange(...).setBackground(...)
-        </pre>
-        Each part passes its result to the next one. It makes the code shorter and cleaner.
+      <li><strong>Functions:</strong> Reusable blocks of code that take inputs and give outputs.</li>
+      <li><strong>Method Chaining:</strong> Passes results from one method to the next:
+        <pre><code>SpreadsheetApp.getActive().getRange(...).setBackground(...)</code></pre>
       </li>
-      <li><strong>Event Handling</strong> - For example, onOpen() runs when the spreadsheet is opened. This is kind of like telling the sheet, “Hey, do this when that happens.”
-      </li>
-      <li><strong>Authorization</strong> - The first time you run your script, Google asks for permission. It looks a little scary, but it’s fine if you wrote the script yourself.</li>
+      <li><strong>Event Handling:</strong> Functions that run on events like opening the spreadsheet (<code>onOpen()</code>).</li>
+      <li><strong>Authorization:</strong> Google asks for permission the first time you run a script.</li>
     </ul>
 
-    <h3>🚀 What I Could Do With This Later:</h3>
+    <h3>🚀 What I Could Do With This Later</h3>
     <ul>
       <li>Syncing Sheets with your Google Calendar</li>
       <li>Sending emails automatically (reminders or summaries)</li>
@@ -180,7 +136,7 @@ SpreadsheetApp.getActive().getRange(...).setBackground(...)
     </ul>
 
     <h3>✏️ My Takeaway</h3>
-    <p>Before this YouTube video, I thought Google Sheets was just for numbers and formulas. But with Apps Script, it’s kind of turning your spreadsheet into an app. Even something as simple as automating formatting or building a fun custom formula can save time. I'm especially curious about combining it with Gmail or Calendar next — that seems useful!</p>
+    <p>Before this YouTube video, I thought Google Sheets was just for numbers and formulas. But with Apps Script, it’s turning your spreadsheet into an app. Automating formatting or creating custom formulas can save time. I'm curious about integrating it with Gmail or Calendar — that seems useful!</p>
   </div>
 
   <div class="section">
@@ -212,19 +168,27 @@ SpreadsheetApp.getActive().getRange(...).setBackground(...)
           <li>Limited execution time (quotas)</li>
           <li>Only works within Google ecosystem</li>
           <li>Debugging can be slow and clunky</li>
-          <li>Documentation is sometimes lacking for advanced features</li>
+          <li>Documentation is sometimes lacking for advanced tasks</li>
         </ul>
       </div>
     </div>
   </div>
 
-  <div class="link-section">
-    <h3>🔗 Useful Links & Resources</h3>
+  <div class="section">
+    <h2>🧠 Deep Reflection & Learning Outcomes</h2>
+    <p>This project was not just about coding a feature—it was about learning how to teach, think critically, and communicate with both humans and machines. Here are the key insights:</p>
     <ul>
-      <li><a href="https://developers.google.com/apps-script" target="_blank">Google Apps Script Documentation</a></li>
-      <li><a href="https://www.youtube.com/watch?v=gxyAgAjr7_Q" target="_blank">Watch: Mastering Google Apps Script on YouTube</a></li>
-      <li><a href="https://stackexchange.com" target="_blank">StackExchange for coding help</a></li>
+      <li>⚙️ I discovered how to make Apps Script feel less like a hidden tool and more like a bridge between everyday tools like Google Sheets and full automation logic.</li>
+      <li>📊 I learned how to plan a data-driven solution: defining structure first, then connecting logic through APIs like <code>SpreadsheetApp</code> and <code>getRange()</code>.</li>
+      <li>📚 I adopted the Feynman Technique—explaining things simply until I truly understood every component. If I couldn’t explain it clearly, I didn’t really understand it yet.</li>
+      <li>🧠 I realized the importance of user-oriented thinking: my CCG calculator had to be intuitive, real-time, and foolproof—not just technically “correct.”</li>
     </ul>
+    <p style="margin-top: 10px;">
+      💬 View the full AI conversation that helped guide this learning:
+      <a href="https://chatgpt.com/share/68132dd6-cec0-8005-869e-fdac3a88dcf9" target="_blank">
+        AI Guidance on Apps Script (ChatGPT)
+      </a>
+    </p>
   </div>
 
 </body>
