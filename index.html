@@ -371,7 +371,6 @@
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiqVqJYzl4gxgTdlpX6WuNkGIsmzXDFV39eoKIbB8pqma8HHoycw9QMH1atfr-RlEB/exec";
   
   // Fetch grade data but don't display it yet
-  // Use JSONP approach to avoid CORS issues
   function fetchGradeData() {
     return new Promise((resolve, reject) => {
       fetch(SCRIPT_URL)
@@ -449,8 +448,7 @@
           });
       }
       
-      // Store in session that password has been entered
-      sessionStorage.setItem('gradesUnlocked', 'true');
+      // No longer storing in sessionStorage to ensure password is always required
     } else {
       // Show error message
       errorMessage.style.display = 'block';
@@ -508,28 +506,6 @@
     }
   });
   
-  // Check if grades were previously unlocked in this session
-  window.addEventListener('load', function() {
-    if (sessionStorage.getItem('gradesUnlocked') === 'true') {
-      document.getElementById('passwordForm').style.display = 'none';
-      document.getElementById('gradeContent').style.display = 'block';
-      
-      // Re-fetch the data if needed
-      if (!gradeData) {
-        fetchGradeData()
-          .then(data => {
-            displayGradeData(data);
-          })
-          .catch(error => {
-            document.getElementById('finalGrade').textContent = "Error!";
-            document.getElementById('pointsEarned').textContent = "Could not load grades";
-          });
-      } else {
-        displayGradeData(gradeData);
-      }
-    }
-  });
-
   // Theme detection
   function detectTheme() {
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
