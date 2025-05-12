@@ -69,6 +69,86 @@
       from {bottom: 30px; opacity: 1;}
       to {bottom: 0; opacity: 0;}
     }
+    .cipher-education {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+  color: white;
+}
+
+.cipher-education h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-intro {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #ccc;
+}
+
+.cipher-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.cipher-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cipher-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #5bc0de;
+}
+
+.cipher-card h3 {
+  color: #5bc0de;
+  margin-top: 0;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.cipher-card p {
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.cipher-card strong {
+  color: #5bc0de;
+  font-weight: normal;
+}
+
+.example {
+  background: #121212;
+  border-left: 3px solid #5bc0de;
+  padding: 0.8rem 1rem;
+  margin-top: 1rem;
+  border-radius: 0 3px 3px 0;
+}
+
+.code {
+  font-family: monospace;
+  background: #222;
+  padding: 2px 4px;
+  border-radius: 3px;
+  color: #5bc0de;
+}
+
+@media (max-width: 768px) {
+  .cipher-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+    
   </style>
 </head>
 <body>
@@ -81,6 +161,91 @@
     <li>If the selected algorithm requires a key, enter the key in the input field.</li>
     <li>Click <strong>Encrypt</strong> or <strong>Decrypt</strong> to process the text.</li>
   </ul>
+  <div class="cipher-education">
+  <h2>Understanding Ciphers</h2>
+  <p class="section-intro">Learn about the different encryption methods available on this site.</p>
+  
+  <div class="cipher-cards">
+    <!-- Caesar Cipher -->
+    <div class="cipher-card">
+      <h3>Caesar Cipher</h3>
+      <p><strong>What it is:</strong> One of the simplest and oldest encryption techniques named after Julius Caesar.</p>
+      <p><strong>How it works:</strong> Each letter in the plaintext is shifted a certain number of places down the alphabet. For example, with a shift of 3, A would become D, B would become E, and so on.</p>
+      <div class="example">
+        <p><strong>Example:</strong></p>
+        <p>Plaintext: <span class="code">HELLO</span></p>
+        <p>Shift: 3</p>
+        <p>Ciphertext: <span class="code">KHOOR</span></p>
+      </div>
+    </div>
+
+    <!-- Atbash Cipher -->
+    <div class="cipher-card">
+      <h3>Atbash Cipher</h3>
+      <p><strong>What it is:</strong> A simple substitution cipher originally used for the Hebrew alphabet.</p>
+      <p><strong>How it works:</strong> The first letter of the alphabet is replaced with the last letter, the second with the second-to-last, and so on.</p>
+      <div class="example">
+        <p><strong>Example:</strong></p>
+        <p>Plaintext: <span class="code">HELLO</span></p>
+        <p>Ciphertext: <span class="code">SVOOL</span></p>
+      </div>
+    </div>
+
+    <!-- Vigenere Cipher -->
+    <div class="cipher-card">
+      <h3>Vigenère Cipher</h3>
+      <p><strong>What it is:</strong> A method of encrypting alphabetic text using a simple form of polyalphabetic substitution.</p>
+      <p><strong>How it works:</strong> Uses a keyword to determine different shift values for each letter. Each letter of the message is shifted by the corresponding letter in the keyword.</p>
+      <div class="example">
+        <p><strong>Example:</strong></p>
+        <p>Plaintext: <span class="code">HELLO</span></p>
+        <p>Keyword: <span class="code">KEY</span> (repeated as <span class="code">KEYKE</span>)</p>
+        <p>Ciphertext: <span class="code">RIJVS</span></p>
+      </div>
+    </div>
+
+    <!-- XOR Cipher -->
+    <div class="cipher-card">
+      <h3>XOR Cipher</h3>
+      <p><strong>What it is:</strong> A symmetric encryption algorithm that uses the XOR logical operation.</p>
+      <p><strong>How it works:</strong> Each bit of the plaintext is XORed with the corresponding bit from the key. This operation is reversible by applying the same key again.</p>
+      <div class="example">
+        <p><strong>Example:</strong></p>
+        <p>Plaintext (ASCII): <span class="code">A</span> (65 in binary: 01000001)</p>
+        <p>Key (ASCII): <span class="code">K</span> (75 in binary: 01001011)</p>
+        <p>XOR result (binary): 00001010 (ASCII: LF)</p>
+      </div>
+    </div>
+
+    <!-- AES Cipher -->
+    <div class="cipher-card">
+      <h3>AES Cipher</h3>
+      <p><strong>What it is:</strong> Advanced Encryption Standard, a specification for the encryption of electronic data established by the U.S. NIST in 2001.</p>
+      <p><strong>How it works:</strong> Processes data blocks of 128 bits using cryptographic keys of 128, 192, or 256 bits through multiple rounds of substitution and permutation.</p>
+      <div class="example">
+        <p><strong>Example:</strong> Due to AES complexity, examples are typically shown as hexadecimal values:</p>
+        <p>Plaintext: <span class="code">00112233445566778899aabbccddeeff</span></p>
+        <p>Key: <span class="code">000102030405060708090a0b0c0d0e0f</span></p>
+        <p>Ciphertext: <span class="code">69c4e0d86a7b0430d8cdb78070b4c55a</span></p>
+      </div>
+    </div>
+
+    <!-- RSA Cipher -->
+    <div class="cipher-card">
+      <h3>RSA Cipher</h3>
+      <p><strong>What it is:</strong> An asymmetric cryptographic algorithm widely used for secure data transmission.</p>
+      <p><strong>How it works:</strong> Uses a pair of keys: a public key for encryption and a private key for decryption. The security relies on the practical difficulty of factoring the product of two large prime numbers.</p>
+      <div class="example">
+        <p><strong>Example:</strong> (Using small numbers for illustration)</p>
+        <p>Public key: (n=33, e=7)</p>
+        <p>Private key: (n=33, d=3)</p>
+        <p>Plaintext: <span class="code">2</span></p>
+        <p>Encryption: 2^7 mod 33 = 128 mod 33 = <span class="code">29</span></p>
+        <p>Decryption: 29^3 mod 33 = 24389 mod 33 = <span class="code">2</span></p>
+      </div>
+    </div>
+  </div>
+</div>
   <p><strong>Key Requirements:</strong></p>
   <ul>
     <li><strong>Caesar:</strong> Key = shift number (e.g., 3). Default is 3 if empty.</li>
