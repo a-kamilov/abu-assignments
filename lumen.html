@@ -360,16 +360,9 @@
             padding: 0.5rem 1rem;
             border-radius: 4px;
             font-family: 'Source Code Pro', monospace;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-        
-        .send-btn:hover {
-            background-color: rgba(56, 145, 255, 0.5);
-            box-shadow: 0 0 8px rgba(56, 145, 255, 0.5);
         }
         
         /* Evidence panel section */
@@ -594,10 +587,6 @@
                     <div class="status-dot"></div>
                     <span>SYSTEM ACTIVE</span>
                 </div>
-                <div class="toggle-view">
-                    <button class="toggle-btn active">LIVE MODE</button>
-                    <button class="toggle-btn">ARCHIVED LOGS</button>
-                </div>
             </div>
         </header>
         
@@ -636,7 +625,7 @@
                 <div class="chat-message ai">
                     <div class="message-header">
                         <div class="sender-icon ai">AI</div>
-                        <div class="sender-name">NEXUS</div>
+                        <div class="sender-name">AI</div>
                         <div class="message-timestamp">08:43:08</div>
                     </div>
                     <div class="message-content">
@@ -742,10 +731,10 @@
                 <div class="input-wrapper">
                     <textarea class="command-field" placeholder="Enter command..." rows="1"></textarea>
                 </div>
-                <button class="send-btn">
+                <div class="send-btn">
                     <span>TRANSMIT</span>
                     <i>▶</i>
-                </button>
+                </div>
             </div>
         </div>
         
@@ -753,16 +742,16 @@
         <div class="evidence-panel">
             <div class="panel-header">
                 <h2>EVIDENCE DATABASE</h2>
-                <span class="message-timestamp">6 ITEMS</span>
+                <span class="message-timestamp">3 ITEMS</span>
             </div>
             <div class="evidence-grid">
                 <!-- Evidence Item 1 -->
                 <div class="evidence-item">
-                    <div class="evidence-img">📊</div>
+                    <div class="evidence-img">📷</div>
                     <div class="evidence-info">
-                        <div class="evidence-title">Anomaly Reading #1</div>
+                        <div class="evidence-title">Anomaly Image #1</div>
                         <div class="evidence-meta">
-                            <span>DATA FILE</span>
+                            <span>IMAGE</span>
                             <span>05.12.24</span>
                         </div>
                     </div>
@@ -770,11 +759,11 @@
                 
                 <!-- Evidence Item 2 -->
                 <div class="evidence-item">
-                    <div class="evidence-img">🔍</div>
+                    <div class="evidence-img">📷</div>
                     <div class="evidence-info">
-                        <div class="evidence-title">Spectral Analysis</div>
+                        <div class="evidence-title">Sector Scan</div>
                         <div class="evidence-meta">
-                            <span>SCAN</span>
+                            <span>IMAGE</span>
                             <span>05.13.24</span>
                         </div>
                     </div>
@@ -782,67 +771,14 @@
                 
                 <!-- Evidence Item 3 -->
                 <div class="evidence-item">
-                    <div class="evidence-img">📷</div>
-                    <div class="evidence-info">
-                        <div class="evidence-title">Hull Damage Photo</div>
-                        <div class="evidence-meta">
-                            <span>IMAGE</span>
-                            <span>05.14.24</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Evidence Item 4 -->
-                <div class="evidence-item">
                     <div class="evidence-img">📝</div>
                     <div class="evidence-info">
-                        <div class="evidence-title">Crew Statement</div>
+                        <div class="evidence-title">Mission Report</div>
                         <div class="evidence-meta">
-                            <span>REPORT</span>
+                            <span>TEXT FILE</span>
                             <span>05.14.24</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Evidence Item 5 -->
-                <div class="evidence-item">
-                    <div class="evidence-img">🔬</div>
-                    <div class="evidence-info">
-                        <div class="evidence-title">Residue Analysis</div>
-                        <div class="evidence-meta">
-                            <span>LAB REPORT</span>
-                            <span>05.15.24</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Evidence Item 6 -->
-                <div class="evidence-item">
-                    <div class="evidence-img">🎞️</div>
-                    <div class="evidence-info">
-                        <div class="evidence-title">Security Feed</div>
-                        <div class="evidence-meta">
-                            <span>VIDEO</span>
-                            <span>05.16.24</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Location Tracker Module -->
-            <div class="location-tracker">
-                <div class="tracker-header">
-                    <span>VESSEL TRACKING</span>
-                    <div class="blinking-dot"></div>
-                </div>
-                <div class="tracker-grid">
-                    <div class="tracker-cell">A1</div>
-                    <div class="tracker-cell">A2</div>
-                    <div class="tracker-cell">A3</div>
-                    <div class="tracker-cell">A4</div>
-                    <div class="tracker-cell">A5</div>
-                    <div class="tracker-cell">B1</div>
-                    <div class="tracker-cell">B2</div>
-                    <div class="tracker-cell active">B3</div>
-                    <div class="tracker-cell">B4</div>
-                    <div class="tracker
+        </div>
