@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Debrief Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Source+Code+Pro:wght@300;400;500&display=swap');
+        
+        :root {
+            --primary-bg: #0a0d12;
+            --secondary-bg: #12151a;
+            --accent-blue: #3891ff;
+            --accent-purple: #8a36e9;
+            --accent-green: #1dbc76;
+            --text-primary: #e2e8f0;
+            --text-secondary: #9fabbe;
+            --highlight: #4d6aa880;
+            --terminal-glow: 0 0 8px rgba(56, 145, 255, 0.5);
+            --terminal-border: 1px solid rgba(56, 145, 255, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: 'Source Code Pro', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Scanline effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.2;
+        }
+
+        /* Container for the entire terminal */
+        .terminal-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+        
+        @media (min-width: 992px) {
+            .terminal-container {
+                grid-template-columns: 3fr 2fr;
+            }
+        }
+        
+        /* Header section */
+        .terminal-header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: var(--secondary-bg);
+            border: var(--terminal-border);
+            border-radius: 5px;
+            box-shadow: var(--terminal-glow);
+            margin-bottom: 1rem;
+        }
+        
+        .terminal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            position: relative;
+        }
+        
+        .terminal-title::after {
+            content: "";
+            display: inline-block;
+            width: 12px;
+            height: 18px;
+            background-color: var(--accent-blue);
+            animation: cursor-blink 1.5s infinite;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+        
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+        
+        .toggle-view {
+            display: flex;
+            gap: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 0.35rem;
+            border-radius: 20px;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-family: 'Source Code Pro', monospace;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+        
+        .toggle-btn.active {
+            background-color: rgba(56, 145, 255, 0.3);
+            color: var(--text-primary);
+        }
+        
+        /* Chat log section */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 75vh;
+            background-color: var(--secondary-bg);
+            border: var(--terminal-border);
+            border-radius: 5px;
+            box-shadow: var(--terminal-glow);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 1rem;
+            border-bottom: var(--terminal-border);
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--accent-blue);
+        }
+        
+        .chat-log {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) var(--secondary-bg);
+        }
+        
+        .chat-log::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-log::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+        
+        .chat-log::-webkit-scrollbar-thumb {
+            background-color: var(--accent-blue);
+            border-radius: 6px;
+        }
+        
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sender-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+        
+        .sender-icon.user {
+            background-color: rgba(138, 54, 233, 0.3);
+            color: var(--accent-purple);
+            border: 1px solid var(--accent-purple);
+            box-shadow: 0 0 5px rgba(138, 54, 233, 0.5);
+        }
+        
+        .sender-icon.ai {
+            background-color: rgba(56, 145, 255, 0.3);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            box-shadow: 0 0 5px rgba(56, 145, 255, 0.5);
+        }
+        
+        .sender-icon.system {
+            background-color: rgba(29, 188, 118, 0.3);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 0 5px rgba(29, 188, 118, 0.5);
+        }
+        
+        .sender-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .message-timestamp {
+            margin-left: auto;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: 'Source Code Pro', monospace;
+        }
+        
+        .message-content {
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .user .message-content {
+            background-color: rgba(138, 54, 233, 0.1);
+            border-left: 3px solid var(--accent-purple);
+        }
+        
+        .ai .message-content {
+            background-color: rgba(56, 145, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+        }
+        
+        .system .message-content {
+            background-color: rgba(29, 188, 118, 0.1);
+            border-left: 3px solid var(--accent-green);
+            font-style: italic;
+        }
+        
+        .important-message {
+            position: relative;
+        }
+        
+        .important-message::before {
+            content: "⚠ CRITICAL INFO";
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background-color: rgba(255, 165, 0, 0.2);
+            color: orange;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .attachment {
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: fit-content;
+        }
+        
+        .attachment i {
+            color: var(--accent-blue);
+        }
+        
+        .attachment-name {
+            font-size: 0.85rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        /* Command input section */
+        .command-input {
+            padding: 1rem;
+            border-top: var(--terminal-border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .input-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+        
+        .command-field {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 145, 255, 0.2);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-family: 'Source Code Pro', monospace;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .command-field:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 5px rgba(56, 145, 255, 0.3);
+        }
+        
+        .send-btn {
+            background-color: rgba(56, 145, 255, 0.3);
+            border: 1px solid var(--accent-blue);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .send-btn:hover {
+            background-color: rgba(56, 145, 255, 0.5);
+            box-shadow: 0 0 8px rgba(56, 145, 255, 0.5);
+        }
+        
+        /* Evidence panel section */
+        .evidence-panel {
+            height: 75vh;
+            background-color: var(--secondary-bg);
+            border: var(--terminal-border);
+            border-radius: 5px;
+            box-shadow: var(--terminal-glow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 1rem;
+            border-bottom: var(--terminal-border);
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-header h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--accent-blue);
+        }
+        
+        .evidence-grid {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) var(--secondary-bg);
+        }
+        
+        .evidence-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .evidence-grid::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+        
+        .evidence-grid::-webkit-scrollbar-thumb {
+            background-color: var(--accent-blue);
+            border-radius: 6px;
+        }
+        
+        .evidence-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 145, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .evidence-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(56, 145, 255, 0.3);
+        }
+        
+        .evidence-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background-color: #1a1f28;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--accent-blue);
+        }
+        
+        .evidence-info {
+            padding: 0.75rem;
+        }
+        
+        .evidence-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--accent-purple);
+        }
+        
+        .evidence-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* Location tracker module */
+        .location-tracker {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(56, 145, 255, 0.05);
+            border: var(--terminal-border);
+            border-radius: 5px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        
+        .tracker-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .blinking-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+        
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            font-size: 0.75rem;
+        }
+        
+        .tracker-cell {
+            background-color: rgba(255, 255, 255, 0.05);
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .tracker-cell.active {
+            background-color: rgba(29, 188, 118, 0.2);
+            box-shadow: 0 0 5px rgba(29, 188, 118, 0.5);
+        }
+        
+        .tracker-cell.active::before {
+            content: "";
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Animations */
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes cursor-blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            70% { transform: scale(2); opacity: 0; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 991px) {
+            .terminal-container {
+                margin: 1rem;
+                padding: 0;
+            }
+            
+            .terminal-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .chat-container, .evidence-panel {
+                height: 65vh;
+            }
+        }
+        
+        /* Glitch effect */
+        .glitch-effect {
+            animation: glitch 5s infinite;
+            position: relative;
+        }
+        
+        @keyframes glitch {
+            0% { text-shadow: none; }
+            1% { text-shadow: -1px 0 var(--accent-blue), 1px 0 var(--accent-purple); }
+            1.5% { text-shadow: 1px 0 var(--accent-blue), -1px 0 var(--accent-purple); }
+            2% { text-shadow: none; }
+            98% { text-shadow: none; }
+            99% { text-shadow: -2px 0 var(--accent-blue), 2px 0 var(--accent-purple); }
+            99.5% { text-shadow: 2px 0 var(--accent-blue), -2px 0 var(--accent-purple); }
+            100% { text-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <!-- Terminal Header -->
+        <header class="terminal-header">
+            <div class="terminal-title glitch-effect">Digital Debrief Terminal</div>
+            <div class="terminal-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>SYSTEM ACTIVE</span>
+                </div>
+                <div class="toggle-view">
+                    <button class="toggle-btn active">LIVE MODE</button>
+                    <button class="toggle-btn">ARCHIVED LOGS</button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Chat Log Section -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>MISSION TRANSCRIPT</h2>
+                <span class="message-timestamp">STARDATE: 2415.7.16</span>
+            </div>
+            <div class="chat-log">
+                <!-- System Message -->
+                <div class="chat-message system">
+                    <div class="message-header">
+                        <div class="sender-icon system">S</div>
+                        <div class="sender-name">SYSTEM</div>
+                        <div class="message-timestamp">08:42:17</div>
+                    </div>
+                    <div class="message-content">
+                        Terminal initialized. Secure connection established. Awaiting authorization...
+                    </div>
+                </div>
+                
+                <!-- User Message -->
+                <div class="chat-message user">
+                    <div class="message-header">
+                        <div class="sender-icon user">U</div>
+                        <div class="sender-name">USER</div>
+                        <div class="message-timestamp">08:43:05</div>
+                    </div>
+                    <div class="message-content">
+                        Begin debrief sequence. Authorization code: DELTA-9-ECHO-7.
+                    </div>
+                </div>
+                
+                <!-- AI Message -->
+                <div class="chat-message ai">
+                    <div class="message-header">
+                        <div class="sender-icon ai">AI</div>
+                        <div class="sender-name">NEXUS</div>
+                        <div class="message-timestamp">08:43:08</div>
+                    </div>
+                    <div class="message-content">
+                        Connection established. Authorization accepted. Awaiting mission data...
+                    </div>
+                </div>
+                
+                <!-- User Message -->
+                <div class="chat-message user">
+                    <div class="message-header">
+                        <div class="sender-icon user">U</div>
+                        <div class="sender-name">USER</div>
+                        <div class="message-timestamp">08:44:22</div>
+                    </div>
+                    <div class="message-content">
+                        Upload mission logs from starship Hyperion, incident report #4872-B. Focus on anomaly detected in Sector 7.
+                    </div>
+                </div>
+                
+                <!-- AI Message with attachment -->
+                <div class="chat-message ai">
+                    <div class="message-header">
+                        <div class="sender-icon ai">AI</div>
+                        <div class="sender-name">NEXUS</div>
+                        <div class="message-timestamp">08:44:30</div>
+                    </div>
+                    <div class="message-content">
+                        Processing mission logs... Hyperion records accessed. Incident #4872-B identified. Displaying relevant data regarding Sector 7 anomaly.
+                        <div class="attachment">
+                            <i>📊</i>
+                            <span class="attachment-name">anomaly_readings.dat</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Important System Message -->
+                <div class="chat-message system important-message">
+                    <div class="message-header">
+                        <div class="sender-icon system">S</div>
+                        <div class="sender-name">SYSTEM</div>
+                        <div class="message-timestamp">08:45:01</div>
+                    </div>
+                    <div class="message-content">
+                        WARNING: Unusual energy signatures detected in transmission. Possible data corruption. Recommend enhanced scanning protocols.
+                    </div>
+                </div>
+                
+                <!-- User Message -->
+                <div class="chat-message user">
+                    <div class="message-header">
+                        <div class="sender-icon user">U</div>
+                        <div class="sender-name">USER</div>
+                        <div class="message-timestamp">08:46:15</div>
+                    </div>
+                    <div class="message-content">
+                        Run diagnostic on temporal distortion patterns. Compare with previous encounters in database.
+                    </div>
+                </div>
+                
+                <!-- AI Message with important information -->
+                <div class="chat-message ai important-message">
+                    <div class="message-header">
+                        <div class="sender-icon ai">AI</div>
+                        <div class="sender-name">NEXUS</div>
+                        <div class="message-timestamp">08:46:42</div>
+                    </div>
+                    <div class="message-content">
+                        Diagnostic complete. Temporal signatures match pattern Alpha-3, previously encountered during the Rigel Incident. Evidence suggests non-natural origin. Cross-reference with classified file #XEN-2187 indicates possible technological interference.
+                        <div class="attachment">
+                            <i>🔍</i>
+                            <span class="attachment-name">pattern_match_87%.holo</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Message -->
+                <div class="chat-message user">
+                    <div class="message-header">
+                        <div class="sender-icon user">U</div>
+                        <div class="sender-name">USER</div>
+                        <div class="message-timestamp">08:48:03</div>
+                    </div>
+                    <div class="message-content">
+                        Track origin point of the anomaly. Display last known coordinates of any unregistered vessels in the vicinity.
+                    </div>
+                </div>
+                
+                <!-- AI Message -->
+                <div class="chat-message ai">
+                    <div class="message-header">
+                        <div class="sender-icon ai">AI</div>
+                        <div class="sender-name">NEXUS</div>
+                        <div class="message-timestamp">08:48:22</div>
+                    </div>
+                    <div class="message-content">
+                        Origin point calculated: Coordinates 127.89.4521. Tracking shows unregistered vessel detected briefly at edge of long-range sensors. Vessel signature does not match any known configuration in database. Updating star chart with trajectory analysis.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Command Input Section -->
+            <div class="command-input">
+                <div class="input-wrapper">
+                    <textarea class="command-field" placeholder="Enter command..." rows="1"></textarea>
+                </div>
+                <button class="send-btn">
+                    <span>TRANSMIT</span>
+                    <i>▶</i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Evidence Panel Section -->
+        <div class="evidence-panel">
+            <div class="panel-header">
+                <h2>EVIDENCE DATABASE</h2>
+                <span class="message-timestamp">6 ITEMS</span>
+            </div>
+            <div class="evidence-grid">
+                <!-- Evidence Item 1 -->
+                <div class="evidence-item">
+                    <div class="evidence-img">📊</div>
+                    <div class="evidence-info">
+                        <div class="evidence-title">Anomaly Reading #1</div>
+                        <div class="evidence-meta">
+                            <span>DATA FILE</span>
+                            <span>05.12.24</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evidence Item 2 -->
+                <div class="evidence-item">
+                    <div class="evidence-img">🔍</div>
+                    <div class="evidence-info">
+                        <div class="evidence-title">Spectral Analysis</div>
+                        <div class="evidence-meta">
+                            <span>SCAN</span>
+                            <span>05.13.24</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evidence Item 3 -->
+                <div class="evidence-item">
+                    <div class="evidence-img">📷</div>
+                    <div class="evidence-info">
+                        <div class="evidence-title">Hull Damage Photo</div>
+                        <div class="evidence-meta">
+                            <span>IMAGE</span>
+                            <span>05.14.24</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evidence Item 4 -->
+                <div class="evidence-item">
+                    <div class="evidence-img">📝</div>
+                    <div class="evidence-info">
+                        <div class="evidence-title">Crew Statement</div>
+                        <div class="evidence-meta">
+                            <span>REPORT</span>
+                            <span>05.14.24</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evidence Item 5 -->
+                <div class="evidence-item">
+                    <div class="evidence-img">🔬</div>
+                    <div class="evidence-info">
+                        <div class="evidence-title">Residue Analysis</div>
+                        <div class="evidence-meta">
+                            <span>LAB REPORT</span>
+                            <span>05.15.24</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evidence Item 6 -->
+                <div class="evidence-item">
+                    <div class="evidence-img">🎞️</div>
+                    <div class="evidence-info">
+                        <div class="evidence-title">Security Feed</div>
+                        <div class="evidence-meta">
+                            <span>VIDEO</span>
+                            <span>05.16.24</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Location Tracker Module -->
+            <div class="location-tracker">
+                <div class="tracker-header">
+                    <span>VESSEL TRACKING</span>
+                    <div class="blinking-dot"></div>
+                </div>
+                <div class="tracker-grid">
+                    <div class="tracker-cell">A1</div>
+                    <div class="tracker-cell">A2</div>
+                    <div class="tracker-cell">A3</div>
+                    <div class="tracker-cell">A4</div>
+                    <div class="tracker-cell">A5</div>
+                    <div class="tracker-cell">B1</div>
+                    <div class="tracker-cell">B2</div>
+                    <div class="tracker-cell active">B3</div>
+                    <div class="tracker-cell">B4</div>
+                    <div class="tracker
