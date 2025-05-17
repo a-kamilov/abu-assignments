@@ -281,7 +281,15 @@
             background-color: rgba(29, 188, 118, 0.1);
             border-left: 3px solid var(--accent-green);
             font-style: italic;
+            
         }
+
+        pre {
+          white-space: pre-wrap;    /* allow wrapping */
+          word-wrap: break-word;    /* break long words if needed */
+          overflow-wrap: break-word; /* optional, ensures compatibility */
+        }
+
         
         .important-message {
             position: relative;
@@ -321,93 +329,11 @@
             cursor: pointer;
         }
         
-        /* Command input section */
-        .command-input {
-            padding: 1rem;
-            border-top: var(--terminal-border);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+   
+   
+   
         
-        .input-wrapper {
-            flex-grow: 1;
-            position: relative;
-        }
-        
-        .command-field {
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(56, 145, 255, 0.2);
-            border-radius: 4px;
-            padding: 0.75rem 1rem;
-            color: var(--text-primary);
-            font-family: 'Source Code Pro', monospace;
-            resize: none;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-        
-        .command-field:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 5px rgba(56, 145, 255, 0.3);
-        }
-        
-        .send-btn {
-            background-color: rgba(56, 145, 255, 0.3);
-            border: 1px solid var(--accent-blue);
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-family: 'Source Code Pro', monospace;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        /* Evidence panel section */
-        .evidence-card {
-  background: #111827;
-  border: 1px solid #2f354d;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  color: white;
-  font-family: 'Courier New', monospace;
-  box-shadow: 0 0 10px #00f0ff33;
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-
-.evidence-card:hover {
-  transform: scale(1.02);
-  cursor: pointer;
-}
-
-.evidence-card img.preview {
-  width: 100%;
-  border-radius: 0.5rem;
-  object-fit: cover;
-  margin-bottom: 0.75rem;
-}
-
-.evidence-title {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #b15eff;
-  margin-bottom: 0.5rem;
-}
-
-.evidence-content {
-  font-size: 0.85rem;
-  white-space: pre-wrap;
-  color: #d1d5db;
-}
-
+   
         /* Location tracker module */
         .location-tracker {
             margin-top: 1rem;
@@ -733,29 +659,6 @@ Cross-check for Varo’s name or role elsewhere—logs, images, even metadata
                     </div>
                 </div>
 
-                <!-- User Message 4-->
-                <div class="chat-message user">
-                    <div class="message-header">
-                        <div class="sender-icon user">U</div>
-                        <div class="sender-name">USER</div>
-                        <div class="message-timestamp">08:43:05</div>
-                    </div>
-                    <div class="message-content">
-                        Begin debrief sequence. Authorization code: DELTA-9-ECHO-7.
-                    </div>
-                </div>
-
-                <!-- AI Message 4-->
-                <div class="chat-message ai">
-                    <div class="message-header">
-                        <div class="sender-icon ai">AI</div>
-                        <div class="sender-name">AI</div>
-                        <div class="message-timestamp">08:43:08</div>
-                    </div>
-                    <div class="message-content">
-                        Connection established. Authorization accepted. Awaiting mission data...
-                    </div>
-                </div>
                 
             </div>
         </div>
@@ -764,18 +667,34 @@ Cross-check for Varo’s name or role elsewhere—logs, images, even metadata
                 <!-- Chat Log Section 2-->
         <div class="chat-container">
             <div class="chat-header">
-                <h2>MISSION TRANSCRIPT</h2>
+                <h2>KEY CONVERSATION</h2>
                 <span class="message-timestamp">STARDATE: 2415.7.16</span>
             </div>
             <div class="chat-log">
 
 
+                <!-- User Message 4-->
+                <div class="chat-message user">
+                    <div class="message-header">
+                        <div class="sender-icon user">U</div>
+                        <div class="sender-name">CADET ABU</div>
+                        <div class="message-timestamp">08:43:05</div>
+                    </div>
+                    <div class="message-content">
+                        Begin debrief sequence. Authorization code: DELTA-9-ECHO-7.
+                    </div>
+                </div>
 
-<!-- Decrypted Text -->
-<div class="evidence-card">
-  <img class="preview" src="https://drive.google.com/uc?export=view&id=1q2w3e4r5t6y7u8i9o0p" alt="Decrypted text" />
-  <div class="evidence-title">Decrypted text</div>
-  <div class="evidence-content">
+        <!-- Decrypted Text -->
+                <!-- AI Message 4-->
+                <div class="chat-message ai">
+                    <div class="message-header">
+                        <div class="sender-icon ai">AI</div>
+                        <div class="sender-name">LUMEN</div>
+                        <div class="message-timestamp">08:43:08</div>
+                    </div>
+                    <div class="message-content">
+                        <pre>
      CADET, IF THIS MESSAGE HAS REACHED YOUR EYES, YOU SUCCESSFULLY TRACED THE TRAIL FROM OUR SMALL LABORATORY MISUNDERSTANDING--VARO'S SLEEPLESS ACCUSATION--AND DECODED THE SHIFTED LETTERS. 
                                 WELL DONE. A WORD OF CAUTION AS YOU CONTINUE YOUR RECONNAISSANCE COHORT ONE TRAINING: 
                                 1. EVEN ABOARD UNITY BEYOND STARS, WITH ITS MIND-BACKUPS AND REGROWN BODIES, CARELESSNESS STILL CARRIES A COST. RESTORATION IS POSSIBLE, YES, BUT TIME, RESOURCES, AND EMOTIONAL TOLL MAKE DEATH A THOROUGHLY INCONVENIENT OUTCOME. 
@@ -783,9 +702,12 @@ Cross-check for Varo’s name or role elsewhere—logs, images, even metadata
                                 3. ONCE YOU IDENTIFY THAT ENTRY, NOTE THE REPORT ID; IT WILL STEER YOU TO THE NEQT WAYPOINT ON YOUR ORIENTATION QUEST. REMAIN VIGILANT. 
                                 THE WORLDS WE'LL ENTER BEYOND THESE BULKHEADS WILL NOT FORGIVE FORGETFULNESS AND NEITHER WILL VACUUM, TOQIN, OR UNSHIELDED FUSION PLASMA. 
                                 TREAT YOUR FUTURE MISSIONS, AND YOUR CREWMATES, WITH DELIBERATE CARE.
-                                <br><br>CADET CAESAR
-  </div>
-</div>
+                                CADET CAESAR
+          </pre>            
+                    </div>
+                </div>
+
+
 
                 
   </div>
