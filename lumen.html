@@ -451,14 +451,18 @@
         }
 
         .report-section {
-  background-color: var(--secondary-bg);
   padding: 2rem;
-  border-radius: 12px;
-  border: var(--terminal-border);
-  box-shadow: var(--terminal-glow);
   margin-bottom: 2rem;
   color: var(--text-primary);
   font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            height: 75vh;
+            background-color: var(--secondary-bg);
+            border: var(--terminal-border);
+            border-radius: 5px;
+            box-shadow: var(--terminal-glow);
+            overflow: hidden;
 }
 
 .report-title {
