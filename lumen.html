@@ -366,100 +366,48 @@
         }
         
         /* Evidence panel section */
-        .evidence-panel {
-            height: 75vh;
-            background-color: var(--secondary-bg);
-            border: var(--terminal-border);
-            border-radius: 5px;
-            box-shadow: var(--terminal-glow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .panel-header {
-            padding: 1rem;
-            border-bottom: var(--terminal-border);
-            font-family: 'Orbitron', sans-serif;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .panel-header h2 {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--accent-blue);
-        }
-        
-        .evidence-grid {
-            flex-grow: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-blue) var(--secondary-bg);
-        }
-        
-        .evidence-grid::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .evidence-grid::-webkit-scrollbar-track {
-            background: var(--secondary-bg);
-        }
-        
-        .evidence-grid::-webkit-scrollbar-thumb {
-            background-color: var(--accent-blue);
-            border-radius: 6px;
-        }
-        
-        .evidence-item {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(56, 145, 255, 0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .evidence-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(56, 145, 255, 0.3);
-        }
-        
-        .evidence-img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            background-color: #1a1f28;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--accent-blue);
-        }
-        
-        .evidence-info {
-            padding: 0.75rem;
-        }
-        
-        .evidence-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--accent-purple);
-        }
-        
-        .evidence-meta {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
-        }
-        
+        .evidence-card {
+  background: #111827;
+  border: 1px solid #2f354d;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: white;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 10px #00f0ff33;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.evidence-card:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+.evidence-card img.preview {
+  width: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
+
+.evidence-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #b15eff;
+  margin-bottom: 0.5rem;
+}
+
+.evidence-content {
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  color: #d1d5db;
+}
+
         /* Location tracker module */
         .location-tracker {
             margin-top: 1rem;
@@ -625,45 +573,24 @@
         </div>
 
         <!-- Evidence Panel Section -->
-        <div class="evidence-panel">
-            <div class="panel-header">
-                <h2>EVIDENCE DATABASE</h2>
-                <span class="message-timestamp">3 ITEMS</span>
-            </div>
-            <div class="evidence-grid">
+<!-- Anomaly Image #1 -->
+<div class="evidence-card">
+  <img class="preview" src="https://drive.google.com/uc?export=view&id=1a2b3c4d5e6f7g8h9i0j" alt="Anomaly Image #1" />
+  <div class="evidence-title"> Image #1</div>
+</div>
 
-                <!-- Evidence Item 1 -->
-                <div class="evidence-item">
-                    <div class="evidence-img">📷</div>
-                    <div class="evidence-info">
-                        <div class="evidence-title">Anomaly Image #1</div>
-                        <div class="evidence-meta">
-                            <img src="https://drive.google.com/thumbnail?id=1HyDUHoo_ia95wqgt5tvIOmLiJM1PUoSz" alt="Image from Google Drive" />
-                            <span>05.12.24</span>
-                        </div>
-                    </div>
-                </div>
+<!-- Sector Scan -->
+<div class="evidence-card">
+  <img class="preview" src="https://drive.google.com/uc?export=view&id=1x2y3z4a5b6c7d8e9f0g" alt="Sector Scan" />
+  <div class="evidence-title"> Image #2</div>
+</div>
 
-                <!-- Evidence Item 2 -->
-                <div class="evidence-item">
-                    <div class="evidence-img">📷</div>
-                    <div class="evidence-info">
-                        <div class="evidence-title">Sector Scan</div>
-                        <div class="evidence-meta">
-                            <img src="https://drive.google.com/thumbnail?id=11HesIjkNQzjk5Rf0_re5Vl_NPoOh9ToF" alt="Image from Google Drive" />
-                            <span>05.13.24</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Evidence Item 3 -->
-                <div class="evidence-item">
-                    <div class="evidence-img">📝</div>
-                    <div class="evidence-info">
-                        <div class="evidence-title">Decrypted text</div>
-                        <div class="evidence-meta">
-                            <span>
-                                CADET, IF THIS MESSAGE HAS REACHED YOUR EYES, YOU SUCCESSFULLY TRACED THE TRAIL FROM OUR SMALL LABORATORY MISUNDERSTANDING--VARO'S SLEEPLESS ACCUSATION--AND DECODED THE SHIFTED LETTERS. 
+<!-- Decrypted Text -->
+<div class="evidence-card">
+  <img class="preview" src="https://drive.google.com/uc?export=view&id=1q2w3e4r5t6y7u8i9o0p" alt="Decrypted text" />
+  <div class="evidence-title">Decrypted text</div>
+  <div class="evidence-content">
+     CADET, IF THIS MESSAGE HAS REACHED YOUR EYES, YOU SUCCESSFULLY TRACED THE TRAIL FROM OUR SMALL LABORATORY MISUNDERSTANDING--VARO'S SLEEPLESS ACCUSATION--AND DECODED THE SHIFTED LETTERS. 
                                 WELL DONE. A WORD OF CAUTION AS YOU CONTINUE YOUR RECONNAISSANCE COHORT ONE TRAINING: 
                                 1. EVEN ABOARD UNITY BEYOND STARS, WITH ITS MIND-BACKUPS AND REGROWN BODIES, CARELESSNESS STILL CARRIES A COST. RESTORATION IS POSSIBLE, YES, BUT TIME, RESOURCES, AND EMOTIONAL TOLL MAKE DEATH A THOROUGHLY INCONVENIENT OUTCOME. 
                                 2. TO REINFORCE THIS POINT, LOCATE THE ONLY RECORD IN THE INTERPERSONAL ARCHIVE CLASSIFIED AS A DEADLY INCIDENT. ASK HIF-LUMEN IF YOU NEED GUIDANCE FILTERING THE LOG.
@@ -671,11 +598,11 @@
                                 THE WORLDS WE'LL ENTER BEYOND THESE BULKHEADS WILL NOT FORGIVE FORGETFULNESS AND NEITHER WILL VACUUM, TOQIN, OR UNSHIELDED FUSION PLASMA. 
                                 TREAT YOUR FUTURE MISSIONS, AND YOUR CREWMATES, WITH DELIBERATE CARE.
                                 <br><br>CADET CAESAR
-                            </span>
-                            <span>05.14.24</span>
-                        </div>
-                    </div>
-                </div>
+  </div>
+</div>
+
+
+               
 
             </div>
         </div>
