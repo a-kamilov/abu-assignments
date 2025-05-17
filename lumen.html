@@ -449,6 +449,72 @@
             99.5% { text-shadow: 2px 0 var(--accent-blue), -2px 0 var(--accent-purple); }
             100% { text-shadow: none; }
         }
+
+        .report-section {
+  background-color: var(--secondary-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  border: var(--terminal-border);
+  box-shadow: var(--terminal-glow);
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.report-title {
+  font-size: 1.75rem;
+  color: var(--accent-blue);
+  margin-bottom: 0.5rem;
+}
+
+.report-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.report-block {
+  margin-bottom: 1.75rem;
+}
+
+.report-heading {
+  font-size: 1.2rem;
+  color: var(--accent-purple);
+  margin-bottom: 0.5rem;
+  border-left: 3px solid var(--accent-purple);
+  padding-left: 0.5rem;
+}
+
+.report-block p {
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.inset-message {
+  background-color: var(--primary-bg);
+  padding: 1rem;
+  border-left: 3px solid var(--accent-green);
+  box-shadow: inset 0 0 8px rgba(29, 188, 118, 0.3);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
+code {
+  background-color: var(--highlight);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--accent-green);
+}
+
+        
     </style>
 </head>
 <body>
@@ -473,6 +539,61 @@
         </p>
 
         </header>
+
+        <!-- Report-->
+    <section class="report-section">
+  <h2 class="report-title">WEEK 10 – LUMEN</h2>
+  <p class="report-subtitle">Cadet Abu – 2417515</p>
+
+  <div class="report-block">
+    <h3 class="report-heading">MISSION INITIALIZATION</h3>
+    <p>I started the mission by configuring HIF-Lumen to behave more like a strict mentor—no nonsense, little humor, and fully geared toward promoting critical thinking.</p>
+  </div>
+
+  <div class="report-block">
+    <h3 class="report-heading">1. WORKING WITH THE JSON FILE</h3>
+    <p>I tried to open a <code>.json</code> file using browser tools and online validators, but nothing worked. It was somehow confusing to understand it. So, I got into the decrypting step.</p>
+  </div>
+
+  <div class="report-block">
+    <h3 class="report-heading">2. DECODING AND UNCOVERING THE STORY</h3>
+    <p>With help from an online website, I decoded <code>letter.txt</code> using a Monoalphabetic Substitution Cipher. Here is the website I used: 
+      <a href="https://www.dcode.fr/monoalphabetic-substitution" target="_blank">dcode.fr</a>
+    </p>
+
+    <div class="inset-message">
+      <p><strong>Cadet,</strong></p>
+      <p>If this message has reached your eyes, you successfully traced the trail from our small laboratory misunderstanding—Varo’s sleepless accusation—and decoded the shifted letters. Well done.</p>
+      <p>A word of caution as you continue your Reconnaissance Cohort One training:</p>
+      <p>Even aboard Unity Beyond Stars, with its mind‑backups and regrown bodies, carelessness still carries a cost. Restoration is possible, yes, but time, resources, and emotional toll make death a thoroughly inconvenient outcome.</p>
+      <p>To reinforce this point, locate the only record in the interpersonal archive classified as a deadly incident.  Ask HIF‑Lumen if you need guidance filtering the log.</p>
+      <p>Once you identify that entry, note the report ID; it will steer you to the next waypoint on your orientation quest.</p>
+      <p>Remain vigilant. The worlds we’ll enter beyond these bulkheads will not forgive forgetfulness and neither will vacuum, toxin, or unshielded fusion plasma. Treat your future missions, and your crewmates, with deliberate care.</p>
+      <p><strong>Cadet Caesar</strong></p>
+    </div>
+  </div>
+
+  <div class="report-block">
+    <h3 class="report-heading">3. DIGGING THROUGH DATA AND TEAMING UP WITH AI</h3>
+    <p>I just tried to understand what’s going on but it didn’t work out. So, I just sent Lumen the decrypted letter and it found the answer.</p>
+    <p><code>teacherssite/hif/nova.html</code></p>
+    <p>I added that to the URL like so: 
+      <a href="https://josuedean.github.io/ibm/hif/nova.html" target="_blank">https://josuedean.github.io/ibm/hif/nova.html</a>
+    </p>
+  </div>
+
+  <div class="report-block">
+    <h3 class="report-heading">4. FINDING THE CODE AND CONFIRMING THE CLUE</h3>
+    <p>First, I didn’t ask any keyword from Lumen as it may be some kind of trap. So, I just used the word <code>Reality check</code> from the answer it sent me.</p>
+  </div>
+
+  <div class="report-block">
+    <h3 class="report-heading">FINAL THOUGHTS</h3>
+    <p>This assignment went far beyond technical steps—it tested my ability to problem-solve, follow a narrative, and seek help when necessary. I explored different angles, kept going despite setbacks, and used my tools creatively. Rather than just following instructions, I approached the task like a live simulation that required thoughtful and deliberate effort. And I regretted somehow because I could have just reviewed the <code>.csv</code> file and maybe without any extra efforts I could have found the answer right away.</p>
+  </div>
+</section>
+
+        
 
         <!-- Chat Log Section -->
         <div class="chat-container">
