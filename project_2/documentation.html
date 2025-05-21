@@ -1,130 +1,123 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do App PRD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen p-6">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-4xl font-bold mb-4 text-teal-400">📄 To-Do List App – PRD</h1>
+    <p class="text-lg mb-8 text-gray-300">
+      A modern and minimal Product Requirements Document for a personal to-do list app with user authentication.
+    </p>
 
-export default function TodoPRD() {
-  return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 text-teal-400">📄 To-Do List App – PRD</h1>
-        <p className="text-lg mb-8 text-gray-300">
-          A modern and minimal Product Requirements Document for a personal to-do list app with user authentication.
-        </p>
+    <div>
+      <div class="flex space-x-2 mb-6" id="tabs">
+        <button class="tab-button bg-gray-800 px-4 py-2 rounded text-white" data-tab="overview">Overview</button>
+        <button class="tab-button bg-gray-800 px-4 py-2 rounded text-white" data-tab="features">Features</button>
+        <button class="tab-button bg-gray-800 px-4 py-2 rounded text-white" data-tab="tech">Tech Stack</button>
+        <button class="tab-button bg-gray-800 px-4 py-2 rounded text-white" data-tab="api">API</button>
+        <button class="tab-button bg-gray-800 px-4 py-2 rounded text-white" data-tab="timeline">Timeline</button>
+      </div>
 
-        <Tabs defaultValue="overview">
-          <TabsList className="bg-gray-800 mb-6">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="features">Features</TabsTrigger>
-            <TabsTrigger value="tech">Tech Stack</TabsTrigger>
-            <TabsTrigger value="api">API</TabsTrigger>
-            <TabsTrigger value="timeline">Timeline</TabsTrigger>
-          </TabsList>
+      <div class="tab-content" id="overview">
+        <div class="bg-gray-900 p-6 rounded shadow space-y-4">
+          <h2 class="text-2xl font-semibold">1. Overview</h2>
+          <p>This app allows users to sign up, log in, and manage a personal to-do list. Each user has private task data and access control through authentication.</p>
+          <h2 class="text-2xl font-semibold">2. Goals & Objectives</h2>
+          <ul class="list-disc list-inside text-gray-300">
+            <li>Secure authentication (sign up, log in, log out)</li>
+            <li>Private user-specific to-do lists</li>
+            <li>Simple, clean UI for task management</li>
+            <li>Basic CRUD operations on tasks</li>
+          </ul>
+          <h2 class="text-2xl font-semibold">3. Target Audience</h2>
+          <p>University students and beginner developers looking for a practical task manager or project demo.</p>
+        </div>
+      </div>
 
-          <TabsContent value="overview">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-2xl font-semibold text-white">1. Overview</h2>
-                <p>This app allows users to sign up, log in, and manage a personal to-do list. Each user has private task data and access control through authentication.</p>
+      <div class="tab-content hidden" id="features">
+        <div class="bg-gray-900 p-6 rounded shadow space-y-6">
+          <h2 class="text-2xl font-semibold">4. Functional Requirements</h2>
+          <div>
+            <h3 class="text-xl font-semibold">Authentication</h3>
+            <ul class="list-disc list-inside text-gray-300">
+              <li>Sign up with email & password</li>
+              <li>Log in/out securely</li>
+              <li>Hash passwords with bcrypt</li>
+              <li>Access control per user</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold">Task Management</h3>
+            <ul class="list-disc list-inside text-gray-300">
+              <li>Create, view, update, delete tasks</li>
+              <li>Each task tied to a specific user</li>
+              <li>Mark tasks as completed</li>
+              <li>View tasks in a dashboard</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-                <h2 className="text-2xl font-semibold text-white">2. Goals & Objectives</h2>
-                <ul className="list-disc list-inside text-gray-300">
-                  <li>Secure authentication (sign up, log in, log out)</li>
-                  <li>Private user-specific to-do lists</li>
-                  <li>Simple, clean UI for task management</li>
-                  <li>Basic CRUD operations on tasks</li>
-                </ul>
+      <div class="tab-content hidden" id="tech">
+        <div class="bg-gray-900 p-6 rounded shadow space-y-4">
+          <h2 class="text-2xl font-semibold">5. Tech Stack</h2>
+          <ul class="list-disc list-inside text-gray-300">
+            <li><strong>Frontend:</strong> HTML/CSS/JS or React</li>
+            <li><strong>Backend:</strong> Node.js + Express or Python + Flask</li>
+            <li><strong>Database:</strong> SQLite (simple) or PostgreSQL</li>
+            <li><strong>Auth:</strong> JWT or cookie sessions</li>
+          </ul>
+          <h2 class="text-2xl font-semibold">6. Database Schema</h2>
+          <p><span class="bg-gray-800 px-2 py-1 rounded">Users:</span> id, email, password_hash, created_at</p>
+          <p><span class="bg-gray-800 px-2 py-1 rounded">Tasks:</span> id, user_id, title, completed, created_at</p>
+        </div>
+      </div>
 
-                <h2 className="text-2xl font-semibold text-white">3. Target Audience</h2>
-                <p>University students and beginner developers looking for a practical task manager or project demo.</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
+      <div class="tab-content hidden" id="api">
+        <div class="bg-gray-900 p-6 rounded shadow space-y-4">
+          <h2 class="text-2xl font-semibold">7. API Endpoints</h2>
+          <ul class="list-disc list-inside text-gray-300">
+            <li>POST /api/signup – Register a user</li>
+            <li>POST /api/login – Authenticate user</li>
+            <li>POST /api/logout – Log out user</li>
+            <li>GET /api/tasks – Get user's tasks</li>
+            <li>POST /api/tasks – Add a new task</li>
+            <li>PATCH /api/tasks/:id – Update task</li>
+            <li>DELETE /api/tasks/:id – Delete task</li>
+          </ul>
+        </div>
+      </div>
 
-          <TabsContent value="features">
-            <Card>
-              <CardContent className="p-6 space-y-6">
-                <h2 className="text-2xl font-semibold text-white">4. Functional Requirements</h2>
-                <div>
-                  <h3 className="text-xl font-semibold">Authentication</h3>
-                  <ul className="list-disc list-inside text-gray-300">
-                    <li>Sign up with email & password</li>
-                    <li>Log in/out securely</li>
-                    <li>Hash passwords with bcrypt</li>
-                    <li>Access control per user</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-semibold">Task Management</h3>
-                  <ul className="list-disc list-inside text-gray-300">
-                    <li>Create, view, update, delete tasks</li>
-                    <li>Each task tied to a specific user</li>
-                    <li>Mark tasks as completed</li>
-                    <li>View tasks in a dashboard</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="tech">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-2xl font-semibold text-white">5. Tech Stack</h2>
-                <ul className="list-disc list-inside text-gray-300">
-                  <li><b>Frontend:</b> HTML/CSS/JS or React</li>
-                  <li><b>Backend:</b> Node.js + Express or Python + Flask</li>
-                  <li><b>Database:</b> SQLite (simple) or PostgreSQL</li>
-                  <li><b>Auth:</b> JWT or cookie sessions</li>
-                </ul>
-
-                <h2 className="text-2xl font-semibold text-white">6. Database Schema</h2>
-                <div>
-                  <p className="mb-2">Users Table:</p>
-                  <Badge variant="outline">id, email, password_hash, created_at</Badge>
-                </div>
-                <div>
-                  <p className="mb-2">Tasks Table:</p>
-                  <Badge variant="outline">id, user_id, title, completed, created_at</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="api">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-2xl font-semibold text-white">7. API Endpoints</h2>
-                <ul className="list-disc list-inside text-gray-300">
-                  <li>POST /api/signup – Register a user</li>
-                  <li>POST /api/login – Authenticate user</li>
-                  <li>POST /api/logout – Log out user</li>
-                  <li>GET /api/tasks – Get user's tasks</li>
-                  <li>POST /api/tasks – Add a new task</li>
-                  <li>PATCH /api/tasks/:id – Update task</li>
-                  <li>DELETE /api/tasks/:id – Delete task</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="timeline">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-2xl font-semibold text-white">8. Timeline</h2>
-                <ul className="list-disc list-inside text-gray-300">
-                  <li>📌 Planning & PRD Finalization – 1 day</li>
-                  <li>🔧 Backend & Auth Setup – 2–3 days</li>
-                  <li>🧱 Task CRUD API – 2–3 days</li>
-                  <li>🎨 Frontend UI – 3–4 days</li>
-                  <li>🧪 Testing & Debugging – 1–2 days</li>
-                  <li>🚀 Deployment (Raspberry Pi or Cloud) – 1 day</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+      <div class="tab-content hidden" id="timeline">
+        <div class="bg-gray-900 p-6 rounded shadow space-y-4">
+          <h2 class="text-2xl font-semibold">8. Timeline</h2>
+          <ul class="list-disc list-inside text-gray-300">
+            <li>📌 Planning & PRD Finalization – 1 day</li>
+            <li>🔧 Backend & Auth Setup – 2–3 days</li>
+            <li>🧱 Task CRUD API – 2–3 days</li>
+            <li>🎨 Frontend UI – 3–4 days</li>
+            <li>🧪 Testing & Debugging – 1–2 days</li>
+            <li>🚀 Deployment (Raspberry Pi or Cloud) – 1 day</li>
+          </ul>
+        </div>
       </div>
     </div>
-  );
-}
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const tabs = document.querySelectorAll('.tab-content');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        tabs.forEach(tab => tab.classList.add('hidden'));
+        document.getElementById(button.dataset.tab).classList.remove('hidden');
+      });
+    });
+  </script>
+</body>
+</html>
