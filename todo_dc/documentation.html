@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do Task Manager – Documentation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    section {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    details {
+      margin-bottom: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    summary {
+      cursor: pointer;
+      padding: 15px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      background: #ecf0f1;
+      border-radius: 8px 8px 0 0;
+    }
+    .content {
+      padding: 15px 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    ul {
+      margin-top: 0;
+    }
+    .green {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📄 To-Do Task Manager – Documentation</h1>
+</header>
+
+<section>
+
+  <details open>
+    <summary>🧠 Project Overview</summary>
+    <div class="content">
+      <ul>
+        <li>Sign up and log in securely</li>
+        <li>Add and complete tasks</li>
+        <li>View completed tasks in a separate section</li>
+        <li>Clear all completed tasks</li>
+        <li>Maintain user-specific data via Google Sheets</li>
+        <li>Hosted using free Google Apps Script</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🧱 Tools & Technologies Used</summary>
+    <div class="content">
+      <table>
+        <tr><th>Tool / Platform</th><th>Role</th></tr>
+        <tr><td>Google Apps Script</td><td>Backend logic, deployment</td></tr>
+        <tr><td>Google Sheets</td><td>Database for Users & Tasks</td></tr>
+        <tr><td>HTML + CSS + JavaScript</td><td>Frontend UI and interactivity</td></tr>
+        <tr><td>PropertiesService</td><td>Session management</td></tr>
+        <tr><td>Web App URL</td><td>Hosting via Google</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Development Process</summary>
+    <div class="content">
+      <h4>Step 1: Planning</h4>
+      <ul>
+        <li>Identified features: signup, login, task handling</li>
+        <li>Chose Google Apps Script for simplicity and free hosting</li>
+      </ul>
+
+      <h4>Step 2: Sheets Setup</h4>
+      <ul>
+        <li><b>Users:</b> Email | Password | UserID</li>
+        <li><b>Tasks:</b> UserID | Task | Status | CreatedDate</li>
+      </ul>
+
+      <h4>Step 3: Frontend</h4>
+      <ul>
+        <li>Single HTML (index.html) with 3 sections: Login, Signup, Task Manager</li>
+        <li>CSS for clean, responsive layout</li>
+        <li>JavaScript for switching views and task updates</li>
+      </ul>
+
+      <h4>Step 4: Backend (Code.gs)</h4>
+      <ul>
+        <li>signupUser(), loginUserWithEmail(), addTask(), getTasksWithStatus(), completeTask(), clearAllDoneTasks(), clearSession()</li>
+        <li>Uses PropertiesService to manage sessions</li>
+      </ul>
+
+      <h4>Step 5: Connecting Frontend/Backend</h4>
+      <ul>
+        <li>Used <code>google.script.run</code> for function calls</li>
+        <li>Validation in both frontend and backend</li>
+      </ul>
+
+      <h4>Step 6: Styling</h4>
+      <ul>
+        <li>Modern buttons, rounded boxes, input unification</li>
+        <li>“✅” for complete, separate Completed section</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>⚠️ Problems & Solutions</summary>
+    <div class="content">
+      <table>
+        <tr><th>Problem</th><th>Solution</th></tr>
+        <tr><td>Email accepted any input</td><td>Added regex + backend validation</td></tr>
+        <tr><td>Mismatch field heights</td><td>Unified input styling</td></tr>
+        <tr><td>All sections visible at once</td><td>Used JS to toggle with `.hidden` class</td></tr>
+        <tr><td>User stayed logged in</td><td>Cleared session via PropertiesService</td></tr>
+        <tr><td>Logout = blank screen</td><td>Redirected to login screen</td></tr>
+        <tr><td>Task deletion was unclear</td><td>Replaced with ✅ to complete</td></tr>
+        <tr><td>Completed tasks disappeared</td><td>Added separate section and cleanup button</td></tr>
+        <tr><td>GitHub preview errors</td><td>Not supported outside Apps Script</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>🧪 Testing Summary</summary>
+    <div class="content">
+      <ul>
+        <li>✅ Signup/Login tested (valid/invalid cases)</li>
+        <li>✅ Add/complete/clear tasks tested</li>
+        <li>✅ Reload after logout works as expected</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>📌 Final Features</summary>
+    <div class="content">
+      <table>
+        <tr><th>Feature</th><th>Status</th></tr>
+        <tr><td>Signup/Login</td><td class="green">✅ Done</td></tr>
+        <tr><td>Validation</td><td class="green">✅ Done</td></tr>
+        <tr><td>Task creation/completion</td><td class="green">✅ Done</td></tr>
+        <tr><td>View completed tasks</td><td class="green">✅ Done</td></tr>
+        <tr><td>Clear done tasks</td><td class="green">✅ Done</td></tr>
+        <tr><td>Session handling</td><td class="green">✅ Done</td></tr>
+        <tr><td>UX/UI Design</td><td class="green">✅ Done</td></tr>
+        <tr><td>Mobile Responsive</td><td class="green">✅ Done</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>🧠 Reflection & Future</summary>
+    <div class="content">
+      <ul>
+        <li>Add password encryption</li>
+        <li>Support multi-device login (e.g., tokens or cookies)</li>
+        <li>Export tasks to CSV/PDF</li>
+        <li>Add dark mode</li>
+        <li>Switch to fetch/doPost for GitHub/Netlify deployment</li>
+      </ul>
+      <p><b>Outcome:</b> A complete, mobile-friendly To-Do App powered by Google Apps Script and Sheets.</p>
+    </div>
+  </details>
+
+</section>
+
+</body>
+</html>
+
