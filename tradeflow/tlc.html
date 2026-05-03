@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TLC Explorer — Logistics</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0a0a0f;
+    --bg2:     #111118;
+    --bg3:     #18181f;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --text:    #f0f0ee;
+    --muted:   #888880;
+    --accent:  #c8f561;
+    --teal:    #5cf5c8;
+    --orange:  #f5a35c;
+    --mono:    'Space Mono', monospace;
+    --sans:    'DM Sans', sans-serif;
+    --r:       12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 3rem 2rem;
+  }
+
+  /* PAGE HEADER */
+  .page-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 560px;
+    margin-bottom: 3rem;
+  }
+
+  /* FLOW NODES */
+  .tlc-flow {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .tlc-node {
+    flex: 1;
+    min-width: 140px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+    text-align: center;
+  }
+  .tlc-node:first-child { border-radius: var(--r) 0 0 var(--r); }
+  .tlc-node:last-child  { border-radius: 0 var(--r) var(--r) 0; }
+  .tlc-node + .tlc-node { border-left: none; }
+
+  /* arrow between nodes */
+  .tlc-node:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--accent);
+    z-index: 2;
+    background: var(--bg);
+    width: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 50%;
+  }
+
+  .tlc-node:hover   { background: var(--bg3); border-color: var(--border2); }
+  .tlc-node.active  { background: var(--bg3); border-color: var(--accent); }
+  .tlc-node.active .node-title { color: var(--accent); }
+
+  .node-icon  { font-size: 26px; margin-bottom: 0.6rem; display: block; }
+  .node-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+    transition: color 0.2s;
+  }
+  .node-sub { font-size: 11px; color: var(--muted); }
+
+  /* INFO PANEL */
+  .tlc-info {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 2rem;
+    min-height: 160px;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.25s ease;
+  }
+  .tlc-info h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+  .tlc-info p { font-size: 14px; color: var(--muted); line-height: 1.85; margin-bottom: 0.75rem; }
+  .tlc-info p:last-child { margin-bottom: 0; }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge-green  { background: rgba(200,245,97,0.08);  color: var(--accent);  border: 1px solid rgba(200,245,97,0.2); }
+  .badge-teal   { background: rgba(92,245,200,0.08);  color: var(--teal);    border: 1px solid rgba(92,245,200,0.2); }
+  .badge-orange { background: rgba(245,163,92,0.08);  color: var(--orange);  border: 1px solid rgba(245,163,92,0.2); }
+
+  /* SCM CALLOUT */
+  .scm-note {
+    background: rgba(245,163,92,0.05);
+    border: 1px solid rgba(245,163,92,0.2);
+    border-radius: var(--r);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--muted);
+  }
+  .scm-note .scm-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  .scm-note strong { color: var(--text); font-weight: 500; }
+
+  /* JIT vs GLOBALIZATION */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .compare-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+  }
+  .compare-card .c-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .compare-card ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 2;
+  }
+  .compare-card ul li::before { content: '— '; color: var(--accent); }
+
+  .conflict-note {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: var(--r);
+    padding: 1.25rem 1.5rem;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+  .conflict-note strong { color: var(--orange); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    body { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-tag">// Tool 03 — Logistics</div>
+<h1>TLC Flow <em>Explorer</em></h1>
+<p class="subtitle">Click each stage of the Transportation-Logistics Chain to explore what happens there, key decisions, and how it connects to JIT and globalization.</p>
+
+<!-- FLOW -->
+<div class="tlc-flow">
+  <div class="tlc-node" id="node-transport"     onclick="showNode('transport')">
+    <span class="node-icon">🚢</span>
+    <div class="node-title">Transport</div>
+    <div class="node-sub">Move it</div>
+  </div>
+  <div class="tlc-node" id="node-storage"       onclick="showNode('storage')">
+    <span class="node-icon">🏭</span>
+    <div class="node-title">Storage</div>
+    <div class="node-sub">Hold it</div>
+  </div>
+  <div class="tlc-node" id="node-inventory"     onclick="showNode('inventory')">
+    <span class="node-icon">📦</span>
+    <div class="node-title">Inventory</div>
+    <div class="node-sub">Track it</div>
+  </div>
+  <div class="tlc-node" id="node-distribution"  onclick="showNode('distribution')">
+    <span class="node-icon">🚚</span>
+    <div class="node-title">Distribution</div>
+    <div class="node-sub">Deliver it</div>
+  </div>
+</div>
+
+<!-- INFO PANEL -->
+<div class="tlc-info" id="tlcInfo">
+  <h3>← Click a stage to explore</h3>
+  <p>Each node in the TLC represents a core stage of moving goods from origin to final destination. Click any stage above to see what happens there, key concepts, and real-world examples.</p>
+</div>
+
+<!-- SCM CALLOUT -->
+<div class="scm-note">
+  <span class="scm-title">⚠ Where does SCM fit in the TLC?</span>
+  Supply Chain Management (SCM) does <strong>not</strong> sit inside the TLC as a stage. SCM is a broader management framework that wraps around the entire chain — it includes the <strong>supplier</strong> at the start and the <strong>customer</strong> at the end, both of which are outside the TLC boundary. The TLC describes the internal logistics flow only. SCM coordinates everything across the full picture.
+</div>
+
+<!-- JIT VS GLOBALIZATION -->
+<div class="section-label">// Concept Conflict — JIT vs Globalization</div>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="c-title" style="color: var(--teal);">Just-In-Time (JIT)</div>
+    <ul>
+      <li>Minimize inventory held</li>
+      <li>Reduce lead times</li>
+      <li>Order only what you need, when you need it</li>
+      <li>Requires reliable, nearby suppliers</li>
+      <li>Goal: zero waste, zero excess</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="c-title" style="color: var(--orange);">Globalization</div>
+    <ul>
+      <li>Suppliers spread across the globe</li>
+      <li>Increases lead times significantly</li>
+      <li>Requires larger safety stock buffers</li>
+      <li>More variables: ports, customs, delays</li>
+      <li>Goal: cost efficiency through scale</li>
+    </ul>
+  </div>
+</div>
+
+<div class="conflict-note">
+  <strong>The conflict:</strong> JIT tries to minimize inventory and lead time. Globalization naturally increases both. They have fundamentally different goals — JIT demands speed and proximity, while globalization trades both for cost savings. This is why global supply chains are often described as "fragile" — COVID-19 exposed exactly this tension.
+</div>
+
+<script>
+const nodes = {
+  transport: {
+    title: 'Transportation',
+    content: [
+      'Transportation is the movement of goods from one point to another — by sea, air, rail, or road. It is the backbone of the entire logistics chain and often the highest-cost stage.',
+      'Key decisions include choosing the mode of transport (cost vs. speed tradeoff), routing, carrier selection, and managing freight documentation. Sea freight is cheapest but slowest; air is fastest but expensive.',
+      'Example: Bananas harvested in Ecuador are loaded into refrigerated shipping containers and transported by sea to ports in Europe or Asia — a journey of 2–4 weeks.'
+    ],
+    badges: ['badge-green:Sea / Air / Rail / Road', 'badge-teal:Cost vs Speed Tradeoff', 'badge-orange:Highest Cost Stage']
+  },
+  storage: {
+    title: 'Storage (Warehousing)',
+    content: [
+      'Storage is the temporary holding of goods at a facility — a warehouse, distribution center, or cold storage unit — between production and final delivery.',
+      'Key decisions include warehouse location (closer to supplier or customer?), storage conditions (temperature-controlled for perishables), and how long goods should be held before incurring excess cost.',
+      'Example: Bananas arriving at a port are held in refrigerated warehouses under controlled atmosphere conditions to halt ripening until distribution is ready.'
+    ],
+    badges: ['badge-teal:Warehousing', 'badge-green:Cold Storage', 'badge-orange:JIT Tension Point']
+  },
+  inventory: {
+    title: 'Inventory Management',
+    content: [
+      'Inventory management is about tracking and controlling the quantity of goods held at any point in the chain. Too much inventory ties up capital; too little risks stockouts.',
+      'Key decisions include reorder points, safety stock levels, and demand forecasting. This is where JIT has the most direct impact — JIT systems aim to hold as little inventory as possible.',
+      'Example: A grocery chain monitors banana stock across all stores in real time and triggers replenishment orders automatically when stock drops below a threshold.'
+    ],
+    badges: ['badge-green:Stock Control', 'badge-teal:Demand Forecasting', 'badge-orange:JIT Core Stage']
+  },
+  distribution: {
+    title: 'Distribution',
+    content: [
+      'Distribution is the final stage — getting goods from the warehouse or hub to the end point, whether a retail store, business, or individual customer.',
+      'Key decisions include last-mile delivery strategy, route optimization, delivery windows, and returns handling. This stage has the highest visibility to the end customer.',
+      'Example: Bananas are loaded onto refrigerated trucks at the distribution center and delivered overnight to supermarkets, timed to hit shelves fresh in the morning.'
+    ],
+    badges: ['badge-green:Last-Mile Delivery', 'badge-teal:Route Optimization', 'badge-orange:Customer-Facing Stage']
+  }
+};
+
+function showNode(id) {
+  document.querySelectorAll('.tlc-node').forEach(n => n.classList.remove('active'));
+  document.getElementById('node-' + id).classList.add('active');
+
+  const data = nodes[id];
+  const badgeHtml = data.badges.map(b => {
+    const [cls, label] = b.split(':');
+    return `<span class="badge ${cls}">${label}</span>`;
+  }).join('');
+
+  document.getElementById('tlcInfo').innerHTML = `
+    <h3>${data.title}</h3>
+    ${data.content.map(p => `<p>${p}</p>`).join('')}
+    <div class="badges">${badgeHtml}</div>
+  `;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gravity Model Calculator — International Trade</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0a0a0f;
+    --bg2:     #111118;
+    --bg3:     #18181f;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --text:    #f0f0ee;
+    --muted:   #888880;
+    --accent:  #c8f561;
+    --teal:    #5cf5c8;
+    --orange:  #f5a35c;
+    --mono:    'Space Mono', monospace;
+    --sans:    'DM Sans', sans-serif;
+    --r:       12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 3rem 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .page-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 580px;
+    margin-bottom: 3rem;
+  }
+
+  /* FORMULA BAR */
+  .formula-bar {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--r);
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .formula-eq {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .formula-legend {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.9;
+    font-family: var(--mono);
+  }
+  .formula-legend span { color: var(--text); }
+
+  /* GRID LAYOUT */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.75rem;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 1.1rem; }
+  .form-group:last-of-type { margin-bottom: 0; }
+  label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  input[type="number"], input[type="text"] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--muted); opacity: 0.5; }
+
+  .divider-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .divider-row::before,
+  .divider-row::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* BUTTONS */
+  .calc-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1.25rem;
+  }
+  .calc-btn:hover { background: #d9ff80; transform: translateY(-1px); }
+  .calc-btn:active { transform: translateY(0); }
+
+  .example-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--teal);
+    border: 1px solid rgba(92,245,200,0.25);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+  }
+  .example-btn:hover { background: rgba(92,245,200,0.06); border-color: rgba(92,245,200,0.4); }
+
+  /* RESULT */
+  .result-box {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .result-box.visible { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .result-num {
+    font-family: var(--mono);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .result-meta {
+    padding-bottom: 0.4rem;
+  }
+  .result-meta .r-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+  }
+  .result-meta .r-countries {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .result-breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .breakdown-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .breakdown-item .b-val {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .breakdown-item .b-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .result-interp {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+  .result-interp strong { color: var(--text); font-weight: 500; }
+
+  /* STRENGTH BAR */
+  .strength-wrap {
+    margin: 1rem 0;
+  }
+  .strength-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .strength-bar {
+    height: 6px;
+    background: var(--bg3);
+    border-radius: 100px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+  }
+  .strength-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.6s ease;
+    background: var(--accent);
+  }
+
+  /* TARIFF SECTION */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .tariff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tariff-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .tariff-card:hover { border-color: var(--border2); }
+
+  .tariff-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+  .tariff-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    max-width: 160px;
+  }
+  .tariff-rate {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--orange);
+    white-space: nowrap;
+  }
+  .tariff-country {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .tariff-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .tariff-verdict {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    color: var(--orange);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* AUTARKY SECTION */
+  .autarky-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .autarky-box p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.85;
+    margin-bottom: 0.75rem;
+  }
+  .autarky-box p:last-child { margin-bottom: 0; }
+  .autarky-box strong { color: var(--text); font-weight: 500; }
+  .autarky-box em { color: var(--accent); font-style: normal; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .main-grid      { grid-template-columns: 1fr; }
+    .tariff-grid    { grid-template-columns: 1fr; }
+    .result-breakdown { grid-template-columns: 1fr 1fr; }
+    body { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-tag">// Tool 01 — International Trade</div>
+<h1>Gravity Model <em>Calculator</em></h1>
+<p class="subtitle">The Gravity Model predicts trade volume between two countries based on their economic size and the distance between them — inspired by Newton's law of gravity, applied to economics.</p>
+
+<!-- FORMULA BAR -->
+<div class="formula-bar">
+  <div class="formula-eq">T = A × (GDP<sub>A</sub> × GDP<sub>B</sub>) / D</div>
+  <div class="formula-legend">
+    <span>T</span> = Trade volume index &nbsp;|&nbsp;
+    <span>A</span> = Gravity constant &nbsp;|&nbsp;
+    <span>GDP<sub>A,B</sub></span> = Economic sizes &nbsp;|&nbsp;
+    <span>D</span> = Distance (km)
+  </div>
+</div>
+
+<!-- INPUT GRID -->
+<div class="main-grid">
+
+  <div class="card">
+    <div class="card-label">Country A</div>
+    <div class="form-group">
+      <label>Country Name</label>
+      <input type="text" id="countryA" value="South Korea" placeholder="e.g. South Korea" />
+    </div>
+    <div class="form-group">
+      <label>GDP (USD Billions)</label>
+      <input type="number" id="gdpA" value="1700" min="0.1" step="0.1" />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Country B</div>
+    <div class="form-group">
+      <label>Country Name</label>
+      <input type="text" id="countryB" value="Germany" placeholder="e.g. Germany" />
+    </div>
+    <div class="form-group">
+      <label>GDP (USD Billions)</label>
+      <input type="number" id="gdpB" value="4400" min="0.1" step="0.1" />
+    </div>
+  </div>
+
+  <div class="divider-row">Shared Parameters</div>
+
+  <div class="card">
+    <div class="card-label">Distance</div>
+    <div class="form-group">
+      <label>Distance Between Countries (km)</label>
+      <input type="number" id="distance" value="8600" min="1" />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Gravity Constant</div>
+    <div class="form-group">
+      <label>A — Gravity Constant (default: 1)</label>
+      <input type="number" id="gravConst" value="1" min="0.01" step="0.1" />
+    </div>
+  </div>
+
+</div>
+
+<button class="calc-btn" onclick="calcGravity()">Calculate Trade Volume</button>
+<button class="example-btn" onclick="loadExample('banana')">Load Banana Trade Example (Ecuador → Japan)</button>
+<button class="example-btn" onclick="loadExample('quiz')">Load Quiz Example (Country A & B)</button>
+
+<!-- RESULT -->
+<div class="result-box" id="resultBox">
+  <div class="result-header">
+    <div class="result-num" id="resultNum">—</div>
+    <div class="result-meta">
+      <span class="r-label">Trade Volume Index</span>
+      <span class="r-countries" id="resultCountries">—</span>
+    </div>
+  </div>
+
+  <div class="result-breakdown">
+    <div class="breakdown-item">
+      <span class="b-val" id="bGdpA">—</span>
+      <span class="b-lbl" id="bLblA">GDP A</span>
+    </div>
+    <div class="breakdown-item">
+      <span class="b-val" id="bGdpB">—</span>
+      <span class="b-lbl" id="bLblB">GDP B</span>
+    </div>
+    <div class="breakdown-item">
+      <span class="b-val" id="bDist">—</span>
+      <span class="b-lbl">Distance (km)</span>
+    </div>
+  </div>
+
+  <div class="strength-wrap">
+    <div class="strength-label">
+      <span>Trade Potential</span>
+      <span id="strengthLabel">—</span>
+    </div>
+    <div class="strength-bar">
+      <div class="strength-fill" id="strengthFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="result-interp" id="resultInterp">—</div>
+</div>
+
+<!-- TARIFF SECTION -->
+<div class="section-label">// Real-World Tariff Examples — Why Some Trade Rules Are Ridiculous</div>
+
+<div class="tariff-grid">
+  <div class="tariff-card">
+    <div class="tariff-top">
+      <div class="tariff-name">US Chicken Tax on Light Trucks</div>
+      <div class="tariff-rate">25%</div>
+    </div>
+    <div class="tariff-country">United States · Since 1963</div>
+    <div class="tariff-desc">Originally a retaliation against European restrictions on US chicken imports, this tariff has persisted for 60+ years and now mainly protects American truck manufacturers. Foreign automakers route around it by importing trucks as cargo vehicles, then converting them domestically.</div>
+    <div class="tariff-verdict">⚠ Outlived its purpose by 6 decades and counting.</div>
+  </div>
+
+  <div class="tariff-card">
+    <div class="tariff-top">
+      <div class="tariff-name">EU Banana Import Tariff</div>
+      <div class="tariff-rate">€114/t</div>
+    </div>
+    <div class="tariff-country">European Union · Ongoing</div>
+    <div class="tariff-desc">The EU imposes a fixed tariff on banana imports from non-ACP countries (Latin America) to protect preferential trade agreements with former colonies. This led to a 20-year "Banana War" dispute at the WTO, raising prices for European consumers while distorting global trade flows.</div>
+    <div class="tariff-verdict">⚠ A 20-year trade war over fruit. Seriously.</div>
+  </div>
+
+  <div class="tariff-card">
+    <div class="tariff-top">
+      <div class="tariff-name">Japan's Rice Tariff</div>
+      <div class="tariff-rate">778%</div>
+    </div>
+    <div class="tariff-country">Japan · Ongoing</div>
+    <div class="tariff-desc">Japan applies an almost prohibitive tariff on imported rice to protect domestic farmers. At 778%, imported rice becomes economically impossible to sell competitively, effectively blocking the market entirely while Japanese consumers pay some of the world's highest rice prices.</div>
+    <div class="tariff-verdict">⚠ 778% is not a tariff. It's a wall.</div>
+  </div>
+
+  <div class="tariff-card">
+    <div class="tariff-top">
+      <div class="tariff-name">US Import Tariff on Peanut Butter</div>
+      <div class="tariff-rate">132%</div>
+    </div>
+    <div class="tariff-country">United States · Ongoing</div>
+    <div class="tariff-desc">The US imposes a 132% tariff on peanut butter imports beyond a small quota, effectively shutting out foreign competition. Despite this, major peanut butter producers like Canada continue to export via quota allocations, while US consumers pay inflated prices for a sandwich staple.</div>
+    <div class="tariff-verdict">⚠ A 132% markup on sandwiches since forever.</div>
+  </div>
+</div>
+
+<!-- AUTARKY SECTION -->
+<div class="section-label">// Can a True Autarky Exist?</div>
+
+<div class="autarky-box">
+  <p><strong>Autarky</strong> is the concept of a fully self-sufficient nation — one that neither imports nor exports, producing everything it needs domestically. In theory, this would mean zero trade. The gravity model would output <em>0</em> for any pair involving an autarky.</p>
+  <p><strong>Currently, no true autarky exists.</strong> North Korea comes closest — heavily sanctioned, with minimal formal trade — yet still engages in informal cross-border trade with China and Russia. Even the most isolated economies need something from the outside world, whether fuel, medicine, or food.</p>
+  <p>The closest historical example of a near-autarky succeeding short-term was <strong>Albania under Enver Hoxha (1976–1991)</strong>, which constitutionally banned all foreign loans, investment, and aid. It collapsed economically shortly after the policy ended. A post-scarcity world — like <em>Wakanda</em> — where technology eliminates all resource constraints is the only realistic scenario where true autarky could function sustainably.</p>
+</div>
+
+<script>
+function fmt(n) {
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + 'T';
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(2) + 'K';
+  return n.toFixed(2);
+}
+
+function getStrength(t) {
+  if (t >= 1e6)  return { pct: 100, label: 'Very High' };
+  if (t >= 1e5)  return { pct: 80,  label: 'High' };
+  if (t >= 1e4)  return { pct: 60,  label: 'Moderate' };
+  if (t >= 1e3)  return { pct: 40,  label: 'Low' };
+  if (t >= 100)  return { pct: 20,  label: 'Very Low' };
+  return { pct: 5, label: 'Minimal' };
+}
+
+function interpret(t, cA, cB, gdpA, gdpB, dist) {
+  const str = getStrength(t);
+  const bigger  = gdpA > gdpB ? cA : cB;
+  const smaller = gdpA > gdpB ? cB : cA;
+  const distNote = dist > 10000
+    ? 'The large distance is a significant drag on trade potential.'
+    : dist > 5000
+    ? 'The considerable distance moderates trade despite economic size.'
+    : 'The relatively short distance works in favour of trade.';
+
+  return `<strong>${cA} ↔ ${cB}</strong> have a <strong>${str.label.toLowerCase()}</strong> trade potential index of <strong>${fmt(t)}</strong>. 
+  ${bigger} is the larger economy and would typically be the dominant exporter of higher-value goods in this pair. 
+  ${distNote} In real trade, this index would be used alongside trade agreements, tariff levels, and political relationships to estimate actual bilateral trade volumes. 
+  A higher index does not guarantee high trade — it signals <em>economic gravity</em>, the natural pull two economies exert on each other.`;
+}
+
+function calcGravity() {
+  const cA   = document.getElementById('countryA').value.trim() || 'Country A';
+  const cB   = document.getElementById('countryB').value.trim() || 'Country B';
+  const gdpA = parseFloat(document.getElementById('gdpA').value);
+  const gdpB = parseFloat(document.getElementById('gdpB').value);
+  const dist = parseFloat(document.getElementById('distance').value);
+  const A    = parseFloat(document.getElementById('gravConst').value);
+
+  if (!gdpA || !gdpB || !dist || !A) return;
+
+  const T = A * (gdpA * gdpB) / dist;
+  const str = getStrength(T);
+
+  document.getElementById('resultNum').textContent      = fmt(T);
+  document.getElementById('resultCountries').textContent = `${cA} ↔ ${cB}`;
+  document.getElementById('bGdpA').textContent           = '$' + gdpA.toLocaleString() + 'B';
+  document.getElementById('bGdpB').textContent           = '$' + gdpB.toLocaleString() + 'B';
+  document.getElementById('bDist').textContent           = dist.toLocaleString() + ' km';
+  document.getElementById('bLblA').textContent           = cA;
+  document.getElementById('bLblB').textContent           = cB;
+  document.getElementById('strengthLabel').textContent   = str.label;
+  document.getElementById('strengthFill').style.width    = str.pct + '%';
+  document.getElementById('resultInterp').innerHTML      = interpret(T, cA, cB, gdpA, gdpB, dist);
+
+  const box = document.getElementById('resultBox');
+  box.classList.remove('visible');
+  void box.offsetWidth;
+  box.classList.add('visible');
+}
+
+function loadExample(type) {
+  if (type === 'banana') {
+    document.getElementById('countryA').value  = 'Ecuador';
+    document.getElementById('gdpA').value      = '115';
+    document.getElementById('countryB').value  = 'Japan';
+    document.getElementById('gdpB').value      = '4200';
+    document.getElementById('distance').value  = '14000';
+    document.getElementById('gravConst').value = '1';
+  } else {
+    document.getElementById('countryA').value  = 'Country A';
+    document.getElementById('gdpA').value      = '5';
+    document.getElementById('countryB').value  = 'Country B';
+    document.getElementById('gdpB').value      = '8';
+    document.getElementById('distance').value  = '10';
+    document.getElementById('gravConst').value = '1';
+  }
+  calcGravity();
+}
+</script>
+
+</body>
+</html>

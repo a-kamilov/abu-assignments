@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TradeFlow — Interactive Trade & Logistics Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0a0a0f;
+    --bg2:     #111118;
+    --bg3:     #18181f;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --text:    #f0f0ee;
+    --muted:   #888880;
+    --accent:  #c8f561;
+    --teal:    #5cf5c8;
+    --orange:  #f5a35c;
+    --mono:    'Space Mono', monospace;
+    --sans:    'DM Sans', sans-serif;
+    --r:       12px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,15,0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    height: 56px;
+    display: flex; align-items: center;
+    padding: 0 3rem;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--accent);
+    color: #0a0a0f;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-pill:hover { background: #d9ff80; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 7rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* animated grid background */
+  .hero::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,245,97,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,245,97,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero > * { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .eyebrow-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(200,245,97,0.3);
+    padding: 5px 14px;
+    border-radius: 100px;
+  }
+  .eyebrow-line {
+    height: 1px;
+    width: 60px;
+    background: rgba(200,245,97,0.3);
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 2rem;
+    max-width: 850px;
+  }
+  .hero h1 .line2 { color: var(--accent); }
+  .hero h1 .line3 { color: var(--muted); font-size: 0.65em; font-weight: 300; }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.85;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    margin-bottom: 5rem;
+  }
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #0a0a0f;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #d9ff80; transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--muted);
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+
+  /* hero stats row */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    max-width: 720px;
+  }
+  .hstat {
+    background: var(--bg2);
+    padding: 1.5rem 1.75rem;
+  }
+  .hstat .n {
+    font-family: var(--mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hstat .l {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── TOOLS SECTION ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 3rem;
+  }
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .section h2 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  .section h2 em { font-style: normal; color: var(--accent); }
+  .section-sub {
+    color: var(--muted);
+    max-width: 560px;
+    font-size: 0.95rem;
+    margin-bottom: 3.5rem;
+  }
+
+  /* tool cards */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  .tool-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color 0.25s, transform 0.25s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .tool-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-4px);
+  }
+  .tool-card.accent-green:hover { border-color: rgba(200,245,97,0.4); }
+  .tool-card.accent-teal:hover  { border-color: rgba(92,245,200,0.4); }
+  .tool-card.accent-orange:hover { border-color: rgba(245,163,92,0.4); }
+
+  .tool-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tool-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+  .tool-title {
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .tool-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.85;
+    flex: 1;
+  }
+  .tool-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 0.25rem;
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+  .tag-g { background: rgba(200,245,97,0.08); color: var(--accent); border: 1px solid rgba(200,245,97,0.2); }
+  .tag-t { background: rgba(92,245,200,0.08); color: var(--teal);   border: 1px solid rgba(92,245,200,0.2); }
+  .tag-o { background: rgba(245,163,92,0.08); color: var(--orange); border: 1px solid rgba(245,163,92,0.2); }
+
+  .tool-arrow {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--muted);
+    transition: color 0.2s, transform 0.2s;
+    align-self: flex-end;
+  }
+  .tool-card:hover .tool-arrow { color: var(--accent); transform: translate(3px,-3px); }
+
+  /* ── HOW IT WORKS ── */
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  .how-step {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2rem;
+  }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--bg3);
+    line-height: 1;
+    margin-bottom: 1rem;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+  }
+  .how-step h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .how-step p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── CONCEPTS SECTION ── */
+  .concepts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .concept-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2rem;
+  }
+  .concept-block .cb-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+  .concept-block h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+  .concept-block p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+  .concept-block ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 2;
+    margin-top: 0.5rem;
+  }
+  .concept-block ul li::before { content: '— '; color: var(--accent); }
+
+  /* ── WHO IS THIS FOR ── */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .audience-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+  }
+  .audience-card .a-icon { font-size: 1.8rem; margin-bottom: 0.75rem; display: block; }
+  .audience-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+  .audience-card p  { font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+  /* ── FAQ ── */
+  .faq-list { display: flex; flex-direction: column; gap: 1px; }
+  .faq-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 1.25rem 1.75rem;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: background 0.2s;
+  }
+  .faq-q:hover { background: var(--bg3); }
+  .faq-chevron {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .faq-item.open .faq-chevron { transform: rotate(45deg); color: var(--accent); }
+  .faq-a {
+    display: none;
+    padding: 0 1.75rem 1.25rem;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.85;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+  .faq-item.open .faq-a { display: block; animation: fadeIn 0.2s ease; }
+  .faq-a strong { color: var(--text); font-weight: 500; }
+
+  /* ── CTA BANNER ── */
+  .cta-banner {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .cta-banner h3 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-banner h3 em { font-style: normal; color: var(--accent); }
+  .cta-banner p { font-size: 14px; color: var(--muted); max-width: 460px; }
+  .cta-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; flex-shrink: 0; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 3rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer .f-logo {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  footer .f-links { display: flex; gap: 2rem; }
+  footer .f-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  footer .f-links a:hover { color: var(--text); }
+  footer .f-copy {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 6rem 1.5rem 3rem; }
+    .section { padding: 4rem 1.5rem; }
+    .tools-grid   { grid-template-columns: 1fr; }
+    .how-grid     { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    .audience-grid { grid-template-columns: 1fr; }
+    .hero-stats   { grid-template-columns: 1fr 1fr; }
+    .divider { margin: 0 1.5rem; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    .cta-banner { padding: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">TRADEFLOW_</a>
+  <div class="nav-links">
+    <a href="#tools">Tools</a>
+    <a href="#concepts">Concepts</a>
+    <a href="#faq">FAQ</a>
+    <a href="gravity.html" class="nav-pill">Open a Tool →</a>
+  </div>
+</nav>
+
+<!-- ════════════════ HERO ════════════════ -->
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span class="eyebrow-tag">Open Educational Tool · Free to Use</span>
+    <span class="eyebrow-line"></span>
+  </div>
+
+  <h1>
+    Learn Trade,<br />
+    <span class="line2">Logistics & Operations</span><br />
+    <span class="line3">by actually doing it.</span>
+  </h1>
+
+  <p class="hero-desc">
+    TradeFlow is a free, interactive toolkit for students studying international trade, supply chain logistics, and management science. No textbook required — just open a tool and start exploring real concepts with live calculators, visualizers, and explainers.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#tools" class="btn-primary">Explore the Tools</a>
+    <a href="#concepts" class="btn-ghost">What's Covered</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hstat">
+      <span class="n">3</span>
+      <span class="l">Interactive Tools</span>
+    </div>
+    <div class="hstat">
+      <span class="n">∞</span>
+      <span class="l">Free Forever</span>
+    </div>
+    <div class="hstat">
+      <span class="n">0</span>
+      <span class="l">Sign-ups</span>
+    </div>
+    <div class="hstat">
+      <span class="n">100%</span>
+      <span class="l">Open Source</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ════════════════ TOOLS ════════════════ -->
+<section class="section" id="tools">
+  <div class="section-eyebrow">// What's Inside</div>
+  <h2>Three tools. <em>One site.</em></h2>
+  <p class="section-sub">Each tool is fully interactive — enter your own numbers, pick your own countries, build your own LP problem. No pre-set answers, just real concepts you can play with.</p>
+
+  <div class="tools-grid">
+
+    <a href="gravity.html" class="tool-card accent-green">
+      <div class="tool-num">// 01 — International Trade</div>
+      <div class="tool-icon">🌍</div>
+      <div class="tool-title">Gravity Model Calculator</div>
+      <div class="tool-desc">
+        Predict trade volume between any two countries using the Gravity Model — the most widely used framework in trade economics. Enter GDPs and distance, get a live trade index with plain-English interpretation.
+        <br /><br />
+        Also includes: real tariff case studies from around the world, a breakdown of what autarky is and whether it can actually exist, and the full formula explained step by step.
+      </div>
+      <div class="tool-tags">
+        <span class="tag tag-g">Gravity Model</span>
+        <span class="tag tag-g">Tariff Analysis</span>
+        <span class="tag tag-g">Autarky</span>
+        <span class="tag tag-g">Globalization</span>
+      </div>
+      <div class="tool-arrow">↗</div>
+    </a>
+
+    <a href="lp.html" class="tool-card accent-teal">
+      <div class="tool-num">// 02 — Management Science</div>
+      <div class="tool-icon">📊</div>
+      <div class="tool-title">LP Optimizer</div>
+      <div class="tool-desc">
+        Build and solve a Linear Programming problem from scratch. Input two products, their profits, machine and labor requirements, and your weekly resource limits — the optimizer solves for the production mix that maximizes profit.
+        <br /><br />
+        Outputs the full LP notation (Sets, Parameters, Decision Variables, Objective Function, Constraints) and draws the feasible region graphically so you can see exactly where the optimal point sits.
+      </div>
+      <div class="tool-tags">
+        <span class="tag tag-t">LP Notation</span>
+        <span class="tag tag-t">Feasible Region</span>
+        <span class="tag tag-t">Optimization</span>
+        <span class="tag tag-t">Gamification</span>
+      </div>
+      <div class="tool-arrow">↗</div>
+    </a>
+
+    <a href="tlc.html" class="tool-card accent-orange">
+      <div class="tool-num">// 03 — Logistics (Bonus)</div>
+      <div class="tool-icon">🚢</div>
+      <div class="tool-title">TLC Flow Explorer</div>
+      <div class="tool-desc">
+        Walk through the four stages of the Transportation-Logistics Chain — Transport, Storage, Inventory, Distribution — by clicking each node. Each stage explains what decisions are made there, key concepts, and real-world examples using banana supply chains.
+        <br /><br />
+        Also covers where SCM sits relative to the TLC (hint: outside it), and the fundamental conflict between Just-In-Time logistics and globalization.
+      </div>
+      <div class="tool-tags">
+        <span class="tag tag-o">TLC</span>
+        <span class="tag tag-o">SCM vs TLC</span>
+        <span class="tag tag-o">JIT</span>
+        <span class="tag tag-o">Globalization</span>
+      </div>
+      <div class="tool-arrow">↗</div>
+    </a>
+
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section-eyebrow">// How to Use It</div>
+  <h2 style="margin-bottom:0.75rem;">Pick a tool. <em>Start exploring.</em></h2>
+  <p class="section-sub" style="margin-bottom:2rem;">No setup, no account, no installation. Works entirely in your browser.</p>
+
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="step-num">01</div>
+      <h3>Choose a Tool</h3>
+      <p>Click any of the three tools above based on what you're studying — Trade, Management Science, or Logistics. Each one is fully standalone.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-num">02</div>
+      <h3>Enter Your Numbers</h3>
+      <p>All tools accept custom inputs. Use preset examples to see how it works, then swap in your own countries, products, or constraints.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-num">03</div>
+      <h3>Read the Output</h3>
+      <p>Every result comes with a plain-English interpretation — not just a number, but what that number actually means in context.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ CONCEPTS ════════════════ -->
+<section class="section" id="concepts">
+  <div class="section-eyebrow">// What You'll Learn</div>
+  <h2>Concepts <em>covered.</em></h2>
+  <p class="section-sub">Every concept in TradeFlow maps directly to real academic content in trade theory, operations research, and logistics management.</p>
+
+  <div class="concepts-grid">
+
+    <div class="concept-block">
+      <span class="cb-tag tag-g">International Trade</span>
+      <h3>Gravity Model of Trade</h3>
+      <p>The gravity model predicts bilateral trade flows between two countries. Based on Newton's gravitational law, it states that trade volume is proportional to the product of two economies' sizes and inversely proportional to the distance between them. The formula: <strong>T = A × (GDP_A × GDP_B) / D</strong>.</p>
+      <ul>
+        <li>What GDP and distance do to trade volume</li>
+        <li>Why large, nearby economies trade more</li>
+        <li>How to interpret the trade index</li>
+      </ul>
+    </div>
+
+    <div class="concept-block">
+      <span class="cb-tag tag-g">International Trade</span>
+      <h3>Tariffs & Trade Policy</h3>
+      <p>A tariff is a tax on imported goods. Countries use tariffs to protect domestic industries, generate revenue, or retaliate against trade partners. TradeFlow covers four real-world tariff examples — including a 778% rice tariff and a 25% truck tariff that outlived its purpose by 60 years.</p>
+      <ul>
+        <li>What makes a tariff "ridiculous"</li>
+        <li>How tariffs distort trade flows</li>
+        <li>Historical context for real tariffs</li>
+      </ul>
+    </div>
+
+    <div class="concept-block">
+      <span class="cb-tag tag-g">International Trade</span>
+      <h3>Autarky — Can It Exist?</h3>
+      <p>Autarky is full national self-sufficiency — no imports, no exports. In theory, the gravity model outputs 0 trade for an autarkic nation. In practice, no true autarky has ever been sustained. TradeFlow covers the historical attempts and why they failed.</p>
+      <ul>
+        <li>What autarky means in trade theory</li>
+        <li>Albania's near-autarky experiment</li>
+        <li>Post-scarcity as the only viable scenario</li>
+      </ul>
+    </div>
+
+    <div class="concept-block">
+      <span class="cb-tag tag-t">Management Science</span>
+      <h3>Linear Programming</h3>
+      <p>LP is a mathematical method for finding the best outcome — maximum profit or minimum cost — subject to a set of constraints. It is foundational to operations research and management science. TradeFlow lets you build and solve LP problems visually.</p>
+      <ul>
+        <li>Standard LP notation (Sets, Parameters, Variables)</li>
+        <li>Writing objective functions and constraints</li>
+        <li>Graphical solution and feasible region</li>
+        <li>Corner point theorem — why the optimal is always at a corner</li>
+      </ul>
+    </div>
+
+    <div class="concept-block">
+      <span class="cb-tag tag-t">Management Science</span>
+      <h3>Gamification in Education</h3>
+      <p>Gamification applies game mechanics — points, levels, narrative, challenge — to non-game contexts to increase engagement and motivation. In the classroom, it reframes learning as a problem to overcome rather than content to memorize.</p>
+      <ul>
+        <li>Definition and psychological basis</li>
+        <li>Real classroom examples (Profit or Peril, CLI Dungeon Crawl)</li>
+        <li>Why it works — intrinsic vs extrinsic motivation</li>
+      </ul>
+    </div>
+
+    <div class="concept-block">
+      <span class="cb-tag tag-o">Logistics</span>
+      <h3>TLC vs SCM</h3>
+      <p>The Transportation-Logistics Chain (TLC) covers the internal movement of goods: Transport → Storage → Inventory → Distribution. Supply Chain Management (SCM) is broader — it wraps around the TLC and includes suppliers and customers at each end. A common exam mistake is placing SCM inside the TLC.</p>
+      <ul>
+        <li>The four stages of the TLC explained</li>
+        <li>Why SCM sits outside the TLC</li>
+        <li>JIT vs Globalization — the core tension</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ WHO IS THIS FOR ════════════════ -->
+<section class="section">
+  <div class="section-eyebrow">// Who Is This For</div>
+  <h2>Built for <em>students.</em> Open to everyone.</h2>
+  <p class="section-sub" style="margin-bottom:2rem;">TradeFlow was built by a student, for students — but the tools are genuinely useful for anyone trying to understand these concepts.</p>
+
+  <div class="audience-grid">
+    <div class="audience-card">
+      <span class="a-icon">🎓</span>
+      <h3>Trade Theory Students</h3>
+      <p>If you're studying international economics, global business, or trade policy — the gravity model calculator and tariff case studies give you real, hands-on practice with core concepts.</p>
+    </div>
+    <div class="audience-card">
+      <span class="a-icon">📐</span>
+      <h3>Management Science Students</h3>
+      <p>The LP Optimizer is perfect for checking your LP formulations, visualizing feasible regions, and understanding what the optimal point actually means geometrically.</p>
+    </div>
+    <div class="audience-card">
+      <span class="a-icon">🚚</span>
+      <h3>Logistics & Supply Chain Students</h3>
+      <p>The TLC Explorer walks through every stage of the logistics chain interactively, covering JIT, SCM boundaries, and the real tensions in global supply chains.</p>
+    </div>
+    <div class="audience-card">
+      <span class="a-icon">👨‍🏫</span>
+      <h3>Educators</h3>
+      <p>Use TradeFlow as a classroom demonstration tool or send it to students as a free, no-signup resource that reinforces lectures with interactive examples.</p>
+    </div>
+    <div class="audience-card">
+      <span class="a-icon">🌐</span>
+      <h3>Curious Learners</h3>
+      <p>No course required. If you want to understand why Japan's rice tariff is 778%, how trade is predicted mathematically, or what LP optimization looks like — you're welcome here.</p>
+    </div>
+    <div class="audience-card">
+      <span class="a-icon">💻</span>
+      <h3>Developers</h3>
+      <p>All source code is on GitHub. Fork it, extend it, add more tools. Pull requests welcome — especially new tariff examples, additional LP constraints, or more supply chain stages.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ FAQ ════════════════ -->
+<section class="section" id="faq">
+  <div class="section-eyebrow">// FAQ</div>
+  <h2>Common <em>questions.</em></h2>
+  <p class="section-sub" style="margin-bottom:2rem;">Everything you need to know before diving in.</p>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is this actually free? Do I need to sign up?
+        <span class="faq-chevron">+</span>
+      </button>
+      <div class="faq-a">
+        <strong>Completely free, no sign-up needed.</strong> TradeFlow runs entirely in your browser — there's no server, no database, no account. Open a page and start using it. It will always be free and open source.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How accurate is the Gravity Model Calculator?
+        <span class="faq-chevron">+</span>
+      </button>
+      <div class="faq-a">
+        The calculator implements the <strong>basic gravity model formula: T = A × (GDP_A × GDP_B) / D</strong>. This is the standard textbook version used in introductory trade theory courses. Real-world gravity models are more complex — they account for trade agreements, cultural proximity, currency, colonial history, and more. The output is a <em>trade potential index</em>, not an actual dollar value of trade. Use it to understand the concept and compare relative trade relationships.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How does the LP Optimizer actually solve the problem?
+        <span class="faq-chevron">+</span>
+      </button>
+      <div class="faq-a">
+        The optimizer uses the <strong>corner point theorem</strong> — a fundamental result in linear programming that states the optimal solution always occurs at a corner (vertex) of the feasible region. The tool enumerates all corner points of the feasible region formed by your constraints, evaluates the objective function at each, and returns the one with the highest profit. This is equivalent to the graphical method taught in introductory MS courses.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Why is SCM not inside the TLC?
+        <span class="faq-chevron">+</span>
+      </button>
+      <div class="faq-a">
+        The TLC (Transportation-Logistics Chain) describes the <strong>internal logistics flow</strong> of goods: from the moment they leave a production point to the moment they reach a distribution end point. SCM (Supply Chain Management) is a <strong>broader management framework</strong> that also includes the supplier at the start and the customer at the end — both of which are external to the logistics operation itself. SCM coordinates across the entire value chain; the TLC is one part of that chain.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Why bananas? What's with the banana examples?
+        <span class="faq-chevron">+</span>
+      </button>
+      <div class="faq-a">
+        Bananas are actually a <strong>perfect product for studying trade and logistics</strong>. They are one of the most internationally traded agricultural commodities, they require specific cold-chain logistics (temperature-controlled transport and storage), they are subject to real trade disputes (the EU Banana War lasted 20 years at the WTO), and they have a clear, simple supply chain that maps neatly onto the TLC. They also happen to have been used as the example product in the course that inspired this tool.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I use this for my own coursework or assignments?
+        <span class="faq-chevron">+</span>
+      </button>
+      <div class="faq-a">
+        Yes — that's exactly what it's here for. Use the tools to check your calculations, explore concepts, or build intuition before an exam. <strong>Don't just copy outputs</strong> though — the goal is understanding. Try changing the inputs, see what happens, and make sure you understand <em>why</em> the results change. The tools are most useful when you use them to ask "what if" questions.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ CTA ════════════════ -->
+<section class="section">
+  <div class="cta-banner">
+    <div>
+      <h3>Ready to <em>start exploring?</em></h3>
+      <p>Pick any tool and start playing with real concepts. No setup, no account — just open it in your browser and go.</p>
+    </div>
+    <div class="cta-btns">
+      <a href="gravity.html" class="btn-primary">Gravity Model →</a>
+      <a href="lp.html" class="btn-ghost">LP Optimizer →</a>
+      <a href="tlc.html" class="btn-ghost">TLC Explorer →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-logo">TRADEFLOW_</span>
+  <div class="f-links">
+    <a href="gravity.html">Gravity Model</a>
+    <a href="lp.html">LP Optimizer</a>
+    <a href="tlc.html">TLC Explorer</a>
+  </div>
+  <span class="f-copy">Built by a student · Open source · Free forever</span>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+
+</body>
+</html>

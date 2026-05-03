@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LP Optimizer — Management Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0a0a0f;
+    --bg2:     #111118;
+    --bg3:     #18181f;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --text:    #f0f0ee;
+    --muted:   #888880;
+    --accent:  #c8f561;
+    --teal:    #5cf5c8;
+    --orange:  #f5a35c;
+    --pink:    #f55cf0;
+    --mono:    'Space Mono', monospace;
+    --sans:    'DM Sans', sans-serif;
+    --r:       12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 3rem 2rem;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .page-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin-bottom: 3rem;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* FORM */
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .product-col { display: flex; flex-direction: column; gap: 1rem; }
+  .product-header {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+  }
+  .p1-header { background: rgba(200,245,97,0.1);  color: var(--accent); border: 1px solid rgba(200,245,97,0.2); }
+  .p2-header { background: rgba(92,245,200,0.1);  color: var(--teal);   border: 1px solid rgba(92,245,200,0.2); }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  input[type="number"], input[type="text"] {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--muted); opacity: 0.4; }
+
+  .constraints-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  /* BUTTONS */
+  .solve-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .solve-btn:hover { background: #d9ff80; transform: translateY(-1px); }
+  .solve-btn:active { transform: translateY(0); }
+
+  .preset-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--teal);
+    border: 1px solid rgba(92,245,200,0.25);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+  }
+  .preset-btn:hover { background: rgba(92,245,200,0.06); border-color: rgba(92,245,200,0.4); }
+
+  /* NOTATION BOX */
+  .notation-box {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid rgba(200,245,97,0.2);
+    border-radius: var(--r);
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 2.2;
+    animation: fadeIn 0.3s ease;
+  }
+  .notation-box.visible { display: block; }
+
+  .nt-section { margin-bottom: 1rem; }
+  .nt-section:last-child { margin-bottom: 0; }
+  .nt-title {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .nt-line { color: var(--text); padding-left: 1rem; }
+  .nt-line .kw   { color: var(--accent); }
+  .nt-line .var  { color: var(--teal); }
+  .nt-line .cst  { color: var(--orange); }
+  .nt-line .num  { color: var(--pink); }
+
+  /* RESULTS */
+  .results-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .results-section.visible { display: block; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.25rem 1rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .stat-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* CHART */
+  .chart-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* INTERPRETATION */
+  .interp-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+  .interp-card strong { color: var(--text); font-weight: 500; }
+  .interp-card em { color: var(--accent); font-style: normal; }
+
+  /* GAMIFICATION SECTION */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .gamif-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .gamif-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+  }
+  .gamif-card .g-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+  }
+  .tag-green  { background: rgba(200,245,97,0.1); color: var(--accent); border: 1px solid rgba(200,245,97,0.2); }
+  .tag-teal   { background: rgba(92,245,200,0.1); color: var(--teal);   border: 1px solid rgba(92,245,200,0.2); }
+  .gamif-card h3 { font-size: 15px; font-weight: 500; margin-bottom: 0.5rem; }
+  .gamif-card p  { font-size: 13px; color: var(--muted); line-height: 1.8; }
+
+  .notation-ref {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: var(--r);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 2.2;
+  }
+  .notation-ref .ref-title {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .notation-ref .ref-row { display: flex; gap: 1rem; align-items: baseline; }
+  .notation-ref .ref-key { color: var(--teal); min-width: 120px; }
+  .notation-ref .ref-val { color: var(--muted); font-size: 11px; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .input-grid       { grid-template-columns: 1fr; }
+    .constraints-grid { grid-template-columns: 1fr; }
+    .stats-grid       { grid-template-columns: 1fr 1fr; }
+    .gamif-grid       { grid-template-columns: 1fr; }
+    body { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-tag">// Tool 02 — Management Science</div>
+<h1>LP <em>Optimizer</em></h1>
+<p class="subtitle">Enter two products, their profits and resource requirements, then set your factory's weekly constraints. The optimizer solves for maximum profit and shows the feasible region visually.</p>
+
+<!-- NOTATION REFERENCE -->
+<div class="notation-ref">
+  <div class="ref-title">Standard LP Notation</div>
+  <div class="ref-row"><span class="ref-key">SET</span><span class="ref-val">Fancy capital letters — defines the universe of elements (e.g. 𝕀, 𝕁)</span></div>
+  <div class="ref-row"><span class="ref-key">PARAMETER</span><span class="ref-val">Capital letters — known fixed values (e.g. P, M, L)</span></div>
+  <div class="ref-row"><span class="ref-key">DEC. VARIABLE</span><span class="ref-val">Lowercase letters — what we solve for (e.g. x₁, x₂)</span></div>
+  <div class="ref-row"><span class="ref-key">OBJ. FUNCTION</span><span class="ref-val">MAX Z = Σ (profit × decision variable)</span></div>
+</div>
+
+<!-- INPUT FORM -->
+<div class="card">
+  <div class="card-label">Product Details</div>
+  <div class="input-grid">
+    <div class="product-col">
+      <span class="product-header p1-header">Product 1 — x₁</span>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="p1name" value="Wompwomps" />
+      </div>
+      <div class="form-group">
+        <label>Profit per unit ($)</label>
+        <input type="number" id="p1profit" value="5" min="0" step="0.5" />
+      </div>
+      <div class="form-group">
+        <label>Machine hours per unit</label>
+        <input type="number" id="p1machine" value="3" min="0" step="0.5" />
+      </div>
+      <div class="form-group">
+        <label>Labor hours per unit</label>
+        <input type="number" id="p1labor" value="2" min="0" step="0.5" />
+      </div>
+    </div>
+
+    <div class="product-col">
+      <span class="product-header p2-header">Product 2 — x₂</span>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="p2name" value="Googoos" />
+      </div>
+      <div class="form-group">
+        <label>Profit per unit ($)</label>
+        <input type="number" id="p2profit" value="4" min="0" step="0.5" />
+      </div>
+      <div class="form-group">
+        <label>Machine hours per unit</label>
+        <input type="number" id="p2machine" value="2" min="0" step="0.5" />
+      </div>
+      <div class="form-group">
+        <label>Labor hours per unit</label>
+        <input type="number" id="p2labor" value="3" min="0" step="0.5" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-label">Weekly Resource Constraints</div>
+  <div class="constraints-grid">
+    <div class="form-group">
+      <label>Available Machine Hours</label>
+      <input type="number" id="machineMax" value="48" min="1" />
+    </div>
+    <div class="form-group">
+      <label>Available Labor Hours</label>
+      <input type="number" id="laborMax" value="36" min="1" />
+    </div>
+  </div>
+</div>
+
+<button class="solve-btn" onclick="solve()">Solve & Generate LP Notation</button>
+<button class="preset-btn" onclick="loadPreset()">Load Quiz Example (Wompwomps & Googoos)</button>
+
+<!-- NOTATION OUTPUT -->
+<div class="notation-box" id="notationBox"></div>
+
+<!-- RESULTS -->
+<div class="results-section" id="resultsSection">
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-num" id="sP1" style="color:var(--accent)">—</span>
+      <span class="stat-lbl" id="sP1lbl">Product 1</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="sP2" style="color:var(--teal)">—</span>
+      <span class="stat-lbl" id="sP2lbl">Product 2</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="sProfit" style="color:var(--orange)">—</span>
+      <span class="stat-lbl">Max Profit</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="sUtil" style="color:var(--pink)">—</span>
+      <span class="stat-lbl">Resource Used</span>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="card-label">Feasible Region — Graphical Solution</div>
+    <canvas id="lpChart" height="380"></canvas>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(200,245,97,0.5)"></div> Feasible Region</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c8f561"></div> Machine constraint</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#5cf5c8"></div> Labor constraint</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5a35c; border-radius:50%;"></div> Optimal point</div>
+    </div>
+  </div>
+
+  <div class="interp-card" id="interpCard"></div>
+
+</div>
+
+<!-- GAMIFICATION SECTION -->
+<div class="section-label">// What is Gamification in the Classroom?</div>
+
+<div class="gamif-grid">
+  <div class="gamif-card">
+    <span class="g-tag tag-green">Definition</span>
+    <h3>Gamification</h3>
+    <p>The application of game elements and mechanics — points, levels, challenges, narrative — to non-game contexts like a classroom. The goal is to maximize student engagement, motivation, and intrinsic interest in the material.</p>
+  </div>
+  <div class="gamif-card">
+    <span class="g-tag tag-teal">Why it works</span>
+    <h3>The Psychology</h3>
+    <p>Games tap into intrinsic motivation through clear goals, immediate feedback, and a sense of progress. When course content is framed as a challenge to overcome rather than material to memorize, retention and engagement improve significantly.</p>
+  </div>
+  <div class="gamif-card">
+    <span class="g-tag tag-green">Example 1</span>
+    <h3>Profit or Peril</h3>
+    <p>An accounting course gamified as a D&D-inspired roleplay — students make financial decisions as characters, with consequences that mirror real accounting outcomes. Risk-taking and strategy become part of the learning loop.</p>
+  </div>
+  <div class="gamif-card">
+    <span class="g-tag tag-teal">Example 2</span>
+    <h3>CLI Dungeon Crawl</h3>
+    <p>A text-based dungeon game built on a simulated command line interface — used in a Digital Literacy course to teach CLI navigation. Students explore rooms by typing real commands, learning the terminal without realizing they are studying.</p>
+  </div>
+</div>
+
+<div class="section-label">// The Math Behind It — Proof</div>
+<div class="card" style="font-family:var(--mono); font-size:13px; line-height:2.2; color:var(--muted);">
+  <div class="card-label">ab=2, bc=3, ac=4 → a+b+c = ?</div>
+  <div style="padding-left:1rem;">
+    <div>ab = 2 &nbsp; bc = 3 &nbsp; ac = 4</div>
+    <div style="color:var(--text);">(ab)(bc)(ac) = 2 × 3 × 4 = 24</div>
+    <div style="color:var(--text);">(abc)² = 24 &nbsp;→&nbsp; abc = √24 = 2√6</div>
+    <div style="margin-top:0.5rem;">a = abc/bc = 2√6/3</div>
+    <div>b = abc/ac = 2√6/4 = √6/2</div>
+    <div>c = abc/ab = 2√6/2 = √6</div>
+    <div style="margin-top:0.5rem; color:var(--accent); font-weight:700;">
+      a + b + c = 2√6/3 + √6/2 + √6 = <span style="font-size:15px;">13√6 / 6 ≈ 5.31</span>
+    </div>
+  </div>
+</div>
+
+<script>
+let chartInstance = null;
+
+function loadPreset() {
+  document.getElementById('p1name').value    = 'Wompwomps';
+  document.getElementById('p1profit').value  = '5';
+  document.getElementById('p1machine').value = '3';
+  document.getElementById('p1labor').value   = '2';
+  document.getElementById('p2name').value    = 'Googoos';
+  document.getElementById('p2profit').value  = '4';
+  document.getElementById('p2machine').value = '2';
+  document.getElementById('p2labor').value   = '3';
+  document.getElementById('machineMax').value = '48';
+  document.getElementById('laborMax').value   = '36';
+  solve();
+}
+
+function solve() {
+  const p1 = document.getElementById('p1name').value.trim() || 'Product 1';
+  const p2 = document.getElementById('p2name').value.trim() || 'Product 2';
+  const c1 = parseFloat(document.getElementById('p1profit').value);
+  const c2 = parseFloat(document.getElementById('p2profit').value);
+  const a11 = parseFloat(document.getElementById('p1machine').value);
+  const a12 = parseFloat(document.getElementById('p2machine').value);
+  const a21 = parseFloat(document.getElementById('p1labor').value);
+  const a22 = parseFloat(document.getElementById('p2labor').value);
+  const M   = parseFloat(document.getElementById('machineMax').value);
+  const L   = parseFloat(document.getElementById('laborMax').value);
+
+  if ([c1,c2,a11,a12,a21,a22,M,L].some(isNaN)) return;
+
+  // Corner point enumeration (LP with 2 vars, 2 constraints + non-negativity)
+  const candidates = [
+    [0, 0],
+    [M / a11, 0],
+    [0, M / a12],
+    [0, L / a22],
+    [L / a21, 0],
+  ];
+
+  // Intersection of machine & labor constraints
+  // a11*x1 + a12*x2 = M
+  // a21*x1 + a22*x2 = L
+  const det = a11 * a22 - a12 * a21;
+  if (Math.abs(det) > 1e-9) {
+    const xi = (M * a22 - L * a12) / det;
+    const yi = (a11 * L - a21 * M) / det;
+    candidates.push([xi, yi]);
+  }
+
+  let bestZ = -Infinity, bestX1 = 0, bestX2 = 0;
+  for (const [x1, x2] of candidates) {
+    if (x1 < -1e-9 || x2 < -1e-9) continue;
+    if (a11 * x1 + a12 * x2 > M + 1e-9) continue;
+    if (a21 * x1 + a22 * x2 > L + 1e-9) continue;
+    const Z = c1 * x1 + c2 * x2;
+    if (Z > bestZ) { bestZ = Z; bestX1 = x1; bestX2 = x2; }
+  }
+
+  const x1 = Math.round(bestX1 * 100) / 100;
+  const x2 = Math.round(bestX2 * 100) / 100;
+  const Z  = Math.round(bestZ * 100) / 100;
+  const machUsed = Math.round((a11 * x1 + a12 * x2) / M * 100);
+  const labUsed  = Math.round((a21 * x1 + a22 * x2) / L * 100);
+  const avgUtil  = Math.round((machUsed + labUsed) / 2);
+
+  // --- NOTATION ---
+  const notBox = document.getElementById('notationBox');
+  notBox.innerHTML = `
+    <div class="nt-section">
+      <div class="nt-title">Sets</div>
+      <div class="nt-line"><span class="kw">𝕀</span> = { <span class="var">${p1}</span>, <span class="var">${p2}</span> }  &nbsp;— set of products</div>
+    </div>
+    <div class="nt-section">
+      <div class="nt-title">Parameters</div>
+      <div class="nt-line"><span class="kw">P</span> = { <span class="num">${c1}</span>, <span class="num">${c2}</span> }  &nbsp;— profit per unit ($)</div>
+      <div class="nt-line"><span class="kw">M</span> = <span class="num">${M}</span>  &nbsp;— available machine hours / week</div>
+      <div class="nt-line"><span class="kw">L</span> = <span class="num">${L}</span>  &nbsp;— available labor hours / week</div>
+      <div class="nt-line"><span class="kw">AM</span> = { <span class="num">${a11}</span>, <span class="num">${a12}</span> }  &nbsp;— machine hrs per unit</div>
+      <div class="nt-line"><span class="kw">AL</span> = { <span class="num">${a21}</span>, <span class="num">${a22}</span> }  &nbsp;— labor hrs per unit</div>
+    </div>
+    <div class="nt-section">
+      <div class="nt-title">Decision Variables</div>
+      <div class="nt-line"><span class="var">x₁</span> = units of <span class="kw">${p1}</span> to produce per week</div>
+      <div class="nt-line"><span class="var">x₂</span> = units of <span class="kw">${p2}</span> to produce per week</div>
+    </div>
+    <div class="nt-section">
+      <div class="nt-title">Objective Function</div>
+      <div class="nt-line"><span class="kw">MAX</span> Z = <span class="num">${c1}</span><span class="var">x₁</span> + <span class="num">${c2}</span><span class="var">x₂</span></div>
+    </div>
+    <div class="nt-section">
+      <div class="nt-title">Subject To (Constraints)</div>
+      <div class="nt-line"><span class="cst">${a11}x₁ + ${a12}x₂ ≤ ${M}</span>  &nbsp;— machine hours</div>
+      <div class="nt-line"><span class="cst">${a21}x₁ + ${a22}x₂ ≤ ${L}</span>  &nbsp;— labor hours</div>
+      <div class="nt-line"><span class="cst">x₁, x₂ ≥ 0</span>  &nbsp;— non-negativity</div>
+    </div>
+  `;
+  notBox.classList.add('visible');
+
+  // --- STATS ---
+  document.getElementById('sP1').textContent    = x1 + ' units';
+  document.getElementById('sP1lbl').textContent = p1;
+  document.getElementById('sP2').textContent    = x2 + ' units';
+  document.getElementById('sP2lbl').textContent = p2;
+  document.getElementById('sProfit').textContent = '$' + Z.toFixed(2);
+  document.getElementById('sUtil').textContent   = avgUtil + '%';
+
+  // --- INTERPRETATION ---
+  document.getElementById('interpCard').innerHTML = `
+    The optimal solution produces <strong>${x1} units of ${p1}</strong> and <strong>${x2} units of ${p2}</strong> per week, 
+    generating a maximum profit of <strong>$${Z.toFixed(2)}</strong>. 
+    This point lies at the intersection of the machine and labor constraint lines — the corner of the feasible region where profit is highest.
+    On average, <em>${avgUtil}%</em> of available resources are utilized. 
+    Any production mix outside the shaded feasible region would violate at least one constraint and is therefore infeasible.
+  `;
+
+  // --- CHART ---
+  const maxX = Math.ceil(Math.max(M / a11, L / a21) * 1.25);
+  const maxY = Math.ceil(Math.max(M / a12, L / a22) * 1.25);
+
+  // Machine constraint line points
+  const machLine = [
+    { x: 0,      y: M / a12 },
+    { x: M / a11, y: 0 }
+  ];
+  // Labor constraint line points
+  const laborLine = [
+    { x: 0,      y: L / a22 },
+    { x: L / a21, y: 0 }
+  ];
+
+  // Feasible region polygon vertices (corner points, filtered)
+  const feasPts = [
+    { x: 0, y: 0 },
+    { x: Math.min(M / a11, L / a21), y: 0 },
+  ];
+  if (Math.abs(det) > 1e-9) {
+    const xi = (M * a22 - L * a12) / det;
+    const yi = (a11 * L - a21 * M) / det;
+    if (xi >= -1e-9 && yi >= -1e-9) feasPts.push({ x: Math.max(0, xi), y: Math.max(0, yi) });
+  }
+  feasPts.push({ x: 0, y: Math.min(M / a12, L / a22) });
+
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+
+  const ctx = document.getElementById('lpChart').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Feasible Region',
+          data: feasPts,
+          fill: true,
+          backgroundColor: 'rgba(200,245,97,0.12)',
+          borderColor: 'transparent',
+          pointRadius: 0,
+          showLine: true,
+          tension: 0,
+        },
+        {
+          label: 'Machine constraint',
+          data: machLine,
+          showLine: true,
+          borderColor: '#c8f561',
+          borderWidth: 2,
+          borderDash: [6, 3],
+          pointRadius: 0,
+          fill: false,
+          backgroundColor: 'transparent',
+        },
+        {
+          label: 'Labor constraint',
+          data: laborLine,
+          showLine: true,
+          borderColor: '#5cf5c8',
+          borderWidth: 2,
+          borderDash: [6, 3],
+          pointRadius: 0,
+          fill: false,
+          backgroundColor: 'transparent',
+        },
+        {
+          label: 'Optimal point',
+          data: [{ x: x1, y: x2 }],
+          pointRadius: 9,
+          pointBackgroundColor: '#f5a35c',
+          pointBorderColor: '#0a0a0f',
+          pointBorderWidth: 2,
+          showLine: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              if (ctx.datasetIndex === 3)
+                return ` Optimal: x₁=${x1}, x₂=${x2}, Z=$${Z.toFixed(2)}`;
+              return ` (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(1)})`;
+            }
+          },
+          backgroundColor: '#18181f',
+          borderColor: 'rgba(255,255,255,0.14)',
+          borderWidth: 1,
+          titleColor: '#f0f0ee',
+          bodyColor: '#888880',
+          titleFont: { family: 'Space Mono', size: 11 },
+          bodyFont:  { family: 'Space Mono', size: 11 },
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          min: 0, max: maxX,
+          title: {
+            display: true,
+            text: `x₁ — ${p1} (units)`,
+            color: '#888880',
+            font: { family: 'Space Mono', size: 11 }
+          },
+          grid:  { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#888880', font: { family: 'Space Mono', size: 10 } }
+        },
+        y: {
+          type: 'linear',
+          min: 0, max: maxY,
+          title: {
+            display: true,
+            text: `x₂ — ${p2} (units)`,
+            color: '#888880',
+            font: { family: 'Space Mono', size: 11 }
+          },
+          grid:  { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#888880', font: { family: 'Space Mono', size: 10 } }
+        }
+      }
+    }
+  });
+
+  const sec = document.getElementById('resultsSection');
+  sec.classList.remove('visible');
+  void sec.offsetWidth;
+  sec.classList.add('visible');
+}
+</script>
+
+</body>
+</html>
