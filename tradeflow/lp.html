@@ -340,10 +340,61 @@
     .gamif-grid       { grid-template-columns: 1fr; }
     body { padding: 2rem 1.25rem; }
   }
+
+ 
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+  }
+  .topbar a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+  .topbar a:hover { color: var(--text); }
+  .topbar .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+  }
+
+  .btn-home {
+    padding: 13px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn-home:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+
+
+ 
 </style>
 </head>
 <body>
 
+    <div class="topbar">
+    <a href="index.html" class="logo">TRADEFLOW_</a>
+    <a href="index.html">← Back to Home</a>
+  </div>
+ 
 <div class="page-tag">// Tool 02 — Management Science</div>
 <h1>LP <em>Optimizer</em></h1>
 <p class="subtitle">Enter two products, their profits and resource requirements, then set your factory's weekly constraints. The optimizer solves for maximum profit and shows the feasible region visually.</p>
