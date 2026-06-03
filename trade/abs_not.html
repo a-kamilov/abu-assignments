@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Absolute vs Comparative Advantage: Trade Minister Challenge</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0a1a2f 0%, #07121f 100%);
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Poppins', sans-serif;
+      padding: 2rem 1.5rem;
+      color: #eef4ff;
+    }
+
+    .game-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* header */
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeSlideDown 0.8s ease-out;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, #FFE6B0, #FFB347);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.01em;
+    }
+
+    /* country cards */
+    .countries-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .country-card {
+      background: rgba(18, 28, 40, 0.8);
+      backdrop-filter: blur(4px);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      flex: 1;
+      min-width: 240px;
+      border: 1px solid rgba(255, 200, 100, 0.3);
+      transition: all 0.3s ease;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+
+    .country-card:hover {
+      transform: translateY(-8px);
+      border-color: #ffb347;
+    }
+
+    .country-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      border-left: 5px solid #ffb347;
+      padding-left: 1rem;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin: 1rem 0;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #FFD966;
+    }
+
+    /* quiz arena */
+    .quiz-arena {
+      background: rgba(10, 20, 35, 0.7);
+      border-radius: 2rem;
+      padding: 2rem;
+      margin: 2.5rem 0;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 180, 70, 0.4);
+    }
+
+    .round-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .question-text {
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin: 1rem 0;
+      background: linear-gradient(120deg, #FFF2D9, #FFE2B5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .option-btn {
+      background: #1e2a3e;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #f0f3fa;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: #ffb347;
+      color: #0a0f1c;
+      transform: scale(1.02);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .next-btn {
+      background: #2c5f8a;
+      border: none;
+      padding: 0.7rem 2rem;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: 0.2s;
+    }
+
+    .next-btn:hover {
+      background: #ffb347;
+      color: #0a0f1c;
+    }
+
+    .feedback {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .green-glow {
+      background: rgba(40, 167, 69, 0.2);
+      box-shadow: 0 0 15px #2ecc71;
+      border-left: 8px solid #2ecc71;
+    }
+
+    .red-warning {
+      background: rgba(220, 53, 69, 0.2);
+      box-shadow: 0 0 12px #e74c3c;
+      border-left: 8px solid #e74c3c;
+      animation: shake 0.3s ease-in-out 0s 2;
+    }
+
+    @keyframes shake {
+      0%,100%{ transform: translateX(0);}
+      25%{ transform: translateX(-6px);}
+      75%{ transform: translateX(6px);}
+    }
+
+    .prison-bar {
+      position: relative;
+      overflow: hidden;
+    }
+    .prison-bar::after {
+      content: "🚫 INEFFICIENT POLICY 🚫";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(45deg, #c0392b, #c0392b 20px, #e67e22 20px, #e67e22 40px);
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      backdrop-filter: blur(2px);
+      animation: slidePrison 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    @keyframes slidePrison {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(0); }
+    }
+
+    .success-badge {
+      display: inline-block;
+      background: #f1c40f;
+      color: #1e2a3a;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    /* evidence tables */
+    .evidence-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .evidence-card {
+      background: #0f1a28;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid #2c3e4e;
+    }
+
+    .evidence-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #ffb347;
+      display: inline-block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #2d3e50;
+    }
+
+    th {
+      background: #1e2f3f;
+      color: #ffd966;
+    }
+
+    .chart-bar {
+      background: #2c3e50;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 0.6rem 0;
+    }
+    .bar-fill {
+      background: linear-gradient(90deg, #ffb347, #ff8c00);
+      padding: 0.4rem;
+      text-align: right;
+      padding-right: 10px;
+      color: white;
+      font-weight: bold;
+      border-radius: 12px;
+    }
+
+    /* calculator */
+    .calculator-card {
+      background: linear-gradient(135deg, #0f212f, #0a1522);
+      border-radius: 2rem;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 1px solid #ffb347;
+    }
+    .calc-input-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1rem 0;
+      align-items: center;
+    }
+    .calc-input-group input {
+      background: #1e2a3a;
+      border: 1px solid #3e5a6c;
+      padding: 0.7rem 1rem;
+      border-radius: 40px;
+      color: white;
+      font-size: 1rem;
+      width: 140px;
+    }
+    .calc-result {
+      background: #07121f;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      margin-top: 1rem;
+    }
+    .reflection {
+      background: #07121fcc;
+      border-radius: 2rem;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      opacity: 0.7;
+    }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-25px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    @media (max-width: 780px) {
+      body { padding: 1rem; }
+      .question-text { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="game-container">
+  <div class="hero">
+    <h1>⚖️ TRADE MINISTER CHALLENGE ⚔️</h1>
+    <p>Absolute vs Comparative Advantage | Strategic Resource Allocation</p>
+  </div>
+
+  <div class="countries-panel">
+    <div class="country-card">
+      <div class="country-name">🌾 Uzmara Steppe Union</div>
+      <div class="stats">⚙️ Storm-Iron / unit: <span class="stat-value">12</span></div>
+      <div class="stats">🌽 Sungrain / unit: <span class="stat-value">6</span></div>
+      <div style="font-size:0.85rem;">⚡ 1 resource unit = 1 labor-hour</div>
+    </div>
+    <div class="country-card">
+      <div class="country-name">🌹 Fleuronne Republic</div>
+      <div class="stats">⚙️ Storm-Iron / unit: <span class="stat-value">8</span></div>
+      <div class="stats">🌽 Sungrain / unit: <span class="stat-value">2</span></div>
+      <div style="font-size:0.85rem;">⚡ 1 resource unit = 1 labor-hour</div>
+    </div>
+  </div>
+
+  <!-- Quiz Game -->
+  <div class="quiz-arena" id="quizArena">
+    <div class="round-title">
+      <span>📜 TRADE DIRECTIVES</span>
+      <span id="roundCounter">Round 1/5</span>
+    </div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+    <div class="feedback" id="feedbackArea"></div>
+    <button id="nextRoundBtn" class="next-btn" style="display: none;">➡️ Next Round</button>
+  </div>
+
+  <!-- NEW INTERACTIVE CALCULATOR -->
+  <div class="calculator-card">
+    <h3>📐 Opportunity Cost Calculator (Custom Data)</h3>
+    <p>Enter production per resource unit for two countries. The calculator will determine Absolute & Comparative Advantage.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
+      <div style="flex:1; background:#0a121e; padding:1rem; border-radius:1rem;">
+        <h4>Country A</h4>
+        <div class="calc-input-group">
+          <label>Storm-Iron output:</label>
+          <input type="number" id="countryA_iron" value="12" step="1">
+        </div>
+        <div class="calc-input-group">
+          <label>Sungrain output:</label>
+          <input type="number" id="countryA_grain" value="6" step="1">
+        </div>
+      </div>
+      <div style="flex:1; background:#0a121e; padding:1rem; border-radius:1rem;">
+        <h4>Country B</h4>
+        <div class="calc-input-group">
+          <label>Storm-Iron output:</label>
+          <input type="number" id="countryB_iron" value="8" step="1">
+        </div>
+        <div class="calc-input-group">
+          <label>Sungrain output:</label>
+          <input type="number" id="countryB_grain" value="2" step="1">
+        </div>
+      </div>
+    </div>
+    <button id="calcBtn" style="background:#ffb347; border:none; padding:0.7rem 2rem; border-radius:60px; font-weight:bold; margin:1rem 0; cursor:pointer;">Analyze Trade Advantages</button>
+    <div id="calcOutput" class="calc-result">
+      💡 Click "Analyze" to see absolute advantage, opportunity costs, comparative advantage & specialization.
+    </div>
+  </div>
+
+  <!-- Evidence Tables & Visual Charts -->
+  <div class="evidence-section">
+    <div class="evidence-card">
+      <h3>📊 Evidence 1: Dataset</h3>
+      <table id="datasetTable">
+        <thead><tr><th>Country</th><th>Storm-Iron</th><th>Sungrain</th></tr></thead>
+        <tbody><tr><td>Uzmara Steppe Union</td><td>12</td><td>6</td></tr><tr><td>Fleuronne Republic</td><td>8</td><td>2</td></tr></tbody>
+      </table>
+      <div class="chart-bar"><div class="bar-fill" style="width: 100%;">Uzmara Iron:12</div></div>
+      <div class="chart-bar"><div class="bar-fill" style="width: 66%;">Fleuronne Iron:8</div></div>
+    </div>
+    <div class="evidence-card">
+      <h3>⚙️ Opportunity Cost</h3>
+      <p><strong>Uzmara:</strong> 1 Iron = 0.5 Grain, 1 Grain = 2 Iron</p>
+      <p><strong>Fleuronne:</strong> 1 Iron = 0.25 Grain, 1 Grain = 4 Iron</p>
+      <table><tr><th>Country</th><th>OC of 1 Iron</th><th>OC of 1 Grain</th></tr>
+      <tr><td>Uzmara</td><td>0.5 Sungrain</td><td>2 Iron</td></tr>
+      <tr><td>Fleuronne</td><td>0.25 Sungrain</td><td>4 Iron</td></tr></table>
+    </div>
+    <div class="evidence-card">
+      <h3>🏆 Absolute & Comparative</h3>
+      <p><strong>Absolute Advantage:</strong> Uzmara in both goods.</p>
+      <p><strong>Comparative Advantage:</strong> Fleuronne in Iron, Uzmara in Grain.</p>
+      <p><strong>Specialization:</strong> Uzmara → Sungrain, Fleuronne → Storm-Iron.</p>
+    </div>
+  </div>
+
+  <div class="reflection">
+    <h2>📚 What Did I Learn?</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+      <div style="flex:1"><strong>🌟 Knowledge:</strong><br>Absolute advantage vs comparative advantage, opportunity cost, specialization gains from trade.</div>
+      <div style="flex:1"><strong>⚡ Skills:</strong><br>Economic reasoning, opportunity cost calculation, data analysis, strategic decision-making.</div>
+      <div style="flex:1"><strong>💡 Reflection:</strong><br>Comparative advantage drives mutual trade benefits even if one country is absolutely better at both. Specialization increases global output.</div>
+    </div>
+  </div>
+  <footer>🏛️ Ministry of Trade | Strategy Simulation</footer>
+</div>
+
+<script>
+  // ----- ORIGINAL DATA & QUIZ LOGIC (fixed manual next & scoring)-----
+  const countriesData = {
+    Uzmara: { iron: 12, grain: 6, name: "Uzmara Steppe Union" },
+    Fleuronne: { iron: 8, grain: 2, name: "Fleuronne Republic" }
+  };
+
+  const rounds = [
+    { question: "Which country has the ABSOLUTE ADVANTAGE in Storm-Iron?", correct: "Uzmara Steppe Union", explanation: "Uzmara produces 12 > 8 per resource unit → Absolute Advantage." },
+    { question: "Which country has the ABSOLUTE ADVANTAGE in Sungrain?", correct: "Uzmara Steppe Union", explanation: "Uzmara produces 6 > 2 → Absolute Advantage in Sungrain." },
+    { question: "Which country has the COMPARATIVE ADVANTAGE in Storm-Iron?", correct: "Fleuronne Republic", explanation: "OC Iron: Uzmara 0.5 Grain, Fleuronne 0.25 Grain → Lower OC = Comparative Advantage." },
+    { question: "Which country has the COMPARATIVE ADVANTAGE in Sungrain?", correct: "Uzmara Steppe Union", explanation: "OC Grain: Uzmara 2 Iron, Fleuronne 4 Iron → Uzmara has lower OC." },
+    { question: "Based on Comparative Advantage, what should EACH country specialize in?", correct: "Uzmara: Sungrain, Fleuronne: Storm-Iron", explanation: "Uzmara lower OC in Grain, Fleuronne lower OC in Iron → Specialization maximizes output." }
+  ];
+
+  let currentRound = 0;
+  let quizLocked = false;     // after answer, disable options until next round
+  let userScore = 0;
+  let quizCompleted = false;
+
+  const questionEl = document.getElementById("questionText");
+  const optionsContainer = document.getElementById("optionsContainer");
+  const feedbackArea = document.getElementById("feedbackArea");
+  const roundCounterSpan = document.getElementById("roundCounter");
+  const nextBtn = document.getElementById("nextRoundBtn");
+
+  function startConfetti() {
+    const canvas = document.createElement("canvas");
+    canvas.style.position = "fixed";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.pointerEvents = "none";
+    canvas.style.zIndex = "9999";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 150; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 8 + 3,
+        speedY: Math.random() * 5 + 6,
+        speedX: (Math.random() - 0.5) * 3,
+        color: `hsl(${Math.random() * 360}, 80%, 60%)`,
+      });
+    }
+    let anim = true;
+    function draw() {
+      if (!anim) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let active = false;
+      for (let p of particles) {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        if (p.y < canvas.height + 50) active = true;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size * 0.6);
+      }
+      if (active) requestAnimationFrame(draw);
+      else { if (document.body.contains(canvas)) document.body.removeChild(canvas); anim = false; }
+    }
+    draw();
+    setTimeout(() => { if (anim && document.body.contains(canvas)) document.body.removeChild(canvas); anim = false; }, 2500);
+  }
+
+  function clearEffects() {
+    feedbackArea.classList.remove("green-glow", "red-warning", "prison-bar");
+  }
+
+  function displayFeedback(isCorrect, explanation, userAnswerRaw) {
+    clearEffects();
+    if (isCorrect) {
+      feedbackArea.classList.add("green-glow");
+      feedbackArea.innerHTML = `<div class="success-badge">✨ CORRECT ✨</div><span style="font-size:1.2rem;">🎉 Excellent Trade Minister! 🎉</span><br>${explanation}`;
+      startConfetti();
+    } else {
+      feedbackArea.classList.add("red-warning", "prison-bar");
+      feedbackArea.innerHTML = `<span style="font-weight:bold;color:#ffaaaa;">❌ INEFFICIENT TRADE POLICY DETECTED ❌</span><br>${explanation}<br><span style="font-style:italic;">Your answer: ${userAnswerRaw}</span>`;
+      setTimeout(() => { if (feedbackArea.classList.contains("prison-bar")) feedbackArea.classList.remove("prison-bar"); }, 1500);
+    }
+  }
+
+  function disableOptions(disabled) {
+    const btns = document.querySelectorAll(".option-btn");
+    btns.forEach(btn => btn.disabled = disabled);
+  }
+
+  function handleAnswer(selected, roundIdx) {
+    if (quizLocked || quizCompleted) return;
+    const round = rounds[roundIdx];
+    let isCorrect = false;
+    if (roundIdx === 4) {
+      if (selected === "Uzmara: Sungrain, Fleuronne: Storm-Iron") isCorrect = true;
+    } else {
+      if (selected === round.correct) isCorrect = true;
+    }
+    if (isCorrect) userScore++;
+    displayFeedback(isCorrect, round.explanation, selected);
+    quizLocked = true;
+    disableOptions(true);
+    nextBtn.style.display = "inline-block";
+  }
+
+  function loadRound(index) {
+    if (index >= rounds.length) {
+      // game finished, show final result
+      quizCompleted = true;
+      questionEl.innerText = "🏁 Challenge Complete! 🏁";
+      optionsContainer.innerHTML = "";
+      let percent = (userScore / rounds.length) * 100;
+      let gradeMsg = "";
+      if (percent === 100) gradeMsg = "⭐ Perfect! Flawless trade strategy! ⭐";
+      else if (percent >= 80) gradeMsg = "🌟 Great Minister! Strong economic insight! 🌟";
+      else if (percent >= 60) gradeMsg = "📈 Good effort, but review opportunity costs! 📈";
+      else gradeMsg = "⚠️ Trade policies need revision. Review comparative advantage! ⚠️";
+      feedbackArea.innerHTML = `<div style="background:#1f2f3f; padding:1rem; border-radius:1rem; text-align:center;">
+        <h3>Your Score: ${userScore} / ${rounds.length}</h3>
+        <p>${gradeMsg}</p>
+        <button onclick="location.reload();" style="background:#ffb347; border:none; padding:0.5rem 1.5rem; border-radius:40px; margin-top:0.5rem;">🔄 Play Again</button>
+      </div>`;
+      nextBtn.style.display = "none";
+      roundCounterSpan.innerText = `Completed`;
+      return;
+    }
+    const round = rounds[index];
+    questionEl.innerText = round.question;
+    roundCounterSpan.innerText = `Round ${index+1}/${rounds.length}`;
+    optionsContainer.innerHTML = "";
+    feedbackArea.innerHTML = "";
+    clearEffects();
+    quizLocked = false;
+    disableOptions(false);
+    nextBtn.style.display = "none";
+
+    if (index === 4) {
+      const opts = ["Uzmara: Sungrain, Fleuronne: Storm-Iron", "Uzmara: Storm-Iron, Fleuronne: Sungrain", "Both specialize in Storm-Iron", "Both specialize in Sungrain"];
+      opts.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.classList.add("option-btn");
+        btn.addEventListener("click", () => handleAnswer(opt, index));
+        optionsContainer.appendChild(btn);
+      });
+    } else {
+      ["Uzmara Steppe Union", "Fleuronne Republic"].forEach(ans => {
+        const btn = document.createElement("button");
+        btn.innerText = ans;
+        btn.classList.add("option-btn");
+        btn.addEventListener("click", () => handleAnswer(ans, index));
+        optionsContainer.appendChild(btn);
+      });
+    }
+  }
+
+  nextBtn.addEventListener("click", () => {
+    if (quizLocked || quizCompleted) {
+      currentRound++;
+      loadRound(currentRound);
+    }
+  });
+
+  loadRound(0);
+
+  // ----- INTERACTIVE CALCULATOR (dynamic) -----
+  const calcBtn = document.getElementById("calcBtn");
+  const calcOutput = document.getElementById("calcOutput");
+
+  function computeAdvantages(ironA, grainA, ironB, grainB, nameA = "Country A", nameB = "Country B") {
+    if (ironA <= 0 || grainA <= 0 || ironB <= 0 || grainB <= 0) return "⚠️ Please enter positive numbers for production.";
+    // absolute advantage
+    const absIron = ironA > ironB ? nameA : (ironB > ironA ? nameB : "Equal");
+    const absGrain = grainA > grainB ? nameA : (grainB > grainA ? nameB : "Equal");
+    // opportunity costs
+    const ocAIron = grainA / ironA;    // grain per iron
+    const ocAGrain = ironA / grainA;
+    const ocBIron = grainB / ironB;
+    const ocBGrain = ironB / grainB;
+    // comparative: lower oc in iron
+    let compIron = ocAIron < ocBIron ? nameA : (ocBIron < ocAIron ? nameB : "Equal");
+    let compGrain = ocAGrain < ocBGrain ? nameA : (ocBGrain < ocAGrain ? nameB : "Equal");
+    let specA = "", specB = "";
+    if (compIron === nameA && compGrain === nameB) { specA = "Iron"; specB = "Grain"; }
+    else if (compIron === nameB && compGrain === nameA) { specA = "Grain"; specB = "Iron"; }
+    else if (compIron === nameA && compGrain === nameA) specA = "Both (but identical OC?)"; 
+    else if (compIron === nameB && compGrain === nameB) specB = "Both";
+    else { specA = "Check data"; specB = "Check data"; }
+    
+    return `
+      <strong>📊 Absolute Advantage:</strong><br>
+      • Storm-Iron: ${absIron}<br>
+      • Sungrain: ${absGrain}<br><br>
+      <strong>⚙️ Opportunity Cost (per 1 unit):</strong><br>
+      ${nameA}: 1 Iron = ${ocAIron.toFixed(2)} Grain, 1 Grain = ${ocAGrain.toFixed(2)} Iron<br>
+      ${nameB}: 1 Iron = ${ocBIron.toFixed(2)} Grain, 1 Grain = ${ocBGrain.toFixed(2)} Iron<br><br>
+      <strong>🏆 Comparative Advantage:</strong><br>
+      • Storm-Iron: ${compIron} (lower opportunity cost)<br>
+      • Sungrain: ${compGrain}<br><br>
+      <strong>🤝 Specialization Recommendation:</strong><br>
+      ${nameA} should specialize in ${specA} | ${nameB} should specialize in ${specB}<br>
+      <em>Why? Countries gain by producing goods where they have lower opportunity cost.</em>
+    `;
+  }
+
+  calcBtn.addEventListener("click", () => {
+    let ironA = parseFloat(document.getElementById("countryA_iron").value);
+    let grainA = parseFloat(document.getElementById("countryA_grain").value);
+    let ironB = parseFloat(document.getElementById("countryB_iron").value);
+    let grainB = parseFloat(document.getElementById("countryB_grain").value);
+    if (isNaN(ironA) || isNaN(grainA) || isNaN(ironB) || isNaN(grainB)) {
+      calcOutput.innerHTML = "❌ Please enter valid numeric values.";
+      return;
+    }
+    const resultHtml = computeAdvantages(ironA, grainA, ironB, grainB, "Country A", "Country B");
+    calcOutput.innerHTML = resultHtml;
+  });
+
+  // initial calculator load
+  setTimeout(() => {
+    document.getElementById("calcBtn").click();
+  }, 100);
+</script>
+</body>
+</html>
