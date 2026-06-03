@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdurakhmon | International Trade Portfolio</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#050816;
+    color:white;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow-x:hidden;
+}
+
+/* animated gradient noise */
+
+.background{
+    position:fixed;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index:-10;
+}
+
+.blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:0.5;
+    animation:move 12s infinite alternate ease-in-out;
+}
+
+.blob1{
+    width:500px;
+    height:500px;
+    background:#0048ff;
+    top:-100px;
+    left:-100px;
+}
+
+.blob2{
+    width:400px;
+    height:400px;
+    background:#ff00aa;
+    right:-100px;
+    top:200px;
+}
+
+.blob3{
+    width:350px;
+    height:350px;
+    background:#00ffc8;
+    bottom:-100px;
+    left:40%;
+}
+
+@keyframes move{
+    from{
+        transform:translateY(0px) translateX(0px);
+    }
+    to{
+        transform:translateY(60px) translateX(40px);
+    }
+}
+
+/* HERO */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:50px;
+    position:relative;
+}
+
+.hero-box{
+    width:100%;
+    max-width:1200px;
+    display:grid;
+    grid-template-columns:1fr 400px;
+    gap:40px;
+    align-items:center;
+}
+
+.left h1{
+    font-size:90px;
+    line-height:0.95;
+    font-weight:900;
+    text-transform:uppercase;
+    background:linear-gradient(to right,#ffffff,#6ee7ff,#ff69f8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.left p{
+    margin-top:30px;
+    font-size:22px;
+    line-height:1.8;
+    color:#d4d4d4;
+    max-width:700px;
+}
+
+.tag{
+    margin-top:25px;
+    display:inline-block;
+    padding:12px 22px;
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:100px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+    font-size:15px;
+    letter-spacing:2px;
+}
+
+.right{
+    position:relative;
+    height:500px;
+}
+
+.circle{
+    position:absolute;
+    width:100%;
+    height:100%;
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:50%;
+    animation:spin 20s linear infinite;
+}
+
+.circle:nth-child(2){
+    width:80%;
+    height:80%;
+    top:10%;
+    left:10%;
+    animation-direction:reverse;
+}
+
+.circle:nth-child(3){
+    width:60%;
+    height:60%;
+    top:20%;
+    left:20%;
+}
+
+@keyframes spin{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.center-text{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+.center-text h2{
+    font-size:70px;
+    color:white;
+}
+
+.center-text span{
+    color:#6ee7ff;
+}
+
+/* PROJECT SECTION */
+
+.projects{
+    padding:120px 7%;
+}
+
+.section-title{
+    font-size:70px;
+    margin-bottom:60px;
+    text-transform:uppercase;
+    line-height:1;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
+.card{
+    position:relative;
+    min-height:280px;
+    border-radius:30px;
+    overflow:hidden;
+    padding:30px;
+    transition:0.5s;
+    cursor:pointer;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.card:hover{
+    transform:translateY(-12px) rotate(-1deg);
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    background:linear-gradient(45deg,#00c3ff,#ff00c8);
+    border-radius:50%;
+    top:-120px;
+    right:-120px;
+    opacity:0.2;
+}
+
+.number{
+    font-size:90px;
+    font-weight:900;
+    opacity:0.08;
+    position:absolute;
+    bottom:-10px;
+    right:20px;
+}
+
+.card h3{
+    font-size:35px;
+    margin-bottom:20px;
+    position:relative;
+    z-index:2;
+}
+
+.card p{
+    color:#d4d4d4;
+    line-height:1.7;
+    position:relative;
+    z-index:2;
+}
+
+.card a{
+    display:inline-block;
+    margin-top:25px;
+    color:white;
+    text-decoration:none;
+    padding:12px 22px;
+    border-radius:12px;
+    background:linear-gradient(to right,#00c3ff,#0051ff);
+    transition:0.3s;
+    position:relative;
+    z-index:2;
+}
+
+.card a:hover{
+    transform:scale(1.05);
+}
+
+/* footer */
+
+footer{
+    padding:60px;
+    text-align:center;
+    color:#9ca3af;
+    font-size:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="background">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+</div>
+
+<section class="hero">
+
+```
+<div class="hero-box">
+
+    <div class="left">
+
+        <h1>
+            I Trade<br>
+            Portfolio
+        </h1>
+
+        <p>
+            Hello, my name is Abdurakhmon.
+            I’m a junior student at Dong-A University,
+            and this is my International Trade class portfolio.
+        </p>
+
+        <div class="tag">
+            PROFESSOR JOSHUA DEAN 
+        </div>
+
+    </div>
+
+    <div class="right">
+
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+
+        <div class="center-text">
+            <h2>5<span>+</span></h2>
+            <p>Projects</p>
+        </div>
+
+    </div>
+
+</div>
+```
+
+</section>
+
+<section class="projects">
+
+```
+<h2 class="section-title">
+    My Projects
+</h2>
+
+<div class="grid">
+
+    <!-- PROJECT 1 -->
+
+    <div class="card">
+
+        <h3>Project One</h3>
+
+        <p>
+            Replace this with your actual project description and project link.
+        </p>
+
+        <a href="#">View Project</a>
+
+        <div class="number">01</div>
+
+    </div>
+
+    <!-- PROJECT 2 -->
+
+    <div class="card">
+
+        <h3>Project Two</h3>
+
+        <p>
+            Add your second International Trade project here.
+        </p>
+
+        <a href="#">View Project</a>
+
+        <div class="number">02</div>
+
+    </div>
+
+    <!-- PROJECT 3 -->
+
+    <div class="card">
+
+        <h3>Project Three</h3>
+
+        <p>
+            Replace this text with your project information.
+        </p>
+
+        <a href="#">View Project</a>
+
+        <div class="number">03</div>
+
+    </div>
+
+    <!-- PROJECT 4 -->
+
+    <div class="card">
+
+        <h3>Project Four</h3>
+
+        <p>
+            Put your actual project title and website link here.
+        </p>
+
+        <a href="#">View Project</a>
+
+        <div class="number">04</div>
+
+    </div>
+
+    <!-- PROJECT 5 -->
+
+    <div class="card">
+
+        <h3>Project Five</h3>
+
+        <p>
+            Final project placeholder for your portfolio website.
+        </p>
+
+        <a href="#">View Project</a>
+
+        <div class="number">05</div>
+
+    </div>
+
+</div>
+```
+
+</section>
+
+<footer>
+    International Trade Portfolio • Abdurakhmon • Dong-A University
+</footer>
+
+</body>
+</html>
