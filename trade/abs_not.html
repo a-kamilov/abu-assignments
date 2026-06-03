@@ -26,7 +26,7 @@
     /* header */
     .hero {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
       animation: fadeSlideDown 0.8s ease-out;
     }
 
@@ -37,6 +37,58 @@
       background-clip: text;
       color: transparent;
       letter-spacing: -0.01em;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.85;
+      margin-top: 0.6rem;
+    }
+
+    /* INTRO LESSON CARD */
+    .intro-lesson {
+      background: rgba(15, 30, 45, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(255, 180, 70, 0.5);
+      transition: 0.2s;
+    }
+
+    .intro-lesson h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      border-left: 6px solid #ffb347;
+      padding-left: 1rem;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+
+    .concept-card {
+      background: #0f1a28cc;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      border-bottom: 2px solid #ffb347;
+    }
+
+    .concept-card strong {
+      color: #FFD966;
+      font-size: 1.2rem;
+    }
+
+    .classroom-note {
+      background: #1e2f3f;
+      border-radius: 1rem;
+      padding: 0.8rem 1.2rem;
+      margin-top: 1rem;
+      text-align: center;
+      font-style: italic;
     }
 
     /* country cards */
@@ -342,25 +394,62 @@
     <p>Absolute vs Comparative Advantage | Strategic Resource Allocation</p>
   </div>
 
+  <!-- NEW: Detailed Explanation & Classroom Context -->
+  <div class="intro-lesson">
+    <h2>📖 Understanding the Foundations of Trade</h2>
+    <p style="margin-bottom: 1rem;">Before making strategic trade decisions, every Minister must master these core economic principles. The data below is taken directly from our <strong>classroom Google Sheets activity</strong> about two nations and their production capabilities.</p>
+    
+    <div class="concept-grid">
+      <div class="concept-card">
+        <strong>📦 Resource Unit</strong><br>
+        The basic input (like labor hours) needed to produce goods. Both countries have identical resource units.
+      </div>
+      <div class="concept-card">
+        <strong>⚡ Absolute Advantage</strong><br>
+        Producing <strong>more</strong> of a good using the same resources. Higher output → Absolute Advantage.
+      </div>
+      <div class="concept-card">
+        <strong>🔄 Opportunity Cost</strong><br>
+        What you give up to produce one more unit of something else. Formula: (Loss in good B) / (Gain in good A).
+      </div>
+      <div class="concept-card">
+        <strong>📉 Comparative Advantage</strong><br>
+        Producing a good at a <strong>lower opportunity cost</strong> than another country. The key driver of beneficial trade.
+      </div>
+      <div class="concept-card">
+        <strong>🎯 Specialization</strong><br>
+        Focusing resources on the good where a country has comparative advantage → increases total global output.
+      </div>
+      <div class="concept-card">
+        <strong>📈 Production Possibility Frontier (PPF)</strong><br>
+        Max possible production combinations. Trade allows consumption beyond the PPF.
+      </div>
+    </div>
+    <div class="classroom-note">
+      🧑‍🏫 <strong>Classroom Data Reference:</strong> This simulation is based on the original Google Sheets worksheet "Comparative & Absolute Advantage Lab". The following production numbers represent real outputs per resource unit from the Uzmara Steppe Union and Fleuronne Republic.
+    </div>
+  </div>
+
+  <!-- Country Cards -->
   <div class="countries-panel">
     <div class="country-card">
       <div class="country-name">🌾 Uzmara Steppe Union</div>
       <div class="stats">⚙️ Storm-Iron / unit: <span class="stat-value">12</span></div>
       <div class="stats">🌽 Sungrain / unit: <span class="stat-value">6</span></div>
-      <div style="font-size:0.85rem;">⚡ 1 resource unit = 1 labor-hour</div>
+      <div style="font-size:0.85rem;">⚡ 1 resource unit = 1 labor-hour equivalent</div>
     </div>
     <div class="country-card">
       <div class="country-name">🌹 Fleuronne Republic</div>
       <div class="stats">⚙️ Storm-Iron / unit: <span class="stat-value">8</span></div>
       <div class="stats">🌽 Sungrain / unit: <span class="stat-value">2</span></div>
-      <div style="font-size:0.85rem;">⚡ 1 resource unit = 1 labor-hour</div>
+      <div style="font-size:0.85rem;">⚡ 1 resource unit = 1 labor-hour equivalent</div>
     </div>
   </div>
 
   <!-- Quiz Game -->
   <div class="quiz-arena" id="quizArena">
     <div class="round-title">
-      <span>📜 TRADE DIRECTIVES</span>
+      <span>📜 TRADE DIRECTIVES (Minister Exam)</span>
       <span id="roundCounter">Round 1/5</span>
     </div>
     <div class="question-text" id="questionText"></div>
@@ -369,10 +458,10 @@
     <button id="nextRoundBtn" class="next-btn" style="display: none;">➡️ Next Round</button>
   </div>
 
-  <!-- NEW INTERACTIVE CALCULATOR -->
+  <!-- INTERACTIVE CALCULATOR -->
   <div class="calculator-card">
     <h3>📐 Opportunity Cost Calculator (Custom Data)</h3>
-    <p>Enter production per resource unit for two countries. The calculator will determine Absolute & Comparative Advantage.</p>
+    <p>Enter any production values per resource unit. The calculator will reveal Absolute Advantage, Opportunity Costs, Comparative Advantage, and Specialization recommendations.</p>
     <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
       <div style="flex:1; background:#0a121e; padding:1rem; border-radius:1rem;">
         <h4>Country A</h4>
@@ -403,61 +492,79 @@
     </div>
   </div>
 
-  <!-- Evidence Tables & Visual Charts -->
+  <!-- Evidence Tables & Visual Charts (Classroom Worksheet recreation) -->
   <div class="evidence-section">
     <div class="evidence-card">
-      <h3>📊 Evidence 1: Dataset</h3>
+      <h3>📊 Evidence Table 1: Original Dataset (Worksheet)</h3>
       <table id="datasetTable">
         <thead><tr><th>Country</th><th>Storm-Iron</th><th>Sungrain</th></tr></thead>
-        <tbody><tr><td>Uzmara Steppe Union</td><td>12</td><td>6</td></tr><tr><td>Fleuronne Republic</td><td>8</td><td>2</td></tr></tbody>
+        <tbody><tr><td>Uzmara Steppe Union</td><td>12</td><td>6</td></tr>
+          <tr><td>Fleuronne Republic</td><td>8</td><td>2</td></tr>
+        </tbody>
       </table>
       <div class="chart-bar"><div class="bar-fill" style="width: 100%;">Uzmara Iron:12</div></div>
       <div class="chart-bar"><div class="bar-fill" style="width: 66%;">Fleuronne Iron:8</div></div>
+      <div class="chart-bar"><div class="bar-fill" style="width: 100%;">Uzmara Grain:6</div></div>
+      <div class="chart-bar"><div class="bar-fill" style="width: 33%;">Fleuronne Grain:2</div></div>
     </div>
     <div class="evidence-card">
-      <h3>⚙️ Opportunity Cost</h3>
-      <p><strong>Uzmara:</strong> 1 Iron = 0.5 Grain, 1 Grain = 2 Iron</p>
-      <p><strong>Fleuronne:</strong> 1 Iron = 0.25 Grain, 1 Grain = 4 Iron</p>
-      <table><tr><th>Country</th><th>OC of 1 Iron</th><th>OC of 1 Grain</th></tr>
-      <tr><td>Uzmara</td><td>0.5 Sungrain</td><td>2 Iron</td></tr>
-      <tr><td>Fleuronne</td><td>0.25 Sungrain</td><td>4 Iron</td></tr></table>
+      <h3>⚙️ Evidence Table 2: Opportunity Cost Calculations</h3>
+      <p><strong>Step-by-step:</strong> Uzmara: 12 Iron OR 6 Grain → 1 Iron = 6/12 = 0.5 Grain; 1 Grain = 12/6 = 2 Iron.<br>
+      Fleuronne: 8 Iron OR 2 Grain → 1 Iron = 2/8 = 0.25 Grain; 1 Grain = 8/2 = 4 Iron.</p>
+      <table>
+        <tr><th>Country</th><th>OC of 1 Storm-Iron</th><th>OC of 1 Sungrain</th></tr>
+        <tr><td>Uzmara</td><td>0.5 Sungrain</td><td>2 Iron</td></tr>
+        <tr><td>Fleuronne</td><td>0.25 Sungrain</td><td>4 Iron</td></tr>
+      </table>
     </div>
     <div class="evidence-card">
-      <h3>🏆 Absolute & Comparative</h3>
-      <p><strong>Absolute Advantage:</strong> Uzmara in both goods.</p>
-      <p><strong>Comparative Advantage:</strong> Fleuronne in Iron, Uzmara in Grain.</p>
-      <p><strong>Specialization:</strong> Uzmara → Sungrain, Fleuronne → Storm-Iron.</p>
+      <h3>🏆 Evidence Table 3: Absolute Advantage Results</h3>
+      <table><tr><th>Good</th><th>Absolute Advantage</th></tr>
+        <tr><td>Storm-Iron</td><td>Uzmara (12 > 8)</td></tr>
+        <tr><td>Sungrain</td><td>Uzmara (6 > 2)</td></tr>
+      </table>
+      <p>✅ Uzmara holds absolute advantage in BOTH goods.</p>
+    </div>
+    <div class="evidence-card">
+      <h3>📈 Evidence Table 4: Comparative Advantage Results</h3>
+      <table><tr><th>Product</th><th>Lower OC → Comparative Advantage</th></tr>
+        <tr><td>Storm-Iron</td><td>Fleuronne (0.25 Grain vs 0.5 Grain)</td></tr>
+        <tr><td>Sungrain</td><td>Uzmara (2 Iron vs 4 Iron)</td></tr>
+      </table>
+    </div>
+    <div class="evidence-card">
+      <h3>🤝 Evidence Table 5: Specialization Recommendation</h3>
+      <table><tr><th>Country</th><th>Specialize in</th><th>Why?</th></tr>
+        <tr><td>Uzmara Steppe Union</td><td>Sungrain 🌾</td><td>Lower OC in Sungrain (2 Iron)</td></tr>
+        <tr><td>Fleuronne Republic</td><td>Storm-Iron ⚙️</td><td>Lower OC in Iron (0.25 Grain)</td></tr>
+      </table>
+      <p>💡 Specialization based on comparative advantage increases total output for both nations.</p>
     </div>
   </div>
 
   <div class="reflection">
-    <h2>📚 What Did I Learn?</h2>
+    <h2>📚 What Did I Learn? (Minister’s Reflection)</h2>
     <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
-      <div style="flex:1"><strong>🌟 Knowledge:</strong><br>Absolute advantage vs comparative advantage, opportunity cost, specialization gains from trade.</div>
-      <div style="flex:1"><strong>⚡ Skills:</strong><br>Economic reasoning, opportunity cost calculation, data analysis, strategic decision-making.</div>
-      <div style="flex:1"><strong>💡 Reflection:</strong><br>Comparative advantage drives mutual trade benefits even if one country is absolutely better at both. Specialization increases global output.</div>
+      <div style="flex:1"><strong>🌟 Knowledge:</strong><br>Absolute advantage measures raw productivity, but comparative advantage (opportunity cost) is the true engine of trade. Countries can benefit even if one is absolutely better at everything.</div>
+      <div style="flex:1"><strong>⚡ Skills:</strong><br>Economic analysis, opportunity cost calculation, interpreting production tables, strategic decision-making, and applying spreadsheet logic to real-world trade.</div>
+      <div style="flex:1"><strong>💡 Reflection:</strong><br>Comparative advantage is more important than absolute advantage because it reveals mutual gains from specialization. Even if Uzmara dominates both sectors, trade based on comparative advantage allows both countries to consume beyond their own production possibilities.</div>
     </div>
   </div>
-  <footer>🏛️ Ministry of Trade | Strategy Simulation</footer>
+  <footer>🏛️ Based on Google Sheets Classroom Activity | Trade Ministry Simulation</footer>
 </div>
 
 <script>
   // ----- ORIGINAL DATA & QUIZ LOGIC (fixed manual next & scoring)-----
-  const countriesData = {
-    Uzmara: { iron: 12, grain: 6, name: "Uzmara Steppe Union" },
-    Fleuronne: { iron: 8, grain: 2, name: "Fleuronne Republic" }
-  };
-
   const rounds = [
-    { question: "Which country has the ABSOLUTE ADVANTAGE in Storm-Iron?", correct: "Uzmara Steppe Union", explanation: "Uzmara produces 12 > 8 per resource unit → Absolute Advantage." },
-    { question: "Which country has the ABSOLUTE ADVANTAGE in Sungrain?", correct: "Uzmara Steppe Union", explanation: "Uzmara produces 6 > 2 → Absolute Advantage in Sungrain." },
-    { question: "Which country has the COMPARATIVE ADVANTAGE in Storm-Iron?", correct: "Fleuronne Republic", explanation: "OC Iron: Uzmara 0.5 Grain, Fleuronne 0.25 Grain → Lower OC = Comparative Advantage." },
-    { question: "Which country has the COMPARATIVE ADVANTAGE in Sungrain?", correct: "Uzmara Steppe Union", explanation: "OC Grain: Uzmara 2 Iron, Fleuronne 4 Iron → Uzmara has lower OC." },
-    { question: "Based on Comparative Advantage, what should EACH country specialize in?", correct: "Uzmara: Sungrain, Fleuronne: Storm-Iron", explanation: "Uzmara lower OC in Grain, Fleuronne lower OC in Iron → Specialization maximizes output." }
+    { question: "Which country has the ABSOLUTE ADVANTAGE in Storm-Iron?", correct: "Uzmara Steppe Union", explanation: "Uzmara produces 12 units per resource unit, Fleuronne 8 → Uzmara is more productive. Absolute advantage = higher output with same resources." },
+    { question: "Which country has the ABSOLUTE ADVANTAGE in Sungrain?", correct: "Uzmara Steppe Union", explanation: "Uzmara produces 6 Sungrain, Fleuronne only 2 → Uzmara's productivity is higher in grain as well." },
+    { question: "Which country has the COMPARATIVE ADVANTAGE in Storm-Iron?", correct: "Fleuronne Republic", explanation: "Opportunity Cost of 1 Iron: Uzmara = 0.5 Grain, Fleuronne = 0.25 Grain. Lower OC = Comparative Advantage → Fleuronne excels in Iron production." },
+    { question: "Which country has the COMPARATIVE ADVANTAGE in Sungrain?", correct: "Uzmara Steppe Union", explanation: "OC of 1 Grain: Uzmara = 2 Iron, Fleuronne = 4 Iron. Uzmara gives up less Iron → Comparative advantage in Sungrain." },
+    { question: "Based on Comparative Advantage, what should EACH country specialize in?", correct: "Uzmara: Sungrain, Fleuronne: Storm-Iron", explanation: "Uzmara has lower OC in Grain (2 Iron), Fleuronne lower OC in Iron (0.25 Grain). Specialization boosts global efficiency." }
   ];
 
   let currentRound = 0;
-  let quizLocked = false;     // after answer, disable options until next round
+  let quizLocked = false;
   let userScore = 0;
   let quizCompleted = false;
 
@@ -550,23 +657,22 @@
 
   function loadRound(index) {
     if (index >= rounds.length) {
-      // game finished, show final result
       quizCompleted = true;
       questionEl.innerText = "🏁 Challenge Complete! 🏁";
       optionsContainer.innerHTML = "";
       let percent = (userScore / rounds.length) * 100;
       let gradeMsg = "";
-      if (percent === 100) gradeMsg = "⭐ Perfect! Flawless trade strategy! ⭐";
-      else if (percent >= 80) gradeMsg = "🌟 Great Minister! Strong economic insight! 🌟";
+      if (percent === 100) gradeMsg = "⭐ Perfect! Flawless trade strategy! You are a true Minister! ⭐";
+      else if (percent >= 80) gradeMsg = "🌟 Great Minister! Strong economic insight! Keep refining. 🌟";
       else if (percent >= 60) gradeMsg = "📈 Good effort, but review opportunity costs! 📈";
-      else gradeMsg = "⚠️ Trade policies need revision. Review comparative advantage! ⚠️";
+      else gradeMsg = "⚠️ Trade policies need revision. Review comparative advantage & try again! ⚠️";
       feedbackArea.innerHTML = `<div style="background:#1f2f3f; padding:1rem; border-radius:1rem; text-align:center;">
-        <h3>Your Score: ${userScore} / ${rounds.length}</h3>
+        <h3>Your Final Score: ${userScore} / ${rounds.length}</h3>
         <p>${gradeMsg}</p>
-        <button onclick="location.reload();" style="background:#ffb347; border:none; padding:0.5rem 1.5rem; border-radius:40px; margin-top:0.5rem;">🔄 Play Again</button>
+        <button onclick="location.reload();" style="background:#ffb347; border:none; padding:0.5rem 1.5rem; border-radius:40px; margin-top:0.5rem; cursor:pointer;">🔄 Restart Challenge</button>
       </div>`;
       nextBtn.style.display = "none";
-      roundCounterSpan.innerText = `Completed`;
+      roundCounterSpan.innerText = `Final Score: ${userScore}/${rounds.length}`;
       return;
     }
     const round = rounds[index];
@@ -608,29 +714,25 @@
 
   loadRound(0);
 
-  // ----- INTERACTIVE CALCULATOR (dynamic) -----
+  // ----- INTERACTIVE CALCULATOR -----
   const calcBtn = document.getElementById("calcBtn");
-  const calcOutput = document.getElementById("calcOutput");
+  const calcOutputDiv = document.getElementById("calcOutput");
 
   function computeAdvantages(ironA, grainA, ironB, grainB, nameA = "Country A", nameB = "Country B") {
     if (ironA <= 0 || grainA <= 0 || ironB <= 0 || grainB <= 0) return "⚠️ Please enter positive numbers for production.";
-    // absolute advantage
     const absIron = ironA > ironB ? nameA : (ironB > ironA ? nameB : "Equal");
     const absGrain = grainA > grainB ? nameA : (grainB > grainA ? nameB : "Equal");
-    // opportunity costs
-    const ocAIron = grainA / ironA;    // grain per iron
+    const ocAIron = grainA / ironA;
     const ocAGrain = ironA / grainA;
     const ocBIron = grainB / ironB;
     const ocBGrain = ironB / grainB;
-    // comparative: lower oc in iron
     let compIron = ocAIron < ocBIron ? nameA : (ocBIron < ocAIron ? nameB : "Equal");
     let compGrain = ocAGrain < ocBGrain ? nameA : (ocBGrain < ocAGrain ? nameB : "Equal");
     let specA = "", specB = "";
     if (compIron === nameA && compGrain === nameB) { specA = "Iron"; specB = "Grain"; }
     else if (compIron === nameB && compGrain === nameA) { specA = "Grain"; specB = "Iron"; }
-    else if (compIron === nameA && compGrain === nameA) specA = "Both (but identical OC?)"; 
-    else if (compIron === nameB && compGrain === nameB) specB = "Both";
-    else { specA = "Check data"; specB = "Check data"; }
+    else if (compIron === nameA && compGrain === nameA) specA = "Both (identical pattern)";
+    else { specA = "Analyze again"; specB = "Analyze again"; }
     
     return `
       <strong>📊 Absolute Advantage:</strong><br>
@@ -640,11 +742,11 @@
       ${nameA}: 1 Iron = ${ocAIron.toFixed(2)} Grain, 1 Grain = ${ocAGrain.toFixed(2)} Iron<br>
       ${nameB}: 1 Iron = ${ocBIron.toFixed(2)} Grain, 1 Grain = ${ocBGrain.toFixed(2)} Iron<br><br>
       <strong>🏆 Comparative Advantage:</strong><br>
-      • Storm-Iron: ${compIron} (lower opportunity cost)<br>
+      • Storm-Iron: ${compIron} (lower OC)<br>
       • Sungrain: ${compGrain}<br><br>
       <strong>🤝 Specialization Recommendation:</strong><br>
-      ${nameA} should specialize in ${specA} | ${nameB} should specialize in ${specB}<br>
-      <em>Why? Countries gain by producing goods where they have lower opportunity cost.</em>
+      ${nameA} → ${specA} | ${nameB} → ${specB}<br>
+      <em>Why? Produce where opportunity cost is lower to maximize global output.</em>
     `;
   }
 
@@ -654,17 +756,13 @@
     let ironB = parseFloat(document.getElementById("countryB_iron").value);
     let grainB = parseFloat(document.getElementById("countryB_grain").value);
     if (isNaN(ironA) || isNaN(grainA) || isNaN(ironB) || isNaN(grainB)) {
-      calcOutput.innerHTML = "❌ Please enter valid numeric values.";
+      calcOutputDiv.innerHTML = "❌ Please enter valid numeric values.";
       return;
     }
-    const resultHtml = computeAdvantages(ironA, grainA, ironB, grainB, "Country A", "Country B");
-    calcOutput.innerHTML = resultHtml;
+    calcOutputDiv.innerHTML = computeAdvantages(ironA, grainA, ironB, grainB, "Country A", "Country B");
   });
 
-  // initial calculator load
-  setTimeout(() => {
-    document.getElementById("calcBtn").click();
-  }, 100);
+  document.getElementById("calcBtn").click();
 </script>
 </body>
 </html>
