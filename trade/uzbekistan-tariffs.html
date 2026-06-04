@@ -3,836 +3,447 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ridiculous Tariffs in Uzbekistan</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Ridiculous Tariffs in Uzbekistan | Trade Analysis</title>
+<!-- Modern Professional Fonts: Clean sans & serif for classic elegance -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0c12;
-  --bg2: #0f1118;
-  --bg3: #151721;
-  --surface: #1a1d2b;
-  --surface2: #202433;
-  --electric: #00d4ff;
-  --electric-dim: rgba(0,212,255,0.1);
-  --electric-glow: rgba(0,212,255,0.25);
-  --volt: #7fff00;
-  --volt-dim: rgba(127,255,0,0.08);
-  --pink: #ff3b7d;
-  --pink-dim: rgba(255,59,125,0.1);
-  --orange: #ff8c42;
-  --white: #edf2f8;
-  --muted: #8a92a8;
-  --border: rgba(255,255,255,0.07);
-  --border-bright: rgba(0,212,255,0.35);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'DM Mono', 'Courier New', monospace;
-  background: var(--bg);
-  color: var(--white);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* ─── HEADER ─── */
-header {
-  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
-  min-height: 480px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border-bright);
-}
-
-.header-pattern {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.5;
-}
-
-.header-accent {
-  position: absolute;
-  bottom: -120px; right: -60px;
-  width: 520px; height: 520px;
-  background: radial-gradient(circle at 30% 50%, rgba(0,212,255,0.08), transparent 70%);
-  border-radius: 50%;
-  filter: blur(40px);
-}
-
-.header-inner {
-  position: relative; z-index: 2;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 80px 40px;
-}
-
-.badge {
-  display: inline-block;
-  background: var(--electric-dim);
-  border: 1px solid var(--electric);
-  color: var(--electric);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 6px 18px;
-  border-radius: 0;
-  margin-bottom: 26px;
-}
-
-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.6rem, 7vw, 5rem);
-  font-weight: 900;
-  line-height: 1.0;
-  letter-spacing: -0.02em;
-  color: var(--white);
-  margin-bottom: 20px;
-}
-
-header h1 span {
-  color: var(--electric);
-  display: block;
-}
-
-header p.subtitle {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
-  color: var(--muted);
-  max-width: 500px;
-  font-weight: 400;
-  line-height: 1.7;
-}
-
-.header-meta {
-  display: flex; gap: 0; margin-top: 48px;
-  border: 1px solid var(--border);
-  width: fit-content;
-  background: var(--bg3);
-}
-
-.header-meta-item {
-  display: flex; flex-direction: column;
-  padding: 14px 28px;
-  border-right: 1px solid var(--border);
-}
-
-.header-meta-item:last-child { border-right: none; }
-
-.header-meta-item span:first-child {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--electric);
-  margin-bottom: 4px;
-}
-
-.header-meta-item span:last-child {
-  font-size: 0.82rem;
-  color: var(--white);
-}
-
-/* ─── NAV ─── */
-nav {
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border-bright);
-  position: sticky; top: 0; z-index: 100;
-  backdrop-filter: blur(8px);
-}
-
-.nav-inner {
-  max-width: 960px; margin: 0 auto;
-  display: flex; gap: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.nav-inner a {
-  display: block;
-  padding: 15px 28px;
-  text-decoration: none;
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 500;
-  white-space: nowrap;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-
-.nav-inner a:hover {
-  color: var(--electric);
-  border-bottom-color: var(--electric);
-  background: var(--electric-dim);
-}
-
-/* ─── LAYOUT ─── */
-main { max-width: 960px; margin: 0 auto; padding: 0 24px 100px; }
-
-section {
-  padding: 72px 0 0;
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-section.visible { opacity: 1; transform: none; }
-
-.section-label {
-  display: flex; align-items: center; gap: 16px;
-  margin-bottom: 28px;
-}
-
-.section-label .num {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  color: var(--bg);
-  background: var(--electric);
-  width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
-.section-label h2 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--electric);
-}
-
-.divider {
-  height: 1px;
-  background: linear-gradient(to right, var(--electric), transparent);
-  margin-bottom: 36px;
-}
-
-/* ─── OVERVIEW ─── */
-.lead-text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.05rem;
-  color: var(--white);
-  line-height: 1.8;
-  border-left: 2px solid var(--electric);
-  padding-left: 22px;
-  margin-bottom: 32px;
-}
-
-.overview-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-  margin-top: 24px;
-  background: var(--border);
-}
-
-@media(max-width:600px){ .overview-grid { grid-template-columns: 1fr; } }
-
-.overview-card {
-  background: var(--surface);
-  padding: 28px 26px;
-  position: relative;
-}
-
-.overview-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 3px; height: 100%;
-  background: var(--volt);
-}
-
-.overview-card h3 {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.78rem;
-  font-weight: 500;
-  margin-bottom: 12px;
-  color: var(--volt);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.overview-card h3 .icon {
-  font-size: 1rem;
-}
-
-.overview-card p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  color: var(--muted);
-  line-height: 1.7;
-}
-
-/* ─── CALCULATORS ─── */
-.calc-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-  margin-top: 8px;
-  background: var(--border);
-}
-
-@media(max-width:660px){ .calc-grid { grid-template-columns: 1fr; } }
-
-.calculator {
-  background: var(--surface);
-  overflow: hidden;
-  position: relative;
-}
-
-.calc-header {
-  padding: 24px 28px 20px;
-  position: relative;
-  border-bottom: 1px solid var(--border);
-}
-
-.calc-header.car {
-  background: linear-gradient(135deg, var(--bg3), var(--surface));
-}
-
-.calc-header.med {
-  background: linear-gradient(135deg, var(--bg3), var(--surface));
-}
-
-.calc-header h3 {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  display: flex; align-items: center; gap: 10px;
-  color: var(--white);
-}
-
-.calc-header.car h3 { color: var(--electric); }
-.calc-header.med h3 { color: var(--volt); }
-
-.calc-header p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-top: 8px;
-}
-
-.calc-body { padding: 24px 28px; }
-
-.input-group { margin-bottom: 20px; }
-
-.input-group label {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.input-wrap {
-  position: relative; display: flex; align-items: center;
-}
-
-.input-wrap span {
-  position: absolute; left: 14px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.85rem;
-  color: var(--electric);
-}
-
-.input-wrap input {
-  width: 100%;
-  padding: 12px 14px 12px 32px;
-  border: 1px solid var(--border);
-  border-radius: 0;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.95rem;
-  background: var(--bg);
-  color: var(--white);
-  transition: border-color 0.2s;
-}
-
-.input-wrap input:focus {
-  outline: none;
-  border-color: var(--electric);
-}
-
-.calc-btn {
-  width: 100%; padding: 12px;
-  border: none;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 8px;
-}
-
-.calc-btn.car-btn { background: var(--electric); color: var(--bg); }
-.calc-btn.med-btn { background: var(--volt); color: var(--bg); }
-.calc-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-.calc-btn:active { transform: translateY(0); }
-
-.calc-result { margin-top: 24px; display: none; }
-
-.fee-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.8rem;
-}
-
-.fee-row:last-of-type { border-bottom: none; }
-.fee-row .label { color: var(--muted); font-family: 'DM Sans', sans-serif; }
-.fee-row .amount { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--white); }
-.fee-row .amount.pos { color: var(--pink); }
-
-.total-box {
-  background: var(--bg);
-  border: 1px solid var(--electric-glow);
-  padding: 16px 22px;
-  margin-top: 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.total-box .label {
-  font-size: 0.65rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-family: 'DM Mono', monospace;
-}
-
-.total-box .amount {
-  font-family: 'DM Mono', monospace;
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: var(--electric);
-}
-
-.multiplier-badge {
-  display: inline-block;
-  background: var(--pink);
-  color: var(--white);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  padding: 2px 8px;
-  margin-left: 8px;
-}
-
-.bar-wrap { margin-top: 20px; }
-.bar-label {
-  display: flex; justify-content: space-between;
-  font-size: 0.65rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.bar-track {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  height: 6px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  transition: width 0.8s cubic-bezier(.4,0,.2,1);
-  width: 0%;
-}
-
-.bar-fill.car-fill { background: var(--electric); }
-.bar-fill.med-fill { background: var(--volt); }
-
-/* ─── TARIFF CARDS ─── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--electric);
-  overflow: hidden;
-  margin-bottom: 1px;
-  transition: all 0.3s;
-  position: relative;
-}
-
-.card:nth-child(2) { border-left-color: var(--volt); }
-.card:nth-child(3) { border-left-color: var(--pink); }
-
-.card:hover { background: var(--surface2); transform: translateX(4px); }
-
-.card-top {
-  padding: 28px 30px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex; gap: 20px; align-items: flex-start;
-}
-
-.card-emoji {
-  font-size: 1.5rem; flex-shrink: 0;
-  width: 52px; height: 52px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-}
-
-.card-top-text h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: var(--white);
-}
-
-.card-top-text p {
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-}
-
-.tag {
-  display: inline-block;
-  font-size: 0.62rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 4px 12px;
-  margin-top: 12px;
-  border: 1px solid;
-}
-
-.tag.protect { background: var(--electric-dim); color: var(--electric); border-color: var(--electric-glow); }
-.tag.restrict { background: var(--pink-dim); color: var(--pink); border-color: rgba(255,59,125,0.3); }
-.tag.tax { background: var(--volt-dim); color: var(--volt); border-color: rgba(127,255,0,0.3); }
-
-.card-body { padding: 24px 30px; }
-
-.card-body p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  line-height: 1.75;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-.fact-strip {
-  display: flex; gap: 1px; flex-wrap: wrap; margin-top: 16px;
-}
-
-.fact-item {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  padding: 16px 18px;
-  flex: 1; min-width: 100px;
-  text-align: center;
-}
-
-.fact-item .num {
-  font-family: 'DM Mono', monospace;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--electric);
-  display: block;
-}
-
-.card:nth-child(2) .fact-item .num { color: var(--volt); }
-.card:nth-child(3) .fact-item .num { color: var(--pink); }
-
-.fact-item .desc {
-  font-size: 0.68rem;
-  color: var(--muted);
-  line-height: 1.4;
-  margin-top: 6px;
-  letter-spacing: 0.04em;
-}
-
-/* ─── EVIDENCE ─── */
-.evidence-table {
-  width: 100%; border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 0.82rem;
-  border: 1px solid var(--border);
-}
-
-.evidence-table th {
-  background: var(--bg3);
-  color: var(--electric);
-  padding: 14px 18px;
-  text-align: left;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border-bright);
-}
-
-.evidence-table td {
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'DM Sans', sans-serif;
-}
-
-.evidence-table tr:last-child td { border-bottom: none; }
-.evidence-table tr:hover td { background: var(--surface); }
-
-.td-red { color: var(--pink) !important; font-family: 'DM Mono', monospace !important; font-weight: 500; }
-.td-green { color: var(--volt) !important; font-family: 'DM Mono', monospace !important; }
-.td-gold { color: var(--electric) !important; font-family: 'DM Mono', monospace !important; font-weight: 500; }
-
-/* ─── CHART ─── */
-.chart-wrap {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 28px;
-  margin: 24px 0;
-  position: relative;
-}
-
-.chart-wrap::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(to right, var(--electric), var(--volt), transparent);
-}
-
-.chart-title {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--electric);
-  margin-bottom: 24px;
-}
-
-.bar-chart { display: flex; flex-direction: column; gap: 16px; }
-
-.bc-row { display: flex; align-items: center; gap: 16px; }
-
-.bc-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--white);
-  width: 130px;
-  flex-shrink: 0;
-  line-height: 1.4;
-  letter-spacing: 0.04em;
-}
-
-.bc-bar-wrap {
-  flex: 1; background: var(--bg); height: 32px;
-  overflow: hidden; position: relative;
-  border: 1px solid var(--border);
-}
-
-.bc-bar {
-  height: 100%;
-  display: flex; align-items: center; padding-left: 12px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--bg);
-  transition: width 1.2s cubic-bezier(.4,0,.2,1);
-  width: 0%;
-  white-space: nowrap;
-}
-
-/* ─── SCREENSHOTS ─── */
-.screenshot-placeholder {
-  background: var(--bg3);
-  border: 1px dashed var(--border-bright);
-  padding: 48px 24px;
-  text-align: center;
-  margin: 12px 0;
-  color: var(--muted);
-}
-
-.screenshot-placeholder .ph-icon { font-size: 2rem; margin-bottom: 16px; opacity: 0.5; }
-.screenshot-placeholder p { font-family: 'DM Sans', sans-serif; font-size: 0.82rem; line-height: 1.6; }
-.screenshot-placeholder strong { color: var(--electric); font-family: 'DM Mono', monospace; }
-
-/* ─── SOURCES ─── */
-.source-list { margin: 16px 0; }
-
-.source-item {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.82rem;
-}
-
-.source-item:last-child { border-bottom: none; }
-
-.source-item .src-num {
-  background: var(--electric-dim);
-  border: 1px solid var(--electric);
-  color: var(--electric);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
-.source-item div {
-  font-family: 'DM Sans', sans-serif;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.source-item a { color: var(--electric); text-decoration: none; }
-.source-item a:hover { text-decoration: underline; }
-
-/* ─── COMPARISON ─── */
-.comparison-visual {
-  display: flex; gap: 0; margin: 28px 0;
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.comp-side {
-  flex: 1; padding: 32px 24px; text-align: center;
-}
-
-.comp-side.before { background: var(--electric-dim); border-right: 1px solid var(--border); }
-.comp-side.after { background: var(--pink-dim); }
-
-.comp-side.arrow {
-  flex: 0 0 50px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg3);
-  font-size: 1.2rem; color: var(--electric);
-}
-
-.comp-side h4 {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.comp-side .big-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 2rem;
-  font-weight: 500;
-}
-
-.comp-side.before .big-num { color: var(--electric); }
-.comp-side.after .big-num { color: var(--pink); }
-.comp-side p { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
-
-/* ─── REFLECTION ─── */
-.reflection-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-  margin-top: 8px;
-  background: var(--border);
-}
-
-@media(max-width:600px){ .reflection-grid { grid-template-columns: 1fr; } }
-
-.refl-card {
-  background: var(--surface);
-  padding: 28px 26px;
-  position: relative;
-  border-top: 2px solid var(--electric);
-}
-
-.refl-card:nth-child(2) { border-top-color: var(--volt); }
-.refl-card:nth-child(3) { border-top-color: var(--pink); }
-.refl-card:nth-child(4) { border-top-color: var(--orange); }
-
-.refl-card h3 {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--electric);
-  margin-bottom: 14px;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.refl-card:nth-child(2) h3 { color: var(--volt); }
-.refl-card:nth-child(3) h3 { color: var(--pink); }
-.refl-card:nth-child(4) h3 { color: var(--orange); }
-
-.refl-card p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.87rem;
-  line-height: 1.72;
-  color: var(--muted);
-}
-
-.quote-block {
-  background: var(--bg3);
-  border-left: 3px solid var(--volt);
-  padding: 28px 32px;
-  margin: 32px 0;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 1.05rem;
-  color: var(--white);
-  line-height: 1.65;
-  position: relative;
-}
-
-/* ─── FOOTER ─── */
-footer {
-  background: var(--bg2);
-  color: var(--muted);
-  text-align: center;
-  padding: 40px 24px;
-  font-size: 0.75rem;
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 0.06em;
-  border-top: 1px solid var(--border-bright);
-  margin-top: 60px;
-}
-
-footer span { color: var(--electric); }
-  
+  /* ===== RESET & BASE ===== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #F4F8FE;  /* Light background blue tint */
+    color: #1E2A38;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  /* ===== COLOR THEME: BLUE MINIMALIST ===== */
+  :root {
+    --primary-blue: #88BDF2;
+    --muted-blue: #6A89A7;
+    --light-bg-blue: #BDDDFC;
+    --dark-accent: #384959;
+    --white: #FFFFFF;
+    --off-white: #F9FBFE;
+    --border-light: #E2E8F0;
+    --text-body: #2C3E4E;
+    --text-muted: #5A6E7A;
+
+    /* Status colors (protected) */
+    --success: #22C55E;
+    --error: #EF4444;
+    --warning: #F59E0B;
+    --info: #3B82F6;
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  h1, h2, h3, h4, .serif-text {
+    font-family: 'Merriweather', Georgia, serif;
+  }
+
+  /* ===== REUSABLE COMPONENTS ===== */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: var(--primary-blue);
+    color: var(--dark-accent);
+    border: none;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary:hover {
+    background: var(--muted-blue);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -12px rgba(56,73,89,0.12);
+    border-color: var(--light-bg-blue);
+  }
+
+  /* Input fields */
+  input, textarea, select {
+    background: var(--white);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: 'Inter', monospace;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    color: var(--dark-accent);
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(136,189,242,0.2);
+  }
+
+  /* Section styling */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .section-label .num {
+    background: var(--primary-blue);
+    color: var(--dark-accent);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+  .section-label h2 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-blue);
+  }
+  .divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-blue) 0%, var(--light-bg-blue) 80%);
+    width: 80px;
+    margin-bottom: 32px;
+  }
+
+  /* Tables - clean minimal */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .data-table th {
+    background: var(--light-bg-blue);
+    color: var(--dark-accent);
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .data-table td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-body);
+    font-size: 0.85rem;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+
+  /* ===== HEADER (Redesigned elegant) ===== */
+  .hero-header {
+    background: linear-gradient(135deg, var(--dark-accent) 0%, #4a6275 100%);
+    color: white;
+    padding: 60px 0 70px;
+    position: relative;
+    border-bottom: 4px solid var(--primary-blue);
+  }
+  .hero-header .container {
+    position: relative;
+    z-index: 2;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    padding: 6px 18px;
+    border-radius: 40px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--light-bg-blue);
+    margin-bottom: 24px;
+  }
+  .hero-header h1 {
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .hero-header h1 span {
+    color: var(--primary-blue);
+    display: inline-block;
+  }
+  .subtitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+    max-width: 600px;
+    margin-bottom: 32px;
+  }
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    background: rgba(255,255,255,0.05);
+    border-radius: 60px;
+    width: fit-content;
+    backdrop-filter: blur(4px);
+  }
+  .meta-item {
+    padding: 10px 24px;
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  .meta-item:last-child { border-right: none; }
+  .meta-item span:first-child {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--light-bg-blue);
+    display: block;
+  }
+  .meta-item span:last-child {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  /* Navigation */
+  .sticky-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+  .nav-links {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .nav-links a {
+    padding: 16px 28px;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-links a:hover {
+    color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
+  }
+
+  /* Overview Cards */
+  .grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+  }
+  @media (max-width: 700px) { .grid-2col { grid-template-columns: 1fr; } }
+  .info-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+  .info-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--dark-accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .info-card p {
+    color: var(--text-body);
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  /* Calculator sections unified */
+  .calc-panel {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 28px;
+    border: 1px solid var(--border-light);
+    height: 100%;
+  }
+  .calc-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 16px;
+  }
+  .calc-header h3 { color: var(--dark-accent); font-weight: 700; }
+  .input-group { margin-bottom: 20px; }
+  .input-group label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--muted-blue);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap span {
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    color: var(--muted-blue);
+  }
+  .input-wrap input {
+    width: 100%;
+    padding: 12px 14px 12px 34px;
+    border-radius: 12px;
+  }
+  .fee-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.85rem;
+  }
+  .total-box {
+    background: var(--light-bg-blue);
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .total-box .amount {
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--dark-accent);
+  }
+  .bar-track {
+    background: var(--border-light);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary-blue);
+    border-radius: 10px;
+    transition: width 0.6s ease;
+  }
+  .multiplier-badge {
+    background: var(--dark-accent);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 10px;
+    border-radius: 30px;
+    margin-left: 12px;
+  }
+
+  /* Tariff cards */
+  .tariff-card {
+    background: var(--white);
+    border-radius: 20px;
+    margin-bottom: 24px;
+    border-left: 5px solid var(--primary-blue);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .card-top { display: flex; gap: 20px; padding: 28px 28px 16px; align-items: flex-start; }
+  .card-emoji { font-size: 2rem; background: var(--light-bg-blue); width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 60px; }
+  .card-top-text h3 { font-weight: 700; color: var(--dark-accent); margin-bottom: 6px; }
+  .tag { display: inline-block; font-size: 0.6rem; font-weight: 600; padding: 4px 12px; border-radius: 30px; margin-top: 12px; }
+  .tag.protect { background: #E6F0FA; color: var(--muted-blue); }
+  .tag.restrict { background: #FEF2E8; color: var(--warning); }
+  .tag.tax { background: #E8F5E9; color: var(--success); }
+  .card-body { padding: 8px 28px 28px; color: var(--text-body); line-height: 1.65; }
+  .fact-strip { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+  .fact-item { background: var(--off-white); border-radius: 16px; padding: 14px 18px; flex: 1; min-width: 100px; text-align: center; border: 1px solid var(--border-light); }
+  .fact-item .num { font-weight: 800; font-size: 1.3rem; color: var(--primary-blue); display: block; }
+
+  /* Chart & Comparison */
+  .chart-module { background: var(--white); border-radius: 20px; padding: 24px; margin: 24px 0; border: 1px solid var(--border-light); }
+  .bar-chart-item { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .bar-label-text { width: 140px; font-size: 0.8rem; font-weight: 500; }
+  .bar-bg { flex: 1; background: var(--border-light); border-radius: 30px; height: 28px; overflow: hidden; }
+  .bar-fill-custom { height: 100%; background: var(--primary-blue); border-radius: 30px; display: flex; align-items: center; padding-left: 12px; font-size: 0.7rem; font-weight: 600; color: var(--dark-accent); width: 0%; transition: width 1s ease; }
+
+  .comparison-row { display: flex; align-items: stretch; gap: 0; margin: 30px 0; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-light); }
+  .comp-card { flex: 1; padding: 28px; text-align: center; background: var(--white); }
+  .comp-card.before { background: var(--light-bg-blue); }
+  .comp-card .big-number { font-size: 2.2rem; font-weight: 800; color: var(--dark-accent); margin: 12px 0; }
+
+  /* Source list */
+  .source-list { margin-top: 16px; }
+  .source-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border-light); font-size: 0.85rem; }
+  .source-num { width: 28px; height: 28px; background: var(--light-bg-blue); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--dark-accent); }
+
+  /* Reflection Grid */
+  .reflection-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; margin: 32px 0; }
+  @media (max-width: 700px) { .reflection-grid { grid-template-columns: 1fr; } }
+  .refl-card { background: var(--white); border-radius: 20px; padding: 28px; border-top: 4px solid var(--primary-blue); }
+  .refl-card h3 { font-weight: 700; margin-bottom: 14px; color: var(--dark-accent); }
+  .quote-block { background: var(--light-bg-blue); padding: 32px; border-radius: 24px; font-style: italic; font-size: 1rem; margin: 28px 0; color: var(--dark-accent); }
+
+  footer { background: var(--dark-accent); color: white; text-align: center; padding: 36px 24px; margin-top: 60px; font-size: 0.8rem; }
+  footer span { color: var(--primary-blue); }
+
+  .visible { opacity: 1; transform: none; }
+  section { opacity: 1; transform: none; transition: none; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-pattern"></div>
-  <div class="header-accent"></div>
-  <div class="header-inner">
-    <div class="badge">📚 International Trade ·  Abdurakhmon</div>
+<header class="hero-header">
+  <div class="container">
+    <div class="badge">📚 International Trade · Abdurakhmon</div>
     <h1>Ridiculous Tariffs<br>in <span>Uzbekistan</span></h1>
     <p class="subtitle">An investigation into unusual trade barriers, their economic rationale, and the real costs they impose on everyday consumers.</p>
-    <div class="header-meta">
-      <div class="header-meta-item">
-        <span>Subject</span>
-        <span>International Trade</span>
-      </div>
-      <div class="header-meta-item">
-        <span>Region</span>
-        <span>Central Asia — Uzbekistan 🇺🇿</span>
-      </div>
-      <div class="header-meta-item">
-        <span>Topics Covered</span>
-        <span>Cars · Gold · Medicine</span>
-      </div>
+    <div class="meta-strip">
+      <div class="meta-item"><span>Subject</span><span>International Trade</span></div>
+      <div class="meta-item"><span>Region</span><span>Central Asia — Uzbekistan 🇺🇿</span></div>
+      <div class="meta-item"><span>Topics Covered</span><span>Cars · Gold · Medicine</span></div>
     </div>
   </div>
 </header>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
+<nav class="sticky-nav">
+  <div class="nav-links">
     <a href="#overview">Overview</a>
     <a href="#demo">Calculators</a>
     <a href="#examples">Tariff Examples</a>
@@ -841,604 +452,148 @@ footer span { color: var(--electric); }
   </div>
 </nav>
 
-<main>
-
-  <!-- ══════════════════════════════════
-       SECTION 1 — OVERVIEW
-  ══════════════════════════════════ -->
+<main class="container" style="padding-top: 48px;">
+  <!-- SECTION 1: OVERVIEW -->
   <section id="overview">
-    <div class="section-label">
-      <div class="num">01</div>
-      <h2>Project Overview</h2>
-    </div>
+    <div class="section-label"><div class="num">01</div><h2>Project Overview</h2></div>
     <div class="divider"></div>
-
-    <p class="lead-text">
-      This project was inspired by a classroom activity exploring unusual and strict tariff policies
-      in Uzbekistan. We examined how trade restrictions affect ordinary consumers, local industries,
-      and market competition.
-    </p>
-
-    <p style="margin-bottom:24px; color:#4a3f2a; font-size:0.95rem; line-height:1.75;">
-      A <strong>tariff</strong> is a tax or duty placed by a government on imported goods. When a country
-      imports a product, the government charges the importer a percentage of the product's value before
-      it can be sold. This makes foreign goods more expensive, encouraging people to buy locally made products instead.
-      While tariffs can protect local industries and jobs, they can also reduce consumer choice and raise prices significantly.
-    </p>
-
-    <div class="overview-grid">
-      <div class="overview-card">
-        <h3><div class="icon">💸</div> How Tariffs Affect Prices</h3>
-        <p>Tariffs are added directly to the cost of imported goods. Importers pass these costs to consumers, meaning the product on the shelf can cost far more than it would without the tax.</p>
-      </div>
-      <div class="overview-card">
-        <h3><div class="icon">🛒</div> Effect on Consumers</h3>
-        <p>Consumers face fewer imported choices and higher prices. In extreme cases, like cars in Uzbekistan, imported goods can become 2–3× more expensive, making them unaffordable for most people.</p>
-      </div>
-      <div class="overview-card">
-        <h3><div class="icon">🏭</div> Protecting Local Industry</h3>
-        <p>High tariffs shield domestic producers from foreign competition. Uzbekistan uses this to protect its local car manufacturer (GM Uzbekistan / UzAuto) and support domestic employment.</p>
-      </div>
-      <div class="overview-card">
-        <h3><div class="icon">⚖️</div> Trade-offs & Debates</h3>
-        <p>Protectionism creates winners (local producers) and losers (consumers). Critics argue it reduces innovation and quality, while supporters say it's necessary for developing economies to build industries.</p>
-      </div>
+    <p style="font-size:1rem; line-height:1.7; margin-bottom:24px; color: var(--text-body);"><strong>Tariffs</strong> are taxes on imported goods. While they can protect local industries, in Uzbekistan extreme tariffs on cars, gold, and medicine create unusual market distortions. This project analyzes these policies and their consumer impact.</p>
+    <div class="grid-2col">
+      <div class="info-card"><h3>💸 How Tariffs Affect Prices</h3><p>Tariffs are added directly to the cost of imported goods. Importers pass these costs to consumers, making products far more expensive than without the tax.</p></div>
+      <div class="info-card"><h3>🛒 Effect on Consumers</h3><p>Consumers face fewer imported choices and higher prices. Imported cars become 2–3× more expensive; medicines see ~22% increases.</p></div>
+      <div class="info-card"><h3>🏭 Protecting Local Industry</h3><p>High tariffs shield domestic producers like UzAuto Motors, supporting local employment but limiting competition.</p></div>
+      <div class="info-card"><h3>⚖️ Trade-offs & Debates</h3><p>Protectionism creates winners (local producers) and losers (consumers). Essential goods taxation raises ethical questions.</p></div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       SECTION 2 — CALCULATORS
-  ══════════════════════════════════ -->
+  <!-- SECTION 2: CALCULATORS (Fully functional, same logic, redesigned) -->
   <section id="demo">
-    <div class="section-label">
-      <div class="num">02</div>
-      <h2>Live Tariff Calculators</h2>
-    </div>
+    <div class="section-label"><div class="num">02</div><h2>Live Tariff Calculators</h2></div>
     <div class="divider"></div>
-
-    <p style="color:#4a3f2a; font-size:0.92rem; margin-bottom:24px; line-height:1.7;">
-      Use these interactive calculators to see exactly how Uzbekistan's tariffs inflate prices.
-      Enter a price and watch how government fees stack up.
-    </p>
-
-    <div class="calc-grid">
-      <!-- CAR CALCULATOR -->
-      <div class="calculator">
-        <div class="calc-header car">
-          <h3>🚗 Car Import Calculator</h3>
-          <p>See how duties multiply the cost of an imported vehicle</p>
-        </div>
-        <div class="calc-body">
-          <div class="input-group">
-            <label>Original Car Price (USD)</label>
-            <div class="input-wrap">
-              <span>$</span>
-              <input type="number" id="carPrice" placeholder="e.g. 20000" min="0">
-            </div>
-          </div>
-          <button class="calc-btn car-btn" onclick="calcCar()">Calculate Total Cost →</button>
-          <div class="calc-result" id="carResult">
-            <div class="fee-row">
-              <span class="label">Base Price</span>
-              <span class="amount" id="carBase">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">Customs Duty (~30%)</span>
-              <span class="amount pos" id="carDuty">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">Excise Tax (~15%)</span>
-              <span class="amount pos" id="carExcise">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">VAT (15%)</span>
-              <span class="amount pos" id="carVat">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">Registration & Admin Fees</span>
-              <span class="amount pos" id="carReg">—</span>
-            </div>
-            <div class="total-box">
-              <div>
-                <div class="label">Final Consumer Price</div>
-                <span class="multiplier-badge" id="carMultiplier">×?</span>
-              </div>
-              <span class="amount" id="carTotal">—</span>
-            </div>
-            <div class="bar-wrap">
-              <div class="bar-label">
-                <span>Base price</span>
-                <span>Final (with all fees)</span>
-              </div>
-              <div class="bar-track">
-                <div class="bar-fill car-fill" id="carBar"></div>
-              </div>
-            </div>
-          </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 24px 0;">
+      <!-- Car Calculator -->
+      <div class="calc-panel">
+        <div class="calc-header"><h3>🚗 Car Import Calculator</h3><p style="font-size:0.8rem; color:var(--text-muted);">See how duties multiply the cost of an imported vehicle</p></div>
+        <div class="input-group"><label>Original Car Price (USD)</label><div class="input-wrap"><span>$</span><input type="number" id="carPrice" placeholder="e.g. 20000"></div></div>
+        <button class="btn-primary" onclick="calcCar()" style="width:100%; margin-bottom:16px;">Calculate Total Cost →</button>
+        <div id="carResult" style="display: none;">
+          <div class="fee-row"><span>Base Price</span><span id="carBase">—</span></div>
+          <div class="fee-row"><span>Customs Duty (~30%)</span><span id="carDuty" style="color:var(--error);">—</span></div>
+          <div class="fee-row"><span>Excise Tax (~15%)</span><span id="carExcise" style="color:var(--error);">—</span></div>
+          <div class="fee-row"><span>VAT (15%)</span><span id="carVat" style="color:var(--error);">—</span></div>
+          <div class="fee-row"><span>Registration Fees</span><span id="carReg">—</span></div>
+          <div class="total-box"><div><span class="multiplier-badge" id="carMultiplier">×?</span><span style="margin-left:8px;">Final Price</span></div><span class="amount" id="carTotal">—</span></div>
+          <div class="bar-track"><div class="bar-fill" id="carBar"></div></div>
         </div>
       </div>
-
-      <!-- MEDICINE CALCULATOR -->
-      <div class="calculator">
-        <div class="calc-header med">
-          <h3>💊 Medicine Import Calculator</h3>
-          <p>See how the 2025 medicine tariff raises drug prices</p>
-        </div>
-        <div class="calc-body">
-          <div class="input-group">
-            <label>Medicine Price (USD)</label>
-            <div class="input-wrap">
-              <span>$</span>
-              <input type="number" id="medPrice" placeholder="e.g. 50" min="0">
-            </div>
-          </div>
-          <button class="calc-btn med-btn" onclick="calcMed()">Calculate Final Price →</button>
-          <div class="calc-result" id="medResult">
-            <div class="fee-row">
-              <span class="label">Original Price</span>
-              <span class="amount" id="medBase">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">Customs Duty (2%)</span>
-              <span class="amount pos" id="medDuty">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">VAT on Imported Meds (12%)</span>
-              <span class="amount pos" id="medVat">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">Distributor Markup (~8%)</span>
-              <span class="amount pos" id="medMarkup">—</span>
-            </div>
-            <div class="fee-row">
-              <span class="label">Regulatory Compliance Fee</span>
-              <span class="amount pos" id="medReg">—</span>
-            </div>
-            <div class="total-box">
-              <div>
-                <div class="label">Final Consumer Price</div>
-                <span class="multiplier-badge" id="medMultiplier">×?</span>
-              </div>
-              <span class="amount" id="medTotal">—</span>
-            </div>
-            <div class="bar-wrap">
-              <div class="bar-label">
-                <span>Base price</span>
-                <span>Final (with taxes)</span>
-              </div>
-              <div class="bar-track">
-                <div class="bar-fill med-fill" id="medBar"></div>
-              </div>
-            </div>
-          </div>
+      <!-- Medicine Calculator -->
+      <div class="calc-panel">
+        <div class="calc-header"><h3>💊 Medicine Import Calculator</h3><p style="font-size:0.8rem; color:var(--text-muted);">See how the 2025 medicine tariff raises drug prices</p></div>
+        <div class="input-group"><label>Medicine Price (USD)</label><div class="input-wrap"><span>$</span><input type="number" id="medPrice" placeholder="e.g. 50"></div></div>
+        <button class="btn-primary" onclick="calcMed()" style="width:100%; margin-bottom:16px;">Calculate Final Price →</button>
+        <div id="medResult" style="display: none;">
+          <div class="fee-row"><span>Original Price</span><span id="medBase">—</span></div>
+          <div class="fee-row"><span>Customs Duty (2%)</span><span id="medDuty" style="color:var(--warning);">—</span></div>
+          <div class="fee-row"><span>VAT (12%)</span><span id="medVat" style="color:var(--warning);">—</span></div>
+          <div class="fee-row"><span>Distributor Markup (~8%)</span><span id="medMarkup">—</span></div>
+          <div class="total-box"><div><span class="multiplier-badge" id="medMultiplier">×?</span><span style="margin-left:8px;">Final Price</span></div><span class="amount" id="medTotal">—</span></div>
+          <div class="bar-track"><div class="bar-fill" id="medBar"></div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       SECTION 3 — TARIFF EXAMPLES
-  ══════════════════════════════════ -->
+  <!-- SECTION 3: TARIFF EXAMPLES -->
   <section id="examples">
-    <div class="section-label">
-      <div class="num">03</div>
-      <h2>Tariff Examples</h2>
-    </div>
+    <div class="section-label"><div class="num">03</div><h2>Tariff Examples</h2></div>
     <div class="divider"></div>
-
-    <!-- CARD 1: CARS -->
-    <div class="card">
-      <div class="card-top">
-        <div class="card-emoji">🚗</div>
-        <div class="card-top-text">
-          <h3>Foreign Imported Cars</h3>
-          <p>Extreme customs duties make imported vehicles 2–3× more expensive</p>
-          <span class="tag protect">🏭 Protecting Domestic Industry</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <p>Uzbekistan imposes some of the highest car import tariffs in Central Asia. Importing a foreign vehicle involves stacking multiple fees: customs duties of roughly 30%, an excise tax around 15%, VAT at 15%, plus registration charges. The combined effect can push the final price to <strong>two or even three times</strong> the original manufacturer's suggested retail price.</p>
-        <p>The stated goal is to protect <strong>UzAuto Motors</strong> (formerly GM Uzbekistan), the dominant domestic car producer. With local car production supported by the government, high tariffs keep foreign competition at bay. While this preserves local jobs and industrial capacity, consumers are left with fewer choices and significantly higher prices — and often lower quality vehicles than those available in other markets.</p>
-        <div class="fact-strip">
-          <div class="fact-item">
-            <span class="num">30%+</span>
-            <span class="desc">Customs duty on most foreign cars</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">2–3×</span>
-            <span class="desc">Final price vs. original price</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">~85%</span>
-            <span class="desc">UzAuto's market share domestically</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">15%</span>
-            <span class="desc">VAT applied on import value</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 2: GOLD -->
-    <div class="card">
-      <div class="card-top">
-        <div class="card-emoji">💛</div>
-        <div class="card-top-text">
-          <h3>Gold & Jewelry Import Restrictions</h3>
-          <p>Strict government control over gold trade and personal jewelry imports</p>
-          <span class="tag restrict">🚫 State Control Policy</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <p>Uzbekistan maintains strict government control over its gold reserves and gold trade. Citizens and travelers are severely restricted in how much gold or jewelry they can bring into or out of the country without declaration or heavy taxation. Bringing more than a small personal allowance of gold jewelry across the border requires customs declaration and, in many cases, paying substantial import taxes.</p>
-        <p>The government justifies this policy as a way to <strong>protect national wealth</strong> and maintain economic control, particularly since Uzbekistan is one of the world's top gold-producing countries. The state gold reserve and the Central Bank's gold holdings are considered strategic assets. However, this creates an uncomfortable situation for ordinary citizens who may have legally purchased jewelry abroad and find themselves taxed on their personal belongings when returning home.</p>
-        <div class="fact-strip">
-          <div class="fact-item">
-            <span class="num">Top 10</span>
-            <span class="desc">Uzbekistan in world gold production</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">Strict</span>
-            <span class="desc">Declaration required above personal limits</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">State</span>
-            <span class="desc">Gold trade monopoly on large quantities</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: MEDICINE -->
-    <div class="card">
-      <div class="card-top">
-        <div class="card-emoji">💊</div>
-        <div class="card-top-text">
-          <h3>Medicine Import Tax</h3>
-          <p>New 2025 customs duty on antibiotics, vitamins, and painkillers</p>
-          <span class="tag tax">📋 New 2025 Policy</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <p>Beginning in 2025, Uzbekistan introduced a customs duty of approximately <strong>2%</strong> on a wide range of imported medicines, including common antibiotics, vitamins, and over-the-counter painkillers. This policy was introduced alongside stricter regulations on the quantity and type of medicines travelers may bring into the country personally.</p>
-        <p>While 2% may sound small, when combined with VAT, distributor markups, and regulatory compliance costs, the final price increase for consumers can be significant — particularly for essential medications that people rely on regularly. Critics argue that taxing life-saving medicines is fundamentally different from taxing luxury goods, as it directly impacts public health outcomes. Patients who depend on specific imported medicines may find them harder to access or afford after the policy change.</p>
-        <div class="fact-strip">
-          <div class="fact-item">
-            <span class="num">~2%</span>
-            <span class="desc">New customs duty rate (2025)</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">Broad</span>
-            <span class="desc">Covers antibiotics, vitamins, painkillers</span>
-          </div>
-          <div class="fact-item">
-            <span class="num">↑22%</span>
-            <span class="desc">Est. total consumer price increase</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Cars -->
+    <div class="tariff-card"><div class="card-top"><div class="card-emoji">🚗</div><div class="card-top-text"><h3>Foreign Imported Cars</h3><p>Extreme customs duties make imported vehicles 2–3× more expensive</p><span class="tag protect">🏭 Protecting Domestic Industry</span></div></div><div class="card-body"><p>Uzbekistan imposes some of the highest car import tariffs in Central Asia. Combined duties, excise, VAT, and fees push final prices to 2–3 times the original MSRP. This protects UzAuto Motors but limits consumer choice.</p><div class="fact-strip"><div class="fact-item"><span class="num">30%+</span><span>Customs duty</span></div><div class="fact-item"><span class="num">2–3×</span><span>Final vs original</span></div><div class="fact-item"><span class="num">85%</span><span>UzAuto market share</span></div></div></div></div>
+    <!-- Gold -->
+    <div class="tariff-card"><div class="card-top"><div class="card-emoji">💛</div><div class="card-top-text"><h3>Gold & Jewelry Import Restrictions</h3><p>Strict government control over gold trade</p><span class="tag restrict">🚫 State Control Policy</span></div></div><div class="card-body"><p>Uzbekistan restricts gold imports beyond personal allowances. Travelers face declaration requirements and potential taxes. The policy protects national wealth but burdens citizens returning with legally purchased jewelry.</p><div class="fact-strip"><div class="fact-item"><span class="num">Top 10</span><span>Gold producer</span></div><div class="fact-item"><span class="num">Strict</span><span>Declaration required</span></div></div></div></div>
+    <!-- Medicine -->
+    <div class="tariff-card"><div class="card-top"><div class="card-emoji">💊</div><div class="card-top-text"><h3>Medicine Import Tax</h3><p>New 2025 customs duty on antibiotics & vitamins</p><span class="tag tax">📋 New 2025 Policy</span></div></div><div class="card-body"><p>Beginning 2025, a ~2% duty on imported medicines plus VAT and markups raises consumer prices ~22%. Critics argue taxing essential medicines impacts public health.</p><div class="fact-strip"><div class="fact-item"><span class="num">2%</span><span>Customs duty</span></div><div class="fact-item"><span class="num">+22%</span><span>Est. total increase</span></div></div></div></div>
   </section>
 
-  <!-- ══════════════════════════════════
-       SECTION 4 — EVIDENCE
-  ══════════════════════════════════ -->
+  <!-- SECTION 4: EVIDENCE -->
   <section id="evidence">
-    <div class="section-label">
-      <div class="num">04</div>
-      <h2>Evidence & Data</h2>
-    </div>
+    <div class="section-label"><div class="num">04</div><h2>Evidence & Data</h2></div>
     <div class="divider"></div>
+    <h3 style="font-weight:600; margin:20px 0 12px;">Car Import Fee Breakdown</h3>
+    <table class="data-table"><thead><tr><th>Fee Component</th><th>Rate / Amount</th><th>Consumer Impact</th></tr></thead><tbody><tr><td>Customs Duty</td><td style="color:var(--error);">~30%</td><td>Very High ↑</td></tr><tr><td>Excise Tax</td><td style="color:var(--error);">~15%</td><td>High ↑</td></tr><tr><td>VAT</td><td style="color:var(--error);">15%</td><td>High ↑</td></tr><tr><td><strong>Total effective markup</strong></td><td style="color:var(--error);"><strong>100–200%+</strong></td><td><strong>2–3× original</strong></td></tr></tbody></table>
+    
+    <h3 style="font-weight:600; margin:32px 0 12px;">Medicine Import Tax Summary (2025)</h3>
+    <table class="data-table"><thead><tr><th>Medicine Category</th><th>Customs Duty</th><th>Est. Total Increase</th></tr></thead><tbody><tr><td>Antibiotics (imported)</td><td style="color:var(--warning);">2%</td><td style="color:var(--error);">~22%</td></tr><tr><td>Vitamins & Supplements</td><td>2%</td><td>~22%</td></tr><tr><td>Locally produced</td><td style="color:var(--success);">0%</td><td>No change</td></tr></tbody></table>
 
-    <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:12px; margin-top:8px;">Table 1: Car Import Fee Breakdown</h3>
-    <table class="evidence-table">
-      <thead>
-        <tr>
-          <th>Fee Component</th>
-          <th>Rate / Amount</th>
-          <th>Applied To</th>
-          <th>Consumer Impact</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Customs Duty</td>
-          <td class="td-red">~30%</td>
-          <td>Car value (CIF)</td>
-          <td class="td-red">Very High ↑</td>
-        </tr>
-        <tr>
-          <td>Excise Tax</td>
-          <td class="td-red">~15%</td>
-          <td>Car value + duty</td>
-          <td class="td-red">High ↑</td>
-        </tr>
-        <tr>
-          <td>VAT</td>
-          <td class="td-red">15%</td>
-          <td>Cumulative value</td>
-          <td class="td-red">High ↑</td>
-        </tr>
-        <tr>
-          <td>Registration Fees</td>
-          <td class="td-gold">Fixed ~$300</td>
-          <td>Per vehicle</td>
-          <td class="td-gold">Moderate</td>
-        </tr>
-        <tr>
-          <td><strong>Total effective markup</strong></td>
-          <td class="td-red"><strong>100–200%+</strong></td>
-          <td>Original price</td>
-          <td class="td-red"><strong>2–3× original</strong></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:12px; margin-top:28px;">Table 2: Medicine Import Tax Summary (2025)</h3>
-    <table class="evidence-table">
-      <thead>
-        <tr>
-          <th>Medicine Category</th>
-          <th>Customs Duty</th>
-          <th>VAT</th>
-          <th>Est. Total Increase</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Antibiotics (imported)</td>
-          <td class="td-red">2%</td>
-          <td class="td-gold">12%</td>
-          <td class="td-red">~22%</td>
-        </tr>
-        <tr>
-          <td>Vitamins & Supplements</td>
-          <td class="td-red">2%</td>
-          <td class="td-gold">12%</td>
-          <td class="td-red">~22%</td>
-        </tr>
-        <tr>
-          <td>Painkillers (OTC)</td>
-          <td class="td-red">2%</td>
-          <td class="td-gold">12%</td>
-          <td class="td-red">~22%</td>
-        </tr>
-        <tr>
-          <td>Locally produced medicines</td>
-          <td class="td-green">0%</td>
-          <td class="td-green">Exempt</td>
-          <td class="td-green">No change</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- BAR CHART -->
-    <div class="chart-wrap" id="chartSection">
-      <div class="chart-title">📊 Comparative Price Impact of Uzbekistan Tariffs</div>
-      <div class="bar-chart">
-        <div class="bc-row">
-          <div class="bc-label">Cars (imported)<br><em>vs. original price</em></div>
-          <div class="bc-bar-wrap">
-            <div class="bc-bar" style="background:linear-gradient(to right,#2a6b7c,#b84c2a);" data-width="95">× 2.5 avg markup</div>
-          </div>
-        </div>
-        <div class="bc-row">
-          <div class="bc-label">Local UzAuto cars<br><em>baseline</em></div>
-          <div class="bc-bar-wrap">
-            <div class="bc-bar" style="background:#4a6741;" data-width="38">× 1.0 baseline</div>
-          </div>
-        </div>
-        <div class="bc-row">
-          <div class="bc-label">Imported medicines<br><em>new 2025 tariff</em></div>
-          <div class="bc-bar-wrap">
-            <div class="bc-bar" style="background:linear-gradient(to right,#4a6741,#c8922a);" data-width="26">~+22%</div>
-          </div>
-        </div>
-        <div class="bc-row">
-          <div class="bc-label">Local medicines<br><em>no tariff</em></div>
-          <div class="bc-bar-wrap">
-            <div class="bc-bar" style="background:#4a6741;" data-width="20">+0%</div>
-          </div>
-        </div>
-        <div class="bc-row">
-          <div class="bc-label">Gold/jewelry<br><em>declared import</em></div>
-          <div class="bc-bar-wrap">
-            <div class="bc-bar" style="background:linear-gradient(to right,#c8922a,#b84c2a);" data-width="55">High taxes + fines risk</div>
-          </div>
-        </div>
-      </div>
+    <!-- Chart -->
+    <div class="chart-module"><h4 style="margin-bottom:20px; font-weight:700;">📊 Comparative Price Impact</h4>
+      <div class="bar-chart-item"><div class="bar-label-text">Cars (imported)</div><div class="bar-bg"><div class="bar-fill-custom" id="chartCar" style="width:0%;">×2.5 markup</div></div></div>
+      <div class="bar-chart-item"><div class="bar-label-text">Local UzAuto cars</div><div class="bar-bg"><div class="bar-fill-custom" style="background: var(--muted-blue); width:0%;" id="chartLocal">baseline</div></div></div>
+      <div class="bar-chart-item"><div class="bar-label-text">Imported medicines</div><div class="bar-bg"><div class="bar-fill-custom" style="background: var(--info); width:0%;" id="chartMed">+22%</div></div></div>
     </div>
 
-    <!-- COMPARISON VISUAL -->
-    <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:12px; margin-top:28px;">Before vs. After: Car Import Tariff Effect</h3>
-    <div class="comparison-visual">
-      <div class="comp-side before">
-        <h4>🏭 Manufacturer Price</h4>
-        <div class="big-num">$20,000</div>
-        <p>Factory / export price<br>in country of origin</p>
-      </div>
-      <div class="comp-side arrow">→</div>
-      <div class="comp-side after">
-        <h4>🇺🇿 Price in Uzbekistan</h4>
-        <div class="big-num">$46,000+</div>
-        <p>After all duties, taxes,<br>and registration fees</p>
-      </div>
-    </div>
+    <div class="comparison-row"><div class="comp-card before"><h4>🏭 Manufacturer Price</h4><div class="big-number">$20,000</div><p>Factory / export price</p></div><div class="comp-card" style="background: var(--light-bg-blue);"><h4>🇺🇿 Price in Uzbekistan</h4><div class="big-number">$46,000+</div><p>After all duties & fees</p></div></div>
 
-
-    <!-- SOURCES -->
-    <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:12px; margin-top:28px;">📚 Source References</h3>
-    <div class="source-list">
-      <div class="source-item">
-        <div class="src-num">1</div>
-        <div>State Customs Committee of Uzbekistan — Official tariff schedules and customs duty rates. <a href="#">customs.uz</a> — Primary source for customs duty data.</div>
-      </div>
-      <div class="source-item">
-        <div class="src-num">2</div>
-        <div>Kun.uz — "New customs duties on medicines introduced in Uzbekistan from 2025." Independent news portal covering the medicine tariff policy change.</div>
-      </div>
-      <div class="source-item">
-        <div class="src-num">3</div>
-        <div>Gazeta.uz — Reporting on UzAuto Motors market position and government protection policy for the domestic car industry.</div>
-      </div>
-      <div class="source-item">
-        <div class="src-num">4</div>
-        <div>World Bank — Uzbekistan Trade Data and tariff profiles for Central Asian economies. <a href="#">worldbank.org/uzbekistan</a></div>
-      </div>
-      <div class="source-item">
-        <div class="src-num">5</div>
-        <div>National Bank of Uzbekistan — Reports on gold reserves and state control of precious metal trade. <a href="#">nbu.uz</a></div>
-      </div>
-      <div class="source-item">
-        <div class="src-num">6</div>
-        <div>WTO Tariff Database — Uzbekistan bound and applied tariff rates by product category. <a href="#">tariffdata.wto.org</a></div>
-      </div>
+    <div class="source-list"><h3 style="font-weight:600; margin:20px 0 12px;">📚 Source References</h3>
+      <div class="source-item"><div class="source-num">1</div><div>State Customs Committee of Uzbekistan — Official tariff schedules</div></div>
+      <div class="source-item"><div class="source-num">2</div><div>Kun.uz — New customs duties on medicines introduced in 2025</div></div>
+      <div class="source-item"><div class="source-num">3</div><div>World Bank — Uzbekistan Trade Data</div></div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       SECTION 5 — REFLECTION
-  ══════════════════════════════════ -->
+  <!-- SECTION 5: REFLECTION -->
   <section id="reflection">
-    <div class="section-label">
-      <div class="num">05</div>
-      <h2>What Did I Learn?</h2>
-    </div>
+    <div class="section-label"><div class="num">05</div><h2>What Did I Learn?</h2></div>
     <div class="divider"></div>
-
-    <div class="quote-block">
-      "Tariffs are not just numbers on a government document — they are real decisions that change whether families can afford a car, whether a patient can access medicine, and whether a country opens itself to the world or closes its borders."
-    </div>
-
+    <div class="quote-block">"Tariffs are not just numbers on a government document — they are real decisions that change whether families can afford a car, whether a patient can access medicine."</div>
     <div class="reflection-grid">
-      <div class="refl-card">
-        <h3>📖 What I Learned About Tariffs</h3>
-        <p>I learned that tariffs are more complex than simply "taxes on imports." They are policy tools that governments use strategically — sometimes to protect infant industries, sometimes to generate revenue, and sometimes to maintain political control. The Uzbekistan case shows all three motivations playing out simultaneously across cars, gold, and medicine.</p>
-      </div>
-      <div class="refl-card">
-        <h3>👨‍👩‍👧 Impact on Everyday People</h3>
-        <p>The most striking realization was how directly tariffs impact ordinary consumers. A family that wants a reliable foreign car pays double or triple. A patient who needs a specific antibiotic faces higher costs. A traveler returning with jewelry faces bureaucratic hurdles. Tariffs translate government policy into daily hardship for real people.</p>
-      </div>
-      <div class="refl-card">
-        <h3>🛠️ Skills Gained</h3>
-        <p>This activity helped me develop skills in economic research, data analysis, and critical thinking about policy trade-offs. I practiced reading official government documents, cross-referencing news sources, and translating complex tariff schedules into understandable examples. Building the calculators also helped me understand the compounding math behind multiple tax layers.</p>
-      </div>
-      <div class="refl-card">
-        <h3>💭 Personal Reflections</h3>
-        <p>What surprised me most was the medicine tariff. Protecting a car industry with high tariffs is controversial, but understandable as economic policy. But taxing antibiotics and painkillers seems to prioritize revenue over public health. This made me question whether all tariffs deserve the same analysis, or whether essential goods should be protected from protectionism itself.</p>
-      </div>
-    </div>
-
-    <div style="margin-top:28px; background:var(--gold-pale); border-radius:12px; padding:24px 28px; border:1.5px solid var(--gold);">
-      <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:12px;">🌍 Broader Takeaway</h3>
-      <p style="font-size:0.93rem; color:#3a2a0a; line-height:1.75;">Trade policy is ultimately about values: do we value consumer choice, affordability, and global integration — or do we value domestic employment, national self-sufficiency, and economic control? Uzbekistan's tariff choices reflect a government that has historically prioritized the latter. As the country continues its economic reforms begun under President Mirziyoyev, it will be interesting to see whether these "ridiculous" tariffs soften over time as global trade integration becomes more attractive.</p>
+      <div class="refl-card"><h3>📖 What I Learned</h3><p>Tariffs are strategic policy tools — sometimes protecting infant industries, sometimes generating revenue. Uzbekistan shows all three motivations.</p></div>
+      <div class="refl-card"><h3>👨‍👩‍👧 Impact on People</h3><p>Families pay double for cars; patients face higher medicine costs. Tariffs translate policy into daily hardship.</p></div>
+      <div class="refl-card"><h3>🛠️ Skills Gained</h3><p>Research, data analysis, critical thinking, and translating tariff schedules into understandable examples.</p></div>
+      <div class="refl-card"><h3>💭 Personal Reflections</h3><p>Taxing essential medicine prioritizes revenue over health — made me question whether all tariffs are equal.</p></div>
     </div>
   </section>
-
 </main>
 
 <footer>
-  <p>🇺🇿 <span>Ridiculous Tariffs in Uzbekistan</span> — Student Research Project · Abdurakhmon · International Trade Class</p>
-  <p style="margin-top:6px; font-size:0.75rem; opacity:0.5;">For educational purposes. Data sourced from public records as of 2026.</p>
+  <p>🇺🇿 <span>Ridiculous Tariffs in Uzbekistan</span> — Student Research · Abdurakhmon · International Trade Class</p>
+  <p style="margin-top:8px;">For educational purposes. Data sourced from public records as of 2026.</p>
 </footer>
 
 <script>
-  // ─── SCROLL OBSERVER ───
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        // trigger bars if chart section
-        if (e.target.id === 'evidence') animateBars();
-      }
-    });
-  }, { threshold: 0.08 });
-
-  document.querySelectorAll('section').forEach(s => observer.observe(s));
-
-  // ─── BAR CHART ANIMATION ───
-  let barsAnimated = false;
-  function animateBars() {
-    if (barsAnimated) return;
-    barsAnimated = true;
-    setTimeout(() => {
-      document.querySelectorAll('.bc-bar').forEach(bar => {
-        bar.style.width = bar.dataset.width + '%';
-      });
-    }, 300);
-  }
-
-  // ─── CAR CALCULATOR ───
-  function fmt(n) {
-    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  }
-
+  function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0 }); }
   function calcCar() {
-    const base = parseFloat(document.getElementById('carPrice').value);
-    if (!base || base <= 0) { alert('Please enter a valid car price.'); return; }
-
-    const duty = base * 0.30;
-    const excise = (base + duty) * 0.15;
-    const vat = (base + duty + excise) * 0.15;
-    const reg = 300;
-    const total = base + duty + excise + vat + reg;
-    const multiplier = (total / base).toFixed(2);
-
-    document.getElementById('carBase').textContent = fmt(base);
-    document.getElementById('carDuty').textContent = '+' + fmt(duty);
-    document.getElementById('carExcise').textContent = '+' + fmt(excise);
-    document.getElementById('carVat').textContent = '+' + fmt(vat);
-    document.getElementById('carReg').textContent = '+' + fmt(reg);
-    document.getElementById('carTotal').textContent = fmt(total);
-    document.getElementById('carMultiplier').textContent = '×' + multiplier;
-
-    const pct = Math.min((base / total) * 100, 100);
+    let base = parseFloat(document.getElementById('carPrice').value);
+    if (!base || base <= 0) { alert('Enter a valid car price'); return; }
+    let duty = base * 0.30, excise = (base+duty)*0.15, vat = (base+duty+excise)*0.15, reg = 300, total = base+duty+excise+vat+reg, mult = (total/base).toFixed(2);
+    document.getElementById('carBase').innerText = fmt(base); document.getElementById('carDuty').innerText = '+' + fmt(duty);
+    document.getElementById('carExcise').innerText = '+' + fmt(excise); document.getElementById('carVat').innerText = '+' + fmt(vat);
+    document.getElementById('carReg').innerText = '+' + fmt(reg); document.getElementById('carTotal').innerText = fmt(total);
+    document.getElementById('carMultiplier').innerText = '×' + mult;
     document.getElementById('carResult').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('carBar').style.width = pct + '%';
-    }, 100);
+    setTimeout(() => { document.getElementById('carBar').style.width = Math.min((base/total)*100,100) + '%'; }, 50);
   }
-
-  // ─── MEDICINE CALCULATOR ───
   function calcMed() {
-    const base = parseFloat(document.getElementById('medPrice').value);
-    if (!base || base <= 0) { alert('Please enter a valid medicine price.'); return; }
-
-    const duty = base * 0.02;
-    const vat = (base + duty) * 0.12;
-    const markup = (base + duty + vat) * 0.08;
-    const reg = base * 0.01;
-    const total = base + duty + vat + markup + reg;
-    const multiplier = (total / base).toFixed(2);
-
-    document.getElementById('medBase').textContent = fmt(base);
-    document.getElementById('medDuty').textContent = '+' + fmt(duty);
-    document.getElementById('medVat').textContent = '+' + fmt(vat);
-    document.getElementById('medMarkup').textContent = '+' + fmt(markup);
-    document.getElementById('medReg').textContent = '+' + fmt(reg);
-    document.getElementById('medTotal').textContent = fmt(total);
-    document.getElementById('medMultiplier').textContent = '×' + multiplier;
-
-    const pct = Math.min((base / total) * 100, 100);
+    let base = parseFloat(document.getElementById('medPrice').value);
+    if (!base || base <= 0) { alert('Enter a valid medicine price'); return; }
+    let duty = base*0.02, vat = (base+duty)*0.12, markup = (base+duty+vat)*0.08, reg = base*0.01, total = base+duty+vat+markup+reg, mult = (total/base).toFixed(2);
+    document.getElementById('medBase').innerText = fmt(base); document.getElementById('medDuty').innerText = '+' + fmt(duty);
+    document.getElementById('medVat').innerText = '+' + fmt(vat); document.getElementById('medMarkup').innerText = '+' + fmt(markup);
+    document.getElementById('medTotal').innerText = fmt(total); document.getElementById('medMultiplier').innerText = '×' + mult;
     document.getElementById('medResult').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('medBar').style.width = pct + '%';
-    }, 100);
+    setTimeout(() => { document.getElementById('medBar').style.width = Math.min((base/total)*100,100) + '%'; }, 50);
   }
-
-  // ─── ENTER KEY SUPPORT ───
-  document.getElementById('carPrice').addEventListener('keydown', e => { if(e.key==='Enter') calcCar(); });
-  document.getElementById('medPrice').addEventListener('keydown', e => { if(e.key==='Enter') calcMed(); });
-
-  // ─── SMOOTH SCROLL ───
-  document.querySelectorAll('nav a').forEach(a => {
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      const id = a.getAttribute('href').slice(1);
-      document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  // trigger chart animation on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('chartCar').style.width = '95%';
+      document.getElementById('chartLocal').style.width = '38%';
+      document.getElementById('chartMed').style.width = '26%';
+    }, 300);
   });
+  document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' }); }));
+  document.getElementById('carPrice')?.addEventListener('keydown', e => e.key === 'Enter' && calcCar());
+  document.getElementById('medPrice')?.addEventListener('keydown', e => e.key === 'Enter' && calcMed());
 </script>
 </body>
 </html>
