@@ -474,8 +474,8 @@
   <h2 class="sr-only">Trade Detective: An interactive educational tool about the Gravity Model of World Trade, featuring quizzes, data tables, charts, and reflection cards.</h2>
 
   <div class="hero">
-    <div style="display:inline-flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem">
-      <i class="ti ti-world" style="font-size:1.4rem;color:var(--primary-blue)" aria-hidden="true"></i>
+    <div style="display:inline-flex;align-items:center;gap:.5rem;margin-bottom:.75rem">
+      <i class="ti ti-world" style="font-size:22px" aria-hidden="true"></i>
       <span class="section-label" style="margin:0">International Trade</span>
     </div>
     <h1>Trade Detective</h1>
@@ -489,124 +489,441 @@
     <button class="nav-tab" onclick="showSection('reflect')" role="tab">Reflect</button>
   </div>
 
-  <!-- LEARN SECTION -->
   <div id="learn" class="section-content active">
     <div class="section">
       <div class="section-label">The gravity model</div>
       <div class="formula-card">
-        <div style="font-size:0.75rem; font-weight:600; color:var(--dark-accent);">Gravity Model of Trade</div>
-        <div class="formula">T<sub style="font-size:1rem">ij</sub> = A × (Y<sub style="font-size:1rem">i</sub> × Y<sub style="font-size:1rem">j</sub>) / D<sub style="font-size:1rem">ij</sub></div>
-        <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center">
-          <span class="formula-var"><b>T<sub>ij</sub></b> — Trade volume</span>
-          <span class="formula-var"><b>Y<sub>i</sub>, Y<sub>j</sub></b> — GDP</span>
-          <span class="formula-var"><b>D<sub>ij</sub></b> — Distance</span>
+        <div style="font-size:13px;font-weight:500;margin-bottom:.25rem">Gravity Model of Trade</div>
+        <div class="formula">T<sub style="font-size:14px">ij</sub> = A × (Y<sub style="font-size:14px">i</sub> × Y<sub style="font-size:14px">j</sub>) / D<sub style="font-size:14px">ij</sub></div>
+        <div class="formula-vars">
+          <span class="formula-var"><b>T<sub>ij</sub></b> — Trade volume between countries</span>
+          <span class="formula-var"><b>Y<sub>i</sub>, Y<sub>j</sub></b> — GDP of each country</span>
+          <span class="formula-var"><b>D<sub>ij</sub></b> — Distance between them</span>
+          <span class="formula-var"><b>A</b> — Constant factor</span>
         </div>
       </div>
       <div class="grid3">
-        <div class="concept-card"><div class="icon-circle"><i class="ti ti-building-bank"></i></div><h3 style="font-weight:600; margin-bottom:0.5rem;">Larger economies trade more</h3><p style="font-size:0.8rem; color:var(--text-secondary);">Higher GDP means more production & consumption → larger trade volumes.</p></div>
-        <div class="concept-card"><div class="icon-circle"><i class="ti ti-map-pin"></i></div><h3 style="font-weight:600; margin-bottom:0.5rem;">Distance reduces trade</h3><p style="font-size:0.8rem; color:var(--text-secondary);">Higher transport costs & longer lead times reduce trade.</p></div>
-        <div class="concept-card"><div class="icon-circle"><i class="ti ti-writing-sign"></i></div><h3 style="font-weight:600; margin-bottom:0.5rem;">Trade barriers matter</h3><p style="font-size:0.8rem; color:var(--text-secondary);">Borders & regulations act like extra distance.</p></div>
+        <div class="concept-card">
+          <div class="icon-circle"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
+          <h3>Larger economies trade more</h3>
+          <p>Countries with higher GDP produce and consume more, naturally importing and exporting larger volumes of goods and services.</p>
+          <div class="pills"><span class="pill pill-blue">GDP drives trade</span></div>
+        </div>
+        <div class="concept-card">
+          <div class="icon-circle"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
+          <h3>Distance reduces trade</h3>
+          <p>Farther countries face higher shipping costs, longer transit times, and less familiarity — all of which reduce the volume of trade.</p>
+          <div class="pills"><span class="pill pill-amber">Proximity matters</span></div>
+        </div>
+        <div class="concept-card">
+          <div class="icon-circle"><i class="ti ti-writing-sign" aria-hidden="true"></i></div>
+          <h3>Trade barriers matter</h3>
+          <p>Borders, tariffs, and regulatory differences act like extra distance — they reduce trade even when countries are geographically close.</p>
+          <div class="pills"><span class="pill pill-green">Agreements help</span></div>
+        </div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-label">Interactive explorer</div>
       <div class="card">
-        <div style="font-weight:600; margin-bottom:1rem;">Gravity model simulator</div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:1rem">Gravity model simulator</div>
         <div style="display:flex;flex-direction:column;gap:1rem">
-          <div><div style="display:flex;justify-content:space-between;"><label style="font-size:0.8rem;">GDP Country A (trillions)</label><span id="gdpA-out" style="font-weight:500;">$10T</span></div><input type="range" id="gdpA" min="1" max="25" value="10"></div>
-          <div><div style="display:flex;justify-content:space-between;"><label style="font-size:0.8rem;">GDP Country B (trillions)</label><span id="gdpB-out" style="font-weight:500;">$10T</span></div><input type="range" id="gdpB" min="1" max="25" value="10"></div>
-          <div><div style="display:flex;justify-content:space-between;"><label style="font-size:0.8rem;">Distance (thousand km)</label><span id="dist-out" style="font-weight:500;">5,000 km</span></div><input type="range" id="dist" min="1" max="20" value="5"></div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+              <label style="font-size:13px">GDP Country A (trillions)</label>
+              <span id="gdpA-out" style="font-size:13px;font-weight:500">$10T</span>
+            </div>
+            <input type="range" id="gdpA" min="1" max="25" value="10" step="1" style="width:100%">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+              <label style="font-size:13px">GDP Country B (trillions)</label>
+              <span id="gdpB-out" style="font-size:13px;font-weight:500">$10T</span>
+            </div>
+            <input type="range" id="gdpB" min="1" max="25" value="10" step="1" style="width:100%">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+              <label style="font-size:13px">Distance (thousand km)</label>
+              <span id="dist-out" style="font-size:13px;font-weight:500">5,000 km</span>
+            </div>
+            <input type="range" id="dist" min="1" max="20" value="5" step="1" style="width:100%">
+          </div>
         </div>
-        <div style="margin-top:1.25rem; background:var(--off-white); border-radius:16px; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.8rem;">Predicted trade volume (index)</span>
-          <span id="trade-result" style="font-size:1.8rem; font-weight:700; color:var(--primary-blue);">200</span>
+        <div style="margin-top:1.25rem;background:var(--off-white);border-radius:16px;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:13px">Predicted trade volume (index)</span>
+          <span id="trade-result" style="font-size:26px;font-weight:500;color:var(--primary-blue)">200</span>
         </div>
-        <div style="margin-top:0.75rem;"><div style="height:6px; background:var(--border-light); border-radius:10px;"><div id="trade-bar" style="height:100%; background:var(--primary-blue); width:40%; border-radius:10px;"></div></div></div>
+        <div style="margin-top:.75rem">
+          <div style="height:8px;background:var(--border-light);border-radius:4px;overflow:hidden">
+            <div id="trade-bar" style="height:100%;background:var(--primary-blue);border-radius:4px;width:40%;transition:width .5s"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- CASES SECTION (fully functional, same structure) -->
   <div id="cases" class="section-content">
     <div class="detective-header">
-      <div style="width:44px;height:44px;background:rgba(255,255,255,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="ti ti-zoom-in" style="font-size:1.3rem; color:var(--primary-blue);"></i></div>
-      <div><div class="badge-det">Investigation Mode</div><h2>Trade Detective Cases</h2><p>Analyze each case using the gravity model.</p></div>
-      <div style="margin-left:auto; text-align:right"><div class="score-label">Score</div><div id="score-display" class="score-num">0 / 4</div></div>
+      <div style="width:44px;height:44px;border-radius:50%;background:#444441;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ti-zoom-in" style="font-size:20px;color:#FAC775" aria-hidden="true"></i>
+      </div>
+      <div>
+        <div class="badge-det">Investigation Mode</div>
+        <h2>Trade Detective Cases</h2>
+        <p>Analyze each case using the gravity model and your economic instincts.</p>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="score-label">Score</div>
+        <div id="score-display" class="score-num">0 / 4</div>
+      </div>
     </div>
-    <div style="background:var(--white); border-radius:40px; padding:0.75rem 1rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem; border:1px solid var(--border-light);"><span style="font-size:0.8rem;">Progress</span><div class="progress-track"><div id="progress-fill" class="progress-fill" style="width:0%"></div></div><span id="progress-label" style="font-weight:500;">0 / 4</span></div>
 
-    <div id="case1" class="case-card"><div class="section-label" style="margin-bottom:0.5rem;">Case 01 · Trade Volume</div><div class="case-title" style="font-weight:600; margin-bottom:0.5rem;">🇺🇸 United States &amp; 🇨🇦 Canada</div><div class="case-question" style="font-size:0.85rem; margin-bottom:1rem;">The US and Canada are among each other's largest trading partners. Why do they trade so much?</div><div class="options-grid"><button class="option-btn" onclick="answer(1,'A','D')">A — Similar language and culture</button><button class="option-btn" onclick="answer(1,'B','D')">B — Very close geographic distance</button><button class="option-btn" onclick="answer(1,'C','D')">C — Shared trade agreements (USMCA)</button><button class="option-btn" onclick="answer(1,'D','D')">D — All of the above</button></div><div id="fb1" class="feedback"><b>Investigation complete.</b> The correct answer is <b>All of the above</b>. The US-Canada trade benefits from shared language, proximity, and USMCA agreements.</div></div>
-    <div id="case2" class="case-card"><div class="section-label" style="margin-bottom:0.5rem;">Case 02 · GDP Size</div><div class="case-title" style="font-weight:600; margin-bottom:0.5rem;">🇩🇪 Germany vs 🇸🇪 Sweden — US Trade Partner</div><div class="case-question" style="font-size:0.85rem; margin-bottom:1rem;">Germany GDP $4.5T, Sweden $0.6T. Assuming similar distance to US, which trades more?</div><div class="options-grid"><button class="option-btn" onclick="answer(2,'A','A')">A — Germany (larger GDP)</button><button class="option-btn" onclick="answer(2,'B','A')">B — Sweden (smaller, more flexible)</button></div><div id="fb2" class="feedback"><b>Case solved.</b> Germany's larger GDP means 7.5× higher predicted trade by the gravity model.</div></div>
-    <div id="case3" class="case-card"><div class="section-label" style="margin-bottom:0.5rem;">Case 03 · Economy Size</div><div class="case-title" style="font-weight:600; margin-bottom:0.5rem;">Country Alpha vs Country Beta</div><div class="case-question" style="font-size:0.85rem; margin-bottom:1rem;">Alpha GDP $800B, Beta $80B. Same distance to trading partner. Who generates more trade?</div><div class="options-grid"><button class="option-btn" onclick="answer(3,'A','A')">A — Country Alpha (10× larger GDP)</button><button class="option-btn" onclick="answer(3,'B','A')">B — Country Beta (smaller economies need more imports)</button></div><div id="fb3" class="feedback"><b>Case solved.</b> Country Alpha, with 10× GDP, will generate far more trade due to larger production and consumption.</div></div>
-    <div id="case4" class="case-card"><div class="section-label" style="margin-bottom:0.5rem;">Case 04 · Distance Effect</div><div class="case-title" style="font-weight:600; margin-bottom:0.5rem;">Nearby vs Distant</div><div class="case-question" style="font-size:0.85rem; margin-bottom:1rem;">Proxima 800 km away, Distanta 8,000 km away. Same GDP. Which trades more?</div><div class="options-grid"><button class="option-btn" onclick="answer(4,'A','A')">A — Country Proxima (10× closer)</button><button class="option-btn" onclick="answer(4,'B','A')">B — Country Distanta</button></div><div id="fb4" class="feedback"><b>Case closed.</b> Proxima wins. Distance is denominator → 10× distance means ~10× less trade.</div></div>
+    <div style="background:var(--white);border:1px solid var(--border-light);border-radius:40px;padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem">
+      <span style="font-size:13px">Progress</span>
+      <div class="progress-track"><div id="progress-fill" class="progress-fill" style="width:0%"></div></div>
+      <span id="progress-label" style="font-size:13px;font-weight:500">0 / 4</span>
+    </div>
+
+    <div id="case1" class="case-card">
+      <div class="case-number" style="font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem">Case 01 · Trade Volume</div>
+      <div class="case-title" style="font-size:16px;font-weight:500;margin-bottom:.75rem">🇺🇸 United States &amp; 🇨🇦 Canada</div>
+      <div class="case-question" style="font-size:14px;margin-bottom:1rem;line-height:1.6">The US and Canada are among each other's largest trading partners, exchanging over $700 billion annually. According to your gravity model analysis, why do these two countries trade so much with each other?</div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="answer(1,'A','D')">A — Similar language and culture</button>
+        <button class="option-btn" onclick="answer(1,'B','D')">B — Very close geographic distance</button>
+        <button class="option-btn" onclick="answer(1,'C','D')">C — Shared trade agreements (USMCA)</button>
+        <button class="option-btn" onclick="answer(1,'D','D')">D — All of the above</button>
+      </div>
+      <div id="fb1" class="feedback">
+        <b>Investigation complete.</b> The correct answer is <b>All of the above</b>. The US-Canada trade relationship benefits from shared language, a 5,500 mile border (distance ≈ 0), and formal agreements like USMCA. The gravity model predicts high trade — and reality confirms it. Both countries also have large GDPs, which further amplifies trade.
+      </div>
+    </div>
+
+    <div id="case2" class="case-card">
+      <div class="case-number" style="font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem">Case 02 · GDP Size</div>
+      <div class="case-title" style="font-size:16px;font-weight:500;margin-bottom:.75rem">🇩🇪 Germany vs 🇸🇪 Sweden — US Trade Partner</div>
+      <div class="case-question" style="font-size:14px;margin-bottom:1rem;line-height:1.6">Both Germany and Sweden are European countries with advanced economies. Germany has a GDP of approximately $4.5 trillion; Sweden's GDP is approximately $0.6 trillion. Assuming similar distance from the US, which country would the gravity model predict to trade more with the United States?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem">
+        <div style="background:var(--off-white);border-radius:16px;padding:.75rem;font-size:13px">
+          <div style="font-weight:500;margin-bottom:.5rem">🇩🇪 Germany</div>
+          <div>GDP ≈ $4.5 trillion</div>
+          <div style="margin-top:.5rem;margin-bottom:0"><div style="height:18px;background:var(--border-light);border-radius:3px;overflow:hidden"><div style="width:90%;height:100%;background:var(--primary-blue);border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:11px;font-weight:500;color:white">$4.5T</div></div></div>
+        </div>
+        <div style="background:var(--off-white);border-radius:16px;padding:.75rem;font-size:13px">
+          <div style="font-weight:500;margin-bottom:.5rem">🇸🇪 Sweden</div>
+          <div>GDP ≈ $0.6 trillion</div>
+          <div style="margin-top:.5rem;margin-bottom:0"><div style="height:18px;background:var(--border-light);border-radius:3px;overflow:hidden"><div style="width:12%;height:100%;background:#63992210;border-radius:3px"></div></div></div>
+        </div>
+      </div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="answer(2,'A','A')">A — Germany (larger GDP)</button>
+        <button class="option-btn" onclick="answer(2,'B','A')">B — Sweden (smaller, more flexible economy)</button>
+      </div>
+      <div id="fb2" class="feedback">
+        <b>Investigation complete.</b> Germany's much larger GDP means it produces and consumes far more goods. The gravity model multiplies both GDPs — Germany's $4.5T vs Sweden's $0.6T gives Germany a 7.5× higher trade prediction (assuming equal distance). Germany consistently ranks among the top US trading partners.
+      </div>
+    </div>
+
+    <div id="case3" class="case-card">
+      <div class="case-number" style="font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem">Case 03 · Economy Size</div>
+      <div class="case-title" style="font-size:16px;font-weight:500;margin-bottom:.75rem">Country Alpha vs Country Beta — Fictional Case</div>
+      <div class="case-question" style="font-size:14px;margin-bottom:1rem;line-height:1.6">Two fictional countries: Country Alpha has a GDP of $800 billion and Country Beta has a GDP of $80 billion. Both are the same distance from a major trading partner. According to the gravity model, which generates more international trade?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem">
+        <div style="background:var(--light-bg-blue);border:1px solid var(--border-light);border-radius:16px;padding:.75rem;font-size:13px">
+          <div style="font-weight:500;margin-bottom:.3rem">Country Alpha</div>
+          <div style="font-size:20px;font-weight:500">$800B GDP</div>
+          <div style="font-size:11px;margin-top:.25rem">Large industrial economy</div>
+        </div>
+        <div style="background:var(--off-white);border-radius:16px;padding:.75rem;font-size:13px">
+          <div style="font-weight:500;margin-bottom:.3rem">Country Beta</div>
+          <div style="font-size:20px;font-weight:500">$80B GDP</div>
+          <div style="font-size:11px;margin-top:.25rem">Small emerging economy</div>
+        </div>
+      </div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="answer(3,'A','A')">A — Country Alpha (10× larger GDP)</button>
+        <button class="option-btn" onclick="answer(3,'B','A')">B — Country Beta (smaller economies need more imports)</button>
+      </div>
+      <div id="fb3" class="feedback">
+        <b>Case solved.</b> Country Alpha, with 10× the GDP, will generate far more trade. Larger economies both supply more exports (more production) and demand more imports (more consumption). The gravity model formula places GDP in the numerator — higher GDP directly means higher predicted trade.
+      </div>
+    </div>
+
+    <div id="case4" class="case-card">
+      <div class="case-number" style="font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem">Case 04 · Distance Effect</div>
+      <div class="case-title" style="font-size:16px;font-weight:500;margin-bottom:.75rem">Nearby vs Distant — Same Economic Size</div>
+      <div class="case-question" style="font-size:14px;margin-bottom:1rem;line-height:1.6">Country Proxima is 800 km from a major trading hub. Country Distanta has the exact same GDP but is 8,000 km away. Both face the same tariff rates. Which country does the gravity model predict will trade more with the hub?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem">
+        <div style="background:#EAF3DE;border:1px solid #C0DD97;border-radius:16px;padding:.75rem;font-size:13px;text-align:center">
+          <i class="ti ti-map-pin" style="font-size:22px;margin-bottom:.4rem" aria-hidden="true"></i>
+          <div style="font-weight:500">Country Proxima</div>
+          <div style="font-weight:500">800 km away</div>
+          <div style="font-size:11px;margin-top:.2rem">Nearby neighbor</div>
+        </div>
+        <div style="background:#FAECE7;border:1px solid #F5C4B3;border-radius:16px;padding:.75rem;font-size:13px;text-align:center">
+          <i class="ti ti-map-2" style="font-size:22px;margin-bottom:.4rem" aria-hidden="true"></i>
+          <div style="font-weight:500">Country Distanta</div>
+          <div style="font-weight:500">8,000 km away</div>
+          <div style="font-size:11px;margin-top:.2rem">Distant partner</div>
+        </div>
+      </div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="answer(4,'A','A')">A — Country Proxima (10× closer)</button>
+        <button class="option-btn" onclick="answer(4,'B','A')">B — Country Distanta (distance is less relevant today)</button>
+      </div>
+      <div id="fb4" class="feedback">
+        <b>Case closed.</b> Country Proxima wins easily. Distance is the denominator in the gravity model — 10× the distance means roughly 10× less trade (all else equal). Even in the digital age, physical trade in goods is heavily influenced by shipping costs, logistics, and transit time. Distance still matters enormously.
+      </div>
+    </div>
   </div>
 
-  <!-- EVIDENCE SECTION (preserve data, charts) -->
   <div id="evidence" class="section-content">
     <div class="section">
       <div class="section-label">Evidence table 1</div>
-      <div class="card" style="margin-bottom:1.5rem;"><div style="font-weight:600; margin-bottom:0.5rem;">Top US trading partners</div><table class="data-table"><thead><tr><th>Country</th><th>Annual trade</th><th>Key factor</th></tr></thead><tbody><tr><td>🇨🇳 China</td><td>~$660B</td><td><span class="effect-badge eb-up">Large economy</span></td></tr><tr><td>🇨🇦 Canada</td><td>~$700B</td><td><span class="effect-badge eb-up">Proximity + USMCA</span></td></tr><tr><td>🇲🇽 Mexico</td><td>~$660B</td><td><span class="effect-badge eb-up">Proximity + USMCA</span></td></tr><tr><td>🇩🇪 Germany</td><td>~$165B</td><td><span class="effect-badge eb-up">Largest EU economy</span></td></tr></tbody></table></div>
-      <div class="section-label">Evidence table 2 · Gravity components</div>
-      <div class="card"><table class="data-table"><thead><tr><th>Factor</th><th>Effect</th></tr></thead><tbody><tr><td><b>GDP size</b></td><td><span class="effect-badge eb-up">Increases trade</span></td></tr><tr><td><b>Geographic distance</b></td><td><span class="effect-badge eb-down">Reduces trade</span></td></tr><tr><td><b>Trade agreements</b></td><td><span class="effect-badge eb-up">Increases trade</span></td></tr></tbody></table></div>
-      <div class="section-label" style="margin-top:1.5rem;">World trade composition (2015)</div>
-      <div class="card"><div class="chart-wrap"><canvas id="compChart" role="img" aria-label="Donut chart: manufactures 56.5%, services 23.5%, fuels 12%, agriculture 8%."></canvas></div></div>
-      <div class="section-label">Historical timeline</div>
-      <div class="card"><div class="timeline"><div class="tl-item"><div class="tl-dot"></div><div class="tl-year">Pre-1914</div><div class="tl-title">First globalization age</div></div><div class="tl-item"><div class="tl-dot" style="background:var(--error);"></div><div class="tl-year">1914–1945</div><div class="tl-title">Collapse of trade</div></div><div class="tl-item"><div class="tl-dot" style="background:var(--warning);"></div><div class="tl-year">1945–1970s</div><div class="tl-title">Rebuilding and GATT</div></div><div class="tl-item"><div class="tl-dot" style="background:var(--success);"></div><div class="tl-year">1980s–2000s</div><div class="tl-title">Modern globalization</div></div></div></div>
-      <div class="grid2" style="margin-top:1rem;"><div class="img-placeholder"><i class="ti ti-photo"></i><span> Notes Image 1</span><small>images/notes1.jpg</small></div><div class="img-placeholder"><i class="ti ti-photo"></i><span> Notes Image 2</span><small>images/notes2.jpg</small></div></div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div style="font-size:14px;font-weight:500;margin-bottom:.5rem">Top US trading partners</div>
+        <div style="font-size:13px;margin-bottom:1rem">Larger economies consistently appear at the top — confirming the gravity model's GDP prediction.</div>
+        <table class="data-table">
+          <thead><tr><th>Country</th><th>Approx. annual trade</th><th>Key factor</th></tr></thead>
+          <tbody>
+            <tr><td>🇨🇳 China</td><td>~$660B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> World's largest manufacturer</span></td></tr>
+            <tr><td>🇨🇦 Canada</td><td>~$700B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Proximity + USMCA</span></td></tr>
+            <tr><td>🇲🇽 Mexico</td><td>~$660B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Proximity + USMCA</span></td></tr>
+            <tr><td>🇯🇵 Japan</td><td>~$210B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> 3rd largest GDP</span></td></tr>
+            <tr><td>🇩🇪 Germany</td><td>~$165B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Largest EU economy</span></td></tr>
+            <tr><td>🇰🇷 South Korea</td><td>~$160B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Tech exports + FTA</span></td></tr>
+            <tr><td>🇬🇧 United Kingdom</td><td>~$130B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Language + finance links</span></td></tr>
+            <tr><td>🇫🇷 France</td><td>~$90B</td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Large EU economy</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-label">Evidence table 2</div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div style="font-size:14px;font-weight:500;margin-bottom:1rem">Gravity model components</div>
+        <table class="data-table">
+          <thead><tr><th>Factor</th><th>Effect on trade</th><th>Mechanism</th></tr></thead>
+          <tbody>
+            <tr><td><b>GDP size (both countries)</b></td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Increases</span></td><td style="font-size:12px">More production &amp; consumption capacity</td></tr>
+            <tr><td><b>Geographic distance</b></td><td><span class="effect-badge eb-down"><i class="ti ti-trending-down" style="font-size:12px" aria-hidden="true"></i> Reduces</span></td><td style="font-size:12px">Higher transport costs, longer delivery</td></tr>
+            <tr><td><b>National borders</b></td><td><span class="effect-badge eb-down"><i class="ti ti-trending-down" style="font-size:12px" aria-hidden="true"></i> Reduces</span></td><td style="font-size:12px">Tariffs, regulations, currency differences</td></tr>
+            <tr><td><b>Trade agreements</b></td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Increases</span></td><td style="font-size:12px">Reduced barriers, legal certainty</td></tr>
+            <tr><td><b>Shared language/culture</b></td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Increases</span></td><td style="font-size:12px">Lower transaction costs, trust</td></tr>
+            <tr><td><b>Colonial/historical ties</b></td><td><span class="effect-badge eb-up"><i class="ti ti-trending-up" style="font-size:12px" aria-hidden="true"></i> Increases</span></td><td style="font-size:12px">Established trade networks</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-label">Evidence table 3 · World trade composition (2015)</div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><span style="width:10px;height:10px;border-radius:2px;background:#88BDF2"></span>Manufactures 56.5%</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><span style="width:10px;height:10px;border-radius:2px;background:#6A89A7"></span>Commercial services 23.5%</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><span style="width:10px;height:10px;border-radius:2px;background:#384959"></span>Fuels &amp; mining 12%</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><span style="width:10px;height:10px;border-radius:2px;background:#BDDDFC"></span>Agricultural 8%</span>
+        </div>
+        <div class="chart-wrap"><canvas id="compChart" role="img" aria-label="Donut chart of world trade composition in 2015: manufactures 56.5%, commercial services 23.5%, fuels and mining 12%, agricultural 8%.">World trade composition 2015: manufactures 56.5%, services 23.5%, fuels 12%, agriculture 8%.</canvas></div>
+      </div>
+
+      <div class="section-label">Evidence table 4 · Historical timeline</div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div style="font-size:14px;font-weight:500;margin-bottom:1rem">History of globalization and world trade</div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">Pre-1914</div><div class="tl-title">First age of globalization</div><div class="tl-desc">Rapid expansion of international trade powered by steamships, railways, and the gold standard. Trade-to-GDP ratios reached levels not seen again until the 1990s.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:#EF4444"></div><div class="tl-year">1914–1945</div><div class="tl-title">Collapse of trade</div><div class="tl-desc">World Wars and the Great Depression devastated global trade. Protectionist policies like the US Smoot-Hawley Tariff Act further shrank cross-border commerce.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:#F59E0B"></div><div class="tl-year">1945–1970s</div><div class="tl-title">Rebuilding and GATT</div><div class="tl-desc">Post-WWII institutions (GATT, IMF, World Bank) lowered barriers. Trade recovered steadily as Europe rebuilt and Japan industrialized.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:#22C55E"></div><div class="tl-year">1980s–2000s</div><div class="tl-title">Modern globalization</div><div class="tl-desc">WTO formation, containerization, and the internet supercharged trade. China's rise and supply chain fragmentation transformed global commerce patterns.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2010s–present</div><div class="tl-title">New complexities</div><div class="tl-desc">Trade tensions, digital services trade, and reshoring trends create a more complex landscape — the gravity model remains a key analytical framework.</div></div>
+        </div>
+      </div>
+
+      <div class="section-label">Notes — image placeholders</div>
+      <div class="grid2">
+        <div>
+          <img src="images/notes1.jpg" alt="Notes image 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" style="width:100%;border-radius:20px;display:none">
+          <div class="img-placeholder">
+            <i class="ti ti-photo" aria-hidden="true"></i>
+            <span>Notes Image 1</span>
+            <small>images/notes1.jpg</small>
+          </div>
+        </div>
+        <div>
+          <img src="images/notes2.jpg" alt="Notes image 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" style="width:100%;border-radius:20px;display:none">
+          <div class="img-placeholder">
+            <i class="ti ti-photo" aria-hidden="true"></i>
+            <span>Notes Image 2</span>
+            <small>images/notes2.jpg</small>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- REFLECT SECTION -->
   <div id="reflect" class="section-content">
     <div class="section">
       <div class="section-label">What did I learn?</div>
-      <div class="grid3">
-        <div class="reflect-card"><div class="icon-circle"><i class="ti ti-bulb"></i></div><h3 style="font-weight:600; margin-bottom:0.75rem;">Knowledge gained</h3><ul class="reflect-list"><li>How the Gravity Model explains trade patterns</li><li>Why GDP and distance are primary predictors</li><li>How agreements modify predictions</li></ul></div>
-        <div class="reflect-card"><div class="icon-circle"><i class="ti ti-tool"></i></div><h3 style="font-weight:600; margin-bottom:0.75rem;">Skills developed</h3><ul class="reflect-list"><li>Economic model analysis</li><li>Data interpretation</li><li>Bilateral trade relationships</li></ul></div>
-        <div class="reflect-card"><div class="icon-circle"><i class="ti ti-notes"></i></div><h3 style="font-weight:600; margin-bottom:0.75rem;">Key reflections</h3><ul class="reflect-list"><li>Distance still shapes trade</li><li>Globalization evolves</li><li>Trade composition shifted to manufactures/services</li></ul></div>
+      <div class="grid3" style="margin-bottom:1.5rem">
+        <div class="reflect-card">
+          <div class="icon-circle"><i class="ti ti-bulb" aria-hidden="true"></i></div>
+          <h3>Knowledge gained</h3>
+          <ul class="reflect-list">
+            <li>How the Gravity Model explains international trade patterns</li>
+            <li>Why GDP and distance are the primary predictors of trade</li>
+            <li>Why some countries trade more than their size suggests</li>
+            <li>How borders and trade agreements modify gravity model predictions</li>
+          </ul>
+        </div>
+        <div class="reflect-card">
+          <div class="icon-circle"><i class="ti ti-tool" aria-hidden="true"></i></div>
+          <h3>Skills developed</h3>
+          <ul class="reflect-list">
+            <li>Economic model analysis and interpretation</li>
+            <li>Reading and extracting key concepts from trade data</li>
+            <li>Data interpretation and pattern recognition</li>
+            <li>Understanding bilateral trade relationships</li>
+          </ul>
+        </div>
+        <div class="reflect-card">
+          <div class="icon-circle"><i class="ti ti-notes" aria-hidden="true"></i></div>
+          <h3>Key reflections</h3>
+          <ul class="reflect-list">
+            <li>Some countries trade more than expected due to culture, history, or agreements</li>
+            <li>Distance still shapes trade even in the digital age</li>
+            <li>Globalization continues to evolve through technology</li>
+            <li>Trade composition has shifted strongly toward manufactures and services</li>
+          </ul>
+        </div>
       </div>
-      <div class="card" style="background:var(--off-white);"><p style="font-size:0.85rem;"><b>Summary:</b> The Gravity Model provides an intuitive framework: trade depends on economic size (GDP) and distance. Proximity and agreements boost trade; larger economies dominate flows.</p></div>
+      <div class="card" style="background:var(--off-white)">
+        <div style="font-size:13px;line-height:1.8">
+          <b>Summary:</b> The Gravity Model of Trade provides a powerful, intuitive framework for predicting trade volumes. Just as Newton's gravity depends on mass and distance, trade depends on economic size (GDP) and geographic distance. Countries like Canada and Mexico punch above their global weight in US trade due to proximity and agreements — while Germany trades extensively due to sheer economic scale. Understanding these forces helps explain why global trade looks the way it does today.
+        </div>
+      </div>
     </div>
   </div>
+
   <div id="confetti-container" class="confetti-container"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-  let scores = {answered:0, correct:0}, answered = {};
-  function showSection(id) {
-    document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    let idx = {learn:0, cases:1, evidence:2, reflect:3}[id];
-    document.querySelectorAll('.nav-tab')[idx].classList.add('active');
-    if(id === 'evidence') setTimeout(initChart, 100);
+var scores = {answered: 0, correct: 0};
+var answered = {};
+
+function showSection(id) {
+  document.querySelectorAll('.section-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  var tabs = document.querySelectorAll('.nav-tab');
+  var map = {learn:0, cases:1, evidence:2, reflect:3};
+  tabs[map[id]].classList.add('active');
+  if(id === 'evidence') { setTimeout(initChart, 100); }
+}
+
+function answer(caseNum, chosen, correct) {
+  if(answered[caseNum]) return;
+  answered[caseNum] = true;
+  scores.answered++;
+  var isCorrect = chosen === correct;
+  if(isCorrect) scores.correct++;
+  var card = document.getElementById('case' + caseNum);
+  var btns = card.querySelectorAll('.option-btn');
+  btns.forEach(function(b, i) {
+    b.disabled = true;
+    var letter = String.fromCharCode(65 + i);
+    if(letter === correct) b.classList.add('correct');
+    else if(letter === chosen && !isCorrect) b.classList.add('wrong');
+  });
+  var fb = document.getElementById('fb' + caseNum);
+  fb.classList.add('show', 'fade-in');
+  if(isCorrect) {
+    fb.classList.add('success');
+    launchConfetti();
+    card.style.borderColor = '#C0DD97';
+  } else {
+    fb.classList.add('error');
+    card.classList.add('shake');
+    card.style.borderColor = '#F7C1C1';
+    setTimeout(function(){ card.classList.remove('shake'); }, 500);
   }
-  function answer(caseNum, chosen, correct) {
-    if(answered[caseNum]) return;
-    answered[caseNum] = true;
-    scores.answered++; let isCorrect = (chosen === correct);
-    if(isCorrect) scores.correct++;
-    let card = document.getElementById(`case${caseNum}`), btns = card.querySelectorAll('.option-btn');
-    btns.forEach((b,i)=>{ b.disabled=true; let letter=String.fromCharCode(65+i); if(letter===correct) b.classList.add('correct'); else if(letter===chosen && !isCorrect) b.classList.add('wrong'); });
-    let fb = document.getElementById(`fb${caseNum}`);
-    fb.classList.add('show');
-    if(isCorrect) { fb.classList.add('success'); launchConfetti(); } else { fb.classList.add('error'); card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400); }
-    document.getElementById('score-display').innerText = `${scores.correct} / 4`;
-    let pct = (scores.answered/4)*100;
-    document.getElementById('progress-fill').style.width = pct+'%';
-    document.getElementById('progress-label').innerText = `${scores.answered} / 4`;
+  document.getElementById('score-display').textContent = scores.correct + ' / 4';
+  var pct = Math.round((scores.answered / 4) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = scores.answered + ' / 4';
+}
+
+function launchConfetti() {
+  var container = document.getElementById('confetti-container');
+  var colors = ['#88BDF2','#384959','#6A89A7'];
+  for(var i = 0; i < 36; i++) {
+    var piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.top = '-10px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+    piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+    piece.style.animationDelay = Math.random() * 0.5 + 's';
+    container.appendChild(piece);
+    setTimeout(function(p){ p.remove(); }, 3500, piece);
   }
-  function launchConfetti() {
-    let container = document.getElementById('confetti-container');
-    for(let i=0;i<40;i++){ let p=document.createElement('div'); p.className='confetti-piece'; p.style.left=Math.random()*100+'%'; p.style.background=['#88BDF2','#384959','#6A89A7'][Math.floor(Math.random()*3)]; p.style.animationDuration=(1.2+Math.random()*1.5)+'s'; container.appendChild(p); setTimeout(()=>p.remove(),3000); }
-  }
-  let chartInited=false;
-  function initChart(){ if(chartInited) return; chartInited=true; new Chart(document.getElementById('compChart'),{ type:'doughnut', data:{ labels:['Manufactures','Commercial services','Fuels & mining','Agricultural'], datasets:[{ data:[56.5,23.5,12,8], backgroundColor:['#88BDF2','#6A89A7','#384959','#BDDDFC'], borderWidth:0 }] }, options:{ responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ display:false } } } }); }
-  let gdpA=document.getElementById('gdpA'), gdpB=document.getElementById('gdpB'), dist=document.getElementById('dist');
-  function updateSim(){ let a=parseInt(gdpA.value), b=parseInt(gdpB.value), d=parseInt(dist.value); document.getElementById('gdpA-out').innerText='$'+a+'T'; document.getElementById('gdpB-out').innerText='$'+b+'T'; document.getElementById('dist-out').innerText=(d*1000).toLocaleString()+' km'; let raw=(a*b)/d, max=(25*25)/1, pct=Math.min(100,Math.round((raw/max)*100)); document.getElementById('trade-result').innerText=Math.round(raw); document.getElementById('trade-bar').style.width=pct+'%'; }
-  gdpA.addEventListener('input',updateSim); gdpB.addEventListener('input',updateSim); dist.addEventListener('input',updateSim); updateSim();
+}
+
+var chartInited = false;
+function initChart() {
+  if(chartInited) return;
+  chartInited = true;
+  new Chart(document.getElementById('compChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Manufactures', 'Commercial services', 'Fuels & mining', 'Agricultural'],
+      datasets: [{
+        data: [56.5, 23.5, 12, 8],
+        backgroundColor: ['#88BDF2', '#6A89A7', '#384959', '#BDDDFC'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){ return ' ' + ctx.label + ': ' + ctx.parsed + '%'; }
+          }
+        }
+      }
+    }
+  });
+}
+
+var gdpA = document.getElementById('gdpA');
+var gdpB = document.getElementById('gdpB');
+var dist = document.getElementById('dist');
+
+function updateSim() {
+  var a = parseInt(gdpA.value);
+  var b = parseInt(gdpB.value);
+  var d = parseInt(dist.value);
+  document.getElementById('gdpA-out').textContent = '$' + a + 'T';
+  document.getElementById('gdpB-out').textContent = '$' + b + 'T';
+  document.getElementById('dist-out').textContent = (d * 1000).toLocaleString() + ' km';
+  var raw = (a * b) / d;
+  var max = (25 * 25) / 1;
+  var idx = Math.round(raw);
+  var pct = Math.min(100, Math.round((raw / max) * 100));
+  document.getElementById('trade-result').textContent = idx;
+  document.getElementById('trade-bar').style.width = pct + '%';
+}
+
+gdpA.addEventListener('input', updateSim);
+gdpB.addEventListener('input', updateSim);
+dist.addEventListener('input', updateSim);
+updateSim();
 </script>
 </body>
 </html>
