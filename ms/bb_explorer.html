@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branch & Bound Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0E0D0B;
+  --bg-secondary:#1A1916;
+  --bg-card:rgba(26,25,22,0.85);
+  --bg-glass:rgba(14,13,11,0.82);
+  --text-cream:#F5F0E8;
+  --text-bright:#FAF7F2;
+  --text-muted:#E8E0CC;
+  --text-dim:#A09880;
+  --gold:#C9A84C;
+  --gold-light:#E2C97E;
+  --gold-glow:rgba(201,168,76,0.3);
+  --gold-dim:rgba(201,168,76,0.12);
+  --success:#6BAE8C;
+  --warning:#C46B4A;
+  --info:#8A7EC9;
+  --pruned:#C44A4A;
+  --pruned-dim:rgba(196,74,74,0.2);
+  --border-gold:rgba(201,168,76,0.25);
+  --border-subtle:rgba(245,240,232,0.08);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg-primary);
+  color:var(--text-cream);
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:18px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* Canvas */
+#bg-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;opacity:0.55;
+}
+
+/* Layout */
+.site-wrapper{position:relative;z-index:1}
+.container{max-width:1140px;margin:0 auto;padding:0 32px}
+section{padding:96px 0}
+
+/* Typography */
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700;line-height:1.2}
+h1{font-size:clamp(2.8rem,6vw,5.2rem);letter-spacing:-0.02em}
+h2{font-size:clamp(2rem,4vw,3rem);letter-spacing:-0.01em}
+h3{font-size:clamp(1.4rem,2.5vw,1.8rem)}
+h4{font-size:1.1rem;font-family:'Crimson Pro',serif;font-weight:600;letter-spacing:0.08em;text-transform:uppercase}
+.mono{font-family:'DM Mono',monospace}
+
+/* Gold divider */
+.gold-line{
+  width:80px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:24px 0;
+}
+.gold-line-center{margin:24px auto}
+.section-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;
+  letter-spacing:0.22em;
+  color:var(--gold);
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+/* Glass cards */
+.glass-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-gold);
+  border-radius:12px;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  padding:32px;
+}
+.glass-card-sm{
+  background:rgba(26,25,22,0.7);
+  border:1px solid var(--border-subtle);
+  border-radius:8px;
+  padding:20px 24px;
+}
+
+/* Metric badges */
+.metric-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--gold-dim);
+  border:1px solid var(--border-gold);
+  border-radius:20px;padding:6px 16px;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  color:var(--gold-light);letter-spacing:0.05em;
+}
+
+/* ─── HERO ─── */
+#hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:120px 0 80px;
+  position:relative;
+}
+.hero-inner{max-width:820px}
+.hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px}
+.hero-badge{
+  font-family:'DM Mono',monospace;font-size:0.7rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-dim);
+  border:1px solid var(--border-subtle);
+  border-radius:4px;padding:5px 12px;
+}
+.hero-title{
+  color:var(--text-bright);
+  margin-bottom:8px;
+}
+.hero-title em{font-style:italic;color:var(--gold-light)}
+.hero-subtitle{
+  font-size:clamp(1.2rem,2.5vw,1.55rem);
+  color:var(--text-dim);font-weight:300;
+  max-width:600px;margin:20px 0 48px;
+}
+.hero-metrics{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;margin-top:56px;
+}
+.hero-metric{
+  background:var(--bg-glass);
+  border:1px solid var(--border-gold);
+  border-radius:10px;padding:20px;
+  backdrop-filter:blur(12px);
+}
+.hero-metric-label{
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:10px;
+}
+.hero-metric-value{
+  font-family:'DM Mono',monospace;font-size:1.6rem;
+  font-weight:500;color:var(--gold-light);
+  transition:all 0.3s ease;
+}
+.hero-metric-value.green{color:var(--success)}
+.hero-metric-value.purple{color:var(--info)}
+.hero-metric-value.red{color:var(--warning)}
+.scroll-hint{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;
+  color:var(--text-dim);opacity:0.6;
+  animation:scrollBounce 2s ease-in-out infinite;
+}
+.scroll-hint::after{
+  content:'';width:1px;height:40px;
+  background:linear-gradient(to bottom,var(--gold),transparent);
+}
+@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── SECTION: WHY SMART SEARCH ─── */
+#why-search{background:var(--bg-secondary)}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:48px}
+.comp-card{
+  background:var(--bg-glass);
+  border-radius:10px;padding:32px;
+  border:1px solid var(--border-subtle);
+  position:relative;overflow:hidden;
+}
+.comp-card.bad{border-color:rgba(196,74,74,0.3)}
+.comp-card.good{border-color:rgba(107,174,140,0.3)}
+.comp-card-tag{
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  margin-bottom:16px;
+}
+.comp-card.bad .comp-card-tag{color:var(--pruned)}
+.comp-card.good .comp-card-tag{color:var(--success)}
+.comp-stat{
+  font-family:'DM Mono',monospace;font-size:2.4rem;
+  font-weight:500;margin-top:20px;
+}
+.comp-card.bad .comp-stat{color:var(--pruned)}
+.comp-card.good .comp-stat{color:var(--success)}
+.comp-bar-wrap{margin-top:16px;height:6px;background:rgba(255,255,255,0.06);border-radius:3px}
+.comp-bar{height:100%;border-radius:3px;transition:width 1.5s ease}
+.comp-card.bad .comp-bar{background:var(--pruned);width:100%}
+.comp-card.good .comp-bar{background:var(--success);width:12%}
+
+/* ─── CORE CONCEPTS ─── */
+.concepts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.concept-card{
+  background:var(--bg-glass);
+  border:1px solid var(--border-gold);
+  border-radius:10px;padding:28px;
+  cursor:pointer;transition:all 0.35s ease;
+  position:relative;overflow:hidden;
+}
+.concept-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.concept-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--gold);
+  box-shadow:0 20px 40px rgba(0,0,0,0.4),0 0 20px var(--gold-glow);
+}
+.concept-card:hover::before{opacity:1}
+.concept-icon{
+  font-family:'DM Mono',monospace;
+  font-size:1.8rem;color:var(--gold);
+  margin-bottom:16px;line-height:1;
+}
+.concept-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--text-bright);margin-bottom:10px;
+}
+.concept-body{
+  font-size:0.95rem;color:var(--text-dim);line-height:1.6;
+}
+.concept-example{
+  margin-top:16px;
+  padding:12px;
+  background:var(--gold-dim);
+  border-left:2px solid var(--gold);
+  border-radius:0 4px 4px 0;
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;
+  color:var(--gold-light);
+  line-height:1.5;
+}
+
+/* ─── HOW IT WORKS ─── */
+#how-it-works{background:var(--bg-secondary)}
+.workflow-steps{
+  display:flex;flex-direction:column;gap:0;
+  margin-top:56px;position:relative;
+}
+.workflow-step{
+  display:grid;grid-template-columns:80px 1fr;gap:32px;
+  padding:32px 0;border-bottom:1px solid var(--border-subtle);
+  position:relative;
+  opacity:0;transform:translateX(-20px);
+  transition:all 0.6s ease;
+}
+.workflow-step.visible{opacity:1;transform:translateX(0)}
+.step-num{
+  font-family:'DM Mono',monospace;
+  font-size:3rem;font-weight:300;
+  color:var(--gold);opacity:0.35;
+  line-height:1;padding-top:4px;
+}
+.step-content h3{
+  font-size:1.3rem;color:var(--text-bright);margin-bottom:10px;
+}
+.step-content p{color:var(--text-dim);font-size:1rem}
+.step-tag{
+  display:inline-block;margin-top:14px;
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  padding:4px 12px;border-radius:3px;
+}
+.step-tag.root{background:rgba(201,168,76,0.15);color:var(--gold)}
+.step-tag.relax{background:rgba(138,126,201,0.15);color:var(--info)}
+.step-tag.branch{background:rgba(201,168,76,0.15);color:var(--gold)}
+.step-tag.prune{background:rgba(196,74,74,0.15);color:var(--pruned)}
+.step-tag.optimal{background:rgba(107,174,140,0.15);color:var(--success)}
+
+/* ─── INTERACTIVE TREE ─── */
+#interactive-tree{}
+.tree-controls{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;align-items:center;
+}
+.btn{
+  font-family:'DM Mono',monospace;font-size:0.75rem;
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:10px 20px;border-radius:6px;cursor:pointer;
+  border:1px solid var(--border-gold);
+  background:transparent;color:var(--gold-light);
+  transition:all 0.25s;
+}
+.btn:hover{background:var(--gold-dim);box-shadow:0 0 12px var(--gold-glow)}
+.btn.primary{background:var(--gold-dim);border-color:var(--gold)}
+.btn.primary:hover{background:rgba(201,168,76,0.25)}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.tree-canvas-wrap{
+  background:var(--bg-glass);
+  border:1px solid var(--border-gold);
+  border-radius:12px;overflow:hidden;
+  position:relative;
+}
+#tree-canvas{display:block;width:100%;max-height:500px}
+.tree-legend{
+  display:flex;gap:24px;flex-wrap:wrap;
+  margin-top:16px;padding:16px 20px;
+  background:var(--bg-glass);
+  border:1px solid var(--border-subtle);
+  border-radius:8px;
+}
+.legend-item{
+  display:flex;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.1em;color:var(--text-dim);
+}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* ─── BOUND DASHBOARD ─── */
+#bound-dashboard{background:var(--bg-secondary)}
+.dashboard-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:20px;margin-top:40px;
+}
+.dash-metric{
+  background:var(--bg-glass);
+  border:1px solid var(--border-gold);
+  border-radius:10px;padding:28px;
+  text-align:center;
+}
+.dash-metric-label{
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:16px;
+}
+.dash-metric-value{
+  font-family:'DM Mono',monospace;
+  font-size:2.8rem;font-weight:500;
+  transition:all 0.5s ease;
+}
+.dash-metric-value.bb{color:var(--gold-light)}
+.dash-metric-value.bi{color:var(--success)}
+.dash-metric-value.gap{color:var(--warning)}
+.gap-bar-outer{
+  margin-top:32px;height:8px;
+  background:rgba(255,255,255,0.06);border-radius:4px;
+  overflow:hidden;
+}
+.gap-bar-inner{
+  height:100%;border-radius:4px;
+  background:linear-gradient(90deg,var(--success),var(--warning));
+  transition:width 0.8s ease;width:100%;
+}
+.gap-label{
+  display:flex;justify-content:space-between;
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  color:var(--text-dim);margin-top:8px;
+}
+#dash-canvas{
+  width:100%;height:200px;
+  display:block;margin-top:32px;
+  border-radius:8px;
+}
+
+/* ─── BRANCHING STRATEGIES ─── */
+.strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:48px}
+.strategy-card{
+  background:var(--bg-glass);
+  border:1px solid var(--border-gold);
+  border-radius:10px;overflow:hidden;
+}
+.strategy-header{
+  padding:20px 24px;
+  border-bottom:1px solid var(--border-gold);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.strategy-name{
+  font-family:'Playfair Display',serif;font-size:1.1rem;
+  color:var(--text-bright);
+}
+.strategy-tag{
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.12em;padding:4px 10px;
+  border-radius:3px;
+}
+.strategy-canvas{display:block;width:100%;height:220px}
+.strategy-body{padding:20px 24px;font-size:0.95rem;color:var(--text-dim);line-height:1.6}
+
+/* ─── PRUNING ─── */
+#pruning-demo{background:var(--bg-secondary)}
+.pruning-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
+.pruning-pane{
+  background:var(--bg-glass);
+  border:1px solid var(--border-subtle);
+  border-radius:10px;overflow:hidden;
+}
+.pruning-pane-header{
+  padding:16px 20px;
+  border-bottom:1px solid var(--border-subtle);
+}
+.pruning-pane.no-prune .pruning-pane-header{border-bottom-color:rgba(196,74,74,0.3)}
+.pruning-pane.with-prune .pruning-pane-header{border-bottom-color:rgba(107,174,140,0.3)}
+.pruning-canvas{display:block;width:100%;height:240px}
+.pruning-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:12px;margin-top:32px;
+}
+.prune-stat{
+  background:var(--bg-glass);
+  border:1px solid var(--border-subtle);
+  border-radius:8px;padding:16px;text-align:center;
+}
+.prune-stat-label{
+  font-family:'DM Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:8px;
+}
+.prune-stat-value{
+  font-family:'DM Mono',monospace;font-size:1.5rem;
+  font-weight:500;color:var(--text-bright);
+}
+
+/* ─── APPLICATIONS ─── */
+.apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.app-card{
+  background:var(--bg-glass);
+  border:1px solid var(--border-subtle);
+  border-radius:10px;padding:28px;
+  transition:all 0.3s ease;
+}
+.app-card:hover{
+  border-color:var(--border-gold);
+  transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(0,0,0,0.3);
+}
+.app-icon{
+  font-size:1.8rem;margin-bottom:16px;
+  color:var(--gold);
+  font-family:'DM Mono',monospace;
+}
+.app-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;color:var(--text-bright);
+  margin-bottom:10px;
+}
+.app-desc{font-size:0.92rem;color:var(--text-dim);line-height:1.6}
+
+/* ─── TAKEAWAYS ─── */
+#takeaways{background:var(--bg-secondary)}
+.takeaways-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+.takeaway{
+  display:grid;grid-template-columns:40px 1fr;gap:16px;
+  padding:24px;
+  background:var(--bg-glass);
+  border:1px solid var(--border-subtle);
+  border-radius:8px;
+  align-items:start;
+}
+.takeaway-num{
+  font-family:'DM Mono',monospace;font-size:0.75rem;
+  color:var(--gold);font-weight:500;
+  width:32px;height:32px;
+  border:1px solid var(--border-gold);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.takeaway-text{font-size:1rem;color:var(--text-muted);line-height:1.6}
+.takeaway-text strong{color:var(--text-bright);font-weight:600}
+
+/* ─── FOOTER ─── */
+footer{
+  padding:48px 0;
+  border-top:1px solid var(--border-subtle);
+  background:var(--bg-primary);
+}
+.footer-inner{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;color:var(--gold-light);
+}
+.footer-meta{
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.12em;color:var(--text-dim);
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.fade-up{opacity:0;animation:fadeUp 0.8s ease forwards}
+.fade-up-1{animation-delay:0.1s}
+.fade-up-2{animation-delay:0.25s}
+.fade-up-3{animation-delay:0.4s}
+.fade-up-4{animation-delay:0.6s}
+
+/* Intersection observer reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .hero-metrics{grid-template-columns:repeat(2,1fr)}
+  .comparison-grid,.strategy-grid,.pruning-grid{grid-template-columns:1fr}
+  .concepts-grid,.apps-grid{grid-template-columns:repeat(2,1fr)}
+  .dashboard-grid{grid-template-columns:1fr}
+  .takeaways-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .container{padding:0 20px}
+  section{padding:64px 0}
+  .hero-metrics{grid-template-columns:repeat(2,1fr)}
+  .concepts-grid,.apps-grid{grid-template-columns:1fr}
+  .pruning-stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="site-wrapper">
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-badges fade-up fade-up-1">
+        <span class="hero-badge">Integer Programming</span>
+        <span class="hero-badge">Optimization</span>
+        <span class="hero-badge">Branch &amp; Bound</span>
+        <span class="hero-badge">Decision Science</span>
+      </div>
+      <h1 class="hero-title fade-up fade-up-2">
+        Branch &amp;<br><em>Bound</em> Explorer
+      </h1>
+      <div class="gold-line fade-up fade-up-2"></div>
+      <p class="hero-subtitle fade-up fade-up-3">
+        Finding the best solution without checking every possibility.
+      </p>
+      <div class="hero-metrics fade-up fade-up-4">
+        <div class="hero-metric">
+          <div class="hero-metric-label">Active Nodes</div>
+          <div class="hero-metric-value mono" id="m-active">0</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-label">Best Bound</div>
+          <div class="hero-metric-value mono" id="m-bound">—</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-label">Best Incumbent</div>
+          <div class="hero-metric-value green mono" id="m-incumbent">—</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-label">Optimality Gap</div>
+          <div class="hero-metric-value red mono" id="m-gap">100%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint mono">scroll</div>
+</section>
+
+<!-- ─── WHY SMART SEARCH ─── -->
+<section id="why-search">
+  <div class="container">
+    <div class="section-label reveal">The problem space</div>
+    <h2 class="reveal">Why Smart Search<br>Matters</h2>
+    <div class="gold-line reveal"></div>
+    <p class="reveal" style="max-width:640px;color:var(--text-dim)">
+      Large optimization problems contain millions — sometimes billions — of candidate solutions. 
+      Evaluating every one is computationally impossible. The algorithm must be intelligent.
+    </p>
+    <div class="comparison-grid">
+      <div class="comp-card bad reveal">
+        <div class="comp-card-tag">Brute Force</div>
+        <h3 style="color:var(--text-bright);font-size:1.2rem">Exhaustive Search</h3>
+        <p style="color:var(--text-dim);font-size:0.95rem;margin-top:10px">
+          Evaluates every possible combination. Grows exponentially with problem size.
+          A problem with 40 binary variables has over a trillion candidates.
+        </p>
+        <div class="comp-stat">2<sup style="font-size:1rem">40</sup></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-dim);margin-top:4px">possible combinations</div>
+        <div class="comp-bar-wrap"><div class="comp-bar"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--pruned);margin-top:8px">100% of nodes explored</div>
+      </div>
+      <div class="comp-card good reveal">
+        <div class="comp-card-tag">Branch &amp; Bound</div>
+        <h3 style="color:var(--text-bright);font-size:1.2rem">Intelligent Search</h3>
+        <p style="color:var(--text-dim);font-size:0.95rem;margin-top:10px">
+          Systematically eliminates large regions of the search space without examining them.
+          Prunes entire subtrees that provably cannot improve the best solution found.
+        </p>
+        <div class="comp-stat">~3%</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-dim);margin-top:4px">of nodes actually explored</div>
+        <div class="comp-bar-wrap"><div class="comp-bar"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--success);margin-top:8px">97% reduction via pruning</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CORE CONCEPTS ─── -->
+<section id="core-concepts">
+  <div class="container">
+    <div class="section-label reveal">Fundamentals</div>
+    <h2 class="reveal">Core Concepts</h2>
+    <div class="gold-line reveal"></div>
+    <p class="reveal" style="max-width:580px;color:var(--text-dim)">
+      Six interconnected ideas that together power one of the most important algorithms in decision science.
+    </p>
+    <div class="concepts-grid">
+      <div class="concept-card reveal">
+        <div class="concept-icon">⎇</div>
+        <div class="concept-title">Branching</div>
+        <div class="concept-body">Divide a complex problem into smaller, more manageable subproblems by fixing a decision variable's value.</div>
+        <div class="concept-example">x₁ = 0 → left branch<br>x₁ = 1 → right branch</div>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">⌃</div>
+        <div class="concept-title">Bounding</div>
+        <div class="concept-body">Compute an optimistic estimate of the best solution achievable from any given node by relaxing integer constraints.</div>
+        <div class="concept-example">LP relaxation bound: 47.3<br>Must round down to: 47</div>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">◈</div>
+        <div class="concept-title">Best Bound</div>
+        <div class="concept-body">The most optimistic objective value possible given all nodes remaining in the search tree — a ceiling on the final answer.</div>
+        <div class="concept-example">BB = max({bound of<br>all active nodes})</div>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">★</div>
+        <div class="concept-title">Best Incumbent</div>
+        <div class="concept-body">The best integer-feasible solution found so far during the search — the current champion that new candidates must beat.</div>
+        <div class="concept-example">z* = 42 (current best<br>integer solution)</div>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">△</div>
+        <div class="concept-title">Optimality Gap</div>
+        <div class="concept-body">The difference between the Best Bound and Best Incumbent. When the gap reaches zero, optimality is proven.</div>
+        <div class="concept-example">Gap = BB − z* = 5.3<br>→ 0 means optimal</div>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">✂</div>
+        <div class="concept-title">Fathoming</div>
+        <div class="concept-body">Prune (discard) a node when its bound cannot improve the best incumbent — eliminating entire subtrees at once.</div>
+        <div class="concept-example">bound ≤ z* → prune<br>no better solution exists</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-label reveal">The algorithm</div>
+    <h2 class="reveal">How Branch &amp; Bound Works</h2>
+    <div class="gold-line reveal"></div>
+    <div class="workflow-steps">
+      <div class="workflow-step reveal">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Start from the Root Node</h3>
+          <p>The original problem, untouched, becomes the root. All variables are free. The entire feasible region is open for exploration.</p>
+          <span class="step-tag root">Initialization</span>
+        </div>
+      </div>
+      <div class="workflow-step reveal">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Relax the Problem</h3>
+          <p>At each node, solve a relaxed version — allowing fractional values. This gives an upper bound on what any integer solution under this node can achieve.</p>
+          <span class="step-tag relax">LP Relaxation</span>
+        </div>
+      </div>
+      <div class="workflow-step reveal">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Branch into Subproblems</h3>
+          <p>Select a fractional variable from the relaxed solution and create two child nodes — one with the variable rounded down, one rounded up. Each child inherits parent constraints plus the new bound.</p>
+          <span class="step-tag branch">Divide &amp; Conquer</span>
+        </div>
+      </div>
+      <div class="workflow-step reveal">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Prune Unpromising Branches</h3>
+          <p>A node is fathomed when: its bound is no better than the current best solution, it is infeasible, or its relaxation yields an integer solution. Entire subtrees vanish with a single comparison.</p>
+          <span class="step-tag prune">Pruning</span>
+        </div>
+      </div>
+      <div class="workflow-step reveal" style="border-bottom:none">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>Reach the Optimal Solution</h3>
+          <p>When the list of active nodes empties, the best incumbent is proven globally optimal. The optimality gap has closed to zero — not just "good enough" but certifiably best.</p>
+          <span class="step-tag optimal">Convergence</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTERACTIVE TREE ─── -->
+<section id="interactive-tree">
+  <div class="container">
+    <div class="section-label reveal">Interactive</div>
+    <h2 class="reveal">Search Tree Explorer</h2>
+    <div class="gold-line reveal"></div>
+
+    <!-- Problem description -->
+    <div class="glass-card reveal" style="margin-bottom:36px;max-width:860px">
+      <div class="section-label" style="margin-bottom:12px">The Example Problem</div>
+      <p style="color:var(--text-muted);margin-bottom:18px;font-size:1.05rem">
+        We want to <strong style="color:var(--text-bright)">maximize</strong> a profit objective subject to two resource constraints,
+        where both decision variables must be <strong style="color:var(--text-bright)">non-negative integers</strong>
+        (you can't produce half a unit).
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+        <div style="background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:8px;padding:18px">
+          <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Objective</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gold-light)">Maximize: 5x₁ + 4x₂</div>
+        </div>
+        <div style="background:rgba(138,126,201,0.08);border:1px solid rgba(138,126,201,0.25);border-radius:8px;padding:18px">
+          <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--info);margin-bottom:10px">Constraints</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.92rem;color:var(--text-muted);line-height:1.8">
+            6x₁ + 4x₂ ≤ 24<br>
+            x₁ + 2x₂ ≤ 6<br>
+            x₁, x₂ ≥ 0, integer
+          </div>
+        </div>
+      </div>
+      <p style="color:var(--text-dim);font-size:0.97rem;line-height:1.7">
+        The LP relaxation (ignoring the integer requirement) gives <span class="mono" style="color:var(--gold-light)">x₁ = 3, x₂ = 1.5</span> with objective value <span class="mono" style="color:var(--gold-light)">z = 21</span>.
+        Since x₂ is fractional, we cannot accept this — we must branch on x₂.
+        Each step below reveals exactly what the algorithm does, in order. <strong style="color:var(--text-bright)">Nothing already shown ever changes.</strong>
+      </p>
+    </div>
+
+    <!-- Step narrative -->
+    <div id="step-narrative" class="reveal" style="
+      min-height:88px;padding:20px 24px;margin-bottom:20px;
+      background:var(--bg-glass);
+      border:1px solid var(--border-gold);
+      border-radius:10px;
+      display:flex;align-items:flex-start;gap:16px;
+    ">
+      <div style="font-family:'DM Mono',monospace;font-size:1.4rem;color:var(--gold);line-height:1;padding-top:2px;min-width:32px" id="step-icon">◎</div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px" id="step-tag-label">Step 0 of 9</div>
+        <div style="color:var(--text-bright);font-size:1rem;line-height:1.6" id="step-narrative-text">
+          Press <strong>Next Step</strong> to begin the walkthrough, or <strong>Auto Play</strong> to watch it unfold automatically.
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="tree-controls reveal">
+      <button class="btn" id="btn-prev" disabled>← Prev</button>
+      <button class="btn primary" id="btn-step">Next Step →</button>
+      <button class="btn" id="btn-auto">Auto Play</button>
+      <button class="btn" id="btn-reset">Restart</button>
+      <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-dim)">
+        Step <span id="step-counter">0</span> / <span id="step-total">9</span>
+      </div>
+    </div>
+
+    <!-- Tree canvas -->
+    <div class="tree-canvas-wrap reveal" style="margin-top:16px">
+      <canvas id="tree-canvas" width="900" height="520"></canvas>
+    </div>
+
+    <!-- Legend -->
+    <div class="tree-legend reveal">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Active / Being solved</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Best Incumbent (z*)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--info)"></div>Fathomed / Integer found</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--pruned)"></div>Pruned (bound ≤ z*)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#383530"></div>Not yet reached</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DASHBOARD ─── -->
+<section id="bound-dashboard">
+  <div class="container">
+    <div class="section-label reveal">Live Metrics</div>
+    <h2 class="reveal">Best Bound vs. Best Incumbent</h2>
+    <div class="gold-line reveal"></div>
+    <p class="reveal" style="max-width:600px;color:var(--text-dim)">
+      The gap between these two values drives the algorithm. As search progresses, the gap narrows — until it closes completely, proving optimality.
+    </p>
+    <div class="dashboard-grid reveal">
+      <div class="dash-metric">
+        <div class="dash-metric-label">Best Bound (BB)</div>
+        <div class="dash-metric-value bb mono" id="db-bb">—</div>
+        <div style="margin-top:10px;font-size:0.9rem;color:var(--text-dim)">Upper limit on optimal</div>
+      </div>
+      <div class="dash-metric">
+        <div class="dash-metric-label">Best Incumbent (z*)</div>
+        <div class="dash-metric-value bi mono" id="db-bi">—</div>
+        <div style="margin-top:10px;font-size:0.9rem;color:var(--text-dim)">Best integer found</div>
+      </div>
+      <div class="dash-metric">
+        <div class="dash-metric-label">Optimality Gap</div>
+        <div class="dash-metric-value gap mono" id="db-gap">100%</div>
+        <div style="margin-top:10px;font-size:0.9rem;color:var(--text-dim)">Convergence progress</div>
+      </div>
+    </div>
+    <div class="reveal" style="margin-top:24px">
+      <div class="gap-bar-outer">
+        <div class="gap-bar-inner" id="gap-bar"></div>
+      </div>
+      <div class="gap-label">
+        <span>Gap: 100%</span><span id="gap-pct-label">Optimal when 0%</span>
+      </div>
+    </div>
+    <canvas id="dash-canvas" class="reveal"></canvas>
+  </div>
+</section>
+
+<!-- ─── STRATEGIES ─── -->
+<section id="strategies">
+  <div class="container">
+    <div class="section-label reveal">Exploration</div>
+    <h2 class="reveal">Branching Strategies</h2>
+    <div class="gold-line reveal"></div>
+    <p class="reveal" style="max-width:620px;color:var(--text-dim)">
+      Different traversal strategies navigate the tree in different ways, trading off memory, speed, and solution quality.
+    </p>
+    <div class="strategy-grid">
+      <div class="strategy-card reveal">
+        <div class="strategy-header">
+          <div class="strategy-name">Backtracking</div>
+          <span class="strategy-tag" style="background:rgba(138,126,201,0.15);color:var(--info)">Depth First</span>
+        </div>
+        <canvas class="strategy-canvas" id="strategy-bt"></canvas>
+        <div class="strategy-body">
+          Dive deep into one branch before backtracking. Uses minimal memory. Quickly finds feasible solutions but may spend time in poor subtrees.
+        </div>
+      </div>
+      <div class="strategy-card reveal">
+        <div class="strategy-header">
+          <div class="strategy-name">Jumptracking</div>
+          <span class="strategy-tag" style="background:rgba(201,168,76,0.15);color:var(--gold)">Best First</span>
+        </div>
+        <canvas class="strategy-canvas" id="strategy-jt"></canvas>
+        <div class="strategy-body">
+          Always expand the node with the best bound, regardless of depth. Finds optimal solutions faster but requires more memory to track all active nodes.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRUNING DEMO ─── -->
+<section id="pruning-demo">
+  <div class="container">
+    <div class="section-label reveal">Efficiency</div>
+    <h2 class="reveal">Why Pruning Matters</h2>
+    <div class="gold-line reveal"></div>
+    <p class="reveal" style="max-width:600px;color:var(--text-dim);margin-bottom:32px">
+      Pruning is the core mechanism that makes Branch &amp; Bound tractable. The difference between searching with and without it is dramatic.
+    </p>
+    <div class="pruning-grid">
+      <div class="pruning-pane no-prune reveal">
+        <div class="pruning-pane-header">
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--pruned)">Without Pruning</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-bright);margin-top:4px">Full Enumeration</div>
+        </div>
+        <canvas class="pruning-canvas" id="prune-canvas-no"></canvas>
+      </div>
+      <div class="pruning-pane with-prune reveal">
+        <div class="pruning-pane-header">
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--success)">With Pruning</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-bright);margin-top:4px">Branch &amp; Bound</div>
+        </div>
+        <canvas class="pruning-canvas" id="prune-canvas-yes"></canvas>
+      </div>
+    </div>
+    <div class="pruning-stats">
+      <div class="prune-stat reveal">
+        <div class="prune-stat-label">Generated</div>
+        <div class="prune-stat-value" id="ps-gen">31</div>
+      </div>
+      <div class="prune-stat reveal">
+        <div class="prune-stat-label">Explored</div>
+        <div class="prune-stat-value" id="ps-exp">31</div>
+      </div>
+      <div class="prune-stat reveal">
+        <div class="prune-stat-label">Pruned</div>
+        <div class="prune-stat-value" style="color:var(--success)" id="ps-pruned">0</div>
+      </div>
+      <div class="prune-stat reveal">
+        <div class="prune-stat-label">Efficiency</div>
+        <div class="prune-stat-value" style="color:var(--gold)" id="ps-eff">0%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── APPLICATIONS ─── -->
+<section id="applications">
+  <div class="container">
+    <div class="section-label reveal">Real World</div>
+    <h2 class="reveal">Applications</h2>
+    <div class="gold-line reveal"></div>
+    <div class="apps-grid">
+      <div class="app-card reveal">
+        <div class="app-icon">↗</div>
+        <div class="app-title">Logistics &amp; Routing</div>
+        <div class="app-desc">Vehicle routing, delivery scheduling, and network flow optimization — minimizing cost across thousands of feasible routes.</div>
+      </div>
+      <div class="app-card reveal">
+        <div class="app-icon">◷</div>
+        <div class="app-title">Project Scheduling</div>
+        <div class="app-desc">Allocating limited resources across tasks with precedence constraints — maximizing throughput while meeting deadlines.</div>
+      </div>
+      <div class="app-card reveal">
+        <div class="app-icon">⊞</div>
+        <div class="app-title">Resource Allocation</div>
+        <div class="app-desc">Assigning capital, personnel, or capacity to competing projects — finding the portfolio that maximizes total return.</div>
+      </div>
+      <div class="app-card reveal">
+        <div class="app-icon">⟳</div>
+        <div class="app-title">Supply Chain</div>
+        <div class="app-desc">Facility location, inventory management, and supplier selection decisions across complex multi-echelon networks.</div>
+      </div>
+      <div class="app-card reveal">
+        <div class="app-icon">⊶</div>
+        <div class="app-title">Transportation</div>
+        <div class="app-desc">Airline crew scheduling, train timetabling, and hub-and-spoke design — balancing efficiency with operational constraints.</div>
+      </div>
+      <div class="app-card reveal">
+        <div class="app-icon">◈</div>
+        <div class="app-title">Manufacturing</div>
+        <div class="app-desc">Production planning, machine sequencing, and lot sizing decisions — minimizing cost while satisfying demand and capacity.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TAKEAWAYS ─── -->
+<section id="takeaways">
+  <div class="container">
+    <div class="section-label reveal">Summary</div>
+    <h2 class="reveal">Key Takeaways</h2>
+    <div class="gold-line reveal"></div>
+    <div class="takeaways-grid">
+      <div class="takeaway reveal">
+        <div class="takeaway-num">01</div>
+        <div class="takeaway-text"><strong>Branch &amp; Bound avoids exhaustive search</strong> by intelligently dividing problems and eliminating entire regions of the solution space.</div>
+      </div>
+      <div class="takeaway reveal">
+        <div class="takeaway-num">02</div>
+        <div class="takeaway-text"><strong>Bounding estimates the best possible outcome</strong> from any node using a relaxed problem — giving a provably optimistic ceiling.</div>
+      </div>
+      <div class="takeaway reveal">
+        <div class="takeaway-num">03</div>
+        <div class="takeaway-text"><strong>Pruning removes unnecessary work</strong> — when a branch cannot beat the current best solution, the entire subtree is discarded.</div>
+      </div>
+      <div class="takeaway reveal">
+        <div class="takeaway-num">04</div>
+        <div class="takeaway-text"><strong>Optimality is proven when the gap closes</strong> — unlike heuristics, Branch &amp; Bound certifies that no better solution exists.</div>
+      </div>
+      <div class="takeaway reveal" style="grid-column:span 2">
+        <div class="takeaway-num">05</div>
+        <div class="takeaway-text"><strong>Intelligent search enables large-scale optimization</strong> — problems that would take millennia by brute force become solvable in seconds with Branch &amp; Bound.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Branch &amp; Bound Explorer</div>
+        <div style="margin-top:6px;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-dim)">
+          Management Science · Operations Research · Integer Programming
+        </div>
+      </div>
+      <div class="footer-meta">
+        An interactive educational platform<br>
+        for optimization algorithm concepts
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- end site-wrapper -->
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   BACKGROUND CANVAS — Living B&B Search Tree Animation
+═══════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes=[], edges=[], phase=0, phaseTimer=0;
+  let incumbent=-Infinity, bestBound=100;
+  let heroMetrics={active:0,bound:0,incumbent:0,gap:100};
+
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  const GOLD='rgba(201,168,76,';
+  const GREEN='rgba(107,174,140,';
+  const RED='rgba(196,74,74,';
+  const PURPLE='rgba(138,126,201,';
+
+  class BgNode{
+    constructor(x,y,depth,bound,parent){
+      this.x=x; this.y=y; this.depth=depth;
+      this.bound=bound; this.parent=parent;
+      this.r=Math.max(4,10-depth*1.5);
+      this.state='pending'; // pending, active, incumbent, pruned, solved
+      this.age=0; this.opacity=0; this.children=[];
+      this.value=bound; this.pulse=Math.random()*Math.PI*2;
+      this.isFeasible=Math.random()>0.3;
+      this.intValue=Math.floor(bound-Math.random()*10);
+    }
+  }
+
+  let bgNodes=[], bgEdges=[], bgTimer=0, bgPhase=0;
+  let bgIncumbent=-Infinity, bgBound=100;
+
+  function initBgTree(){
+    bgNodes=[]; bgEdges=[];
+    bgIncumbent=-Infinity; bgBound=100;
+    let root=new BgNode(W*0.5,H*0.12,0,100,null);
+    root.state='active';
+    bgNodes.push(root);
+    bgTimer=0; bgPhase=0;
+  }
+  initBgTree();
+
+  function addBgChildren(node){
+    if(node.depth>=5||!node.isFeasible)return;
+    let spread=W*0.12/(node.depth+1);
+    let dy=H*0.14;
+    let lBound=node.bound-Math.random()*15-2;
+    let rBound=node.bound-Math.random()*15-2;
+    let left=new BgNode(node.x-spread,node.y+dy,node.depth+1,lBound,node);
+    let right=new BgNode(node.x+spread,node.y+dy,node.depth+1,rBound,node);
+    left.isFeasible=Math.random()>0.25;
+    right.isFeasible=Math.random()>0.25;
+    // Clamp to canvas
+    left.x=Math.max(60,Math.min(W-60,left.x));
+    right.x=Math.max(60,Math.min(W-60,right.x));
+    bgNodes.push(left,right);
+    bgEdges.push({a:node,b:left,age:0,opacity:0,pruned:false});
+    bgEdges.push({a:node,b:right,age:0,opacity:0,pruned:false});
+    node.children.push(left,right);
+    return [left,right];
+  }
+
+  function bgStep(){
+    bgTimer++;
+    // Every ~60 frames, evolve the tree
+    if(bgTimer%55!==0)return;
+    // Find a pending active node
+    let actives=bgNodes.filter(n=>n.state==='active');
+    if(actives.length===0){
+      // Restart
+      setTimeout(()=>initBgTree(),2000);
+      return;
+    }
+    // Pick one
+    let idx=Math.floor(Math.random()*actives.length);
+    let node=actives[idx];
+    node.state='solved';
+    // Determine fate
+    if(!node.isFeasible||node.bound<=bgIncumbent){
+      // Prune
+      node.state='pruned';
+      // Mark edges to this node pruned
+      bgEdges.forEach(e=>{if(e.b===node)e.pruned=true});
+    } else if(node.depth>=3&&Math.random()>0.5){
+      // Feasible integer solution
+      if(node.intValue>bgIncumbent){
+        bgIncumbent=node.intValue;
+        node.state='incumbent';
+      } else node.state='solved';
+    } else {
+      // Branch
+      addBgChildren(node);
+    }
+    // Update best bound
+    let remaining=bgNodes.filter(n=>n.state==='active'||n.state==='pending');
+    bgBound=remaining.length>0?Math.max(...remaining.map(n=>n.bound)):bgIncumbent;
+
+    // Push to hero metrics
+    let actCount=bgNodes.filter(n=>n.state==='active'||n.state==='pending').length;
+    let gap=bgIncumbent>-Infinity?Math.max(0,Math.round((bgBound-bgIncumbent)/bgBound*100)):100;
+    updateHeroMetrics(actCount,Math.round(bgBound),bgIncumbent,gap);
+  }
+
+  function updateHeroMetrics(active,bound,inc,gap){
+    document.getElementById('m-active').textContent=active;
+    document.getElementById('m-bound').textContent=bound>0?bound:'—';
+    document.getElementById('m-incumbent').textContent=inc>-Infinity?inc:'—';
+    document.getElementById('m-gap').textContent=gap+'%';
+    // Dashboard
+    document.getElementById('db-bb').textContent=bound>0?bound:'—';
+    document.getElementById('db-bi').textContent=inc>-Infinity?inc:'—';
+    document.getElementById('db-gap').textContent=gap+'%';
+    let barPct=100-gap;
+    document.getElementById('gap-bar').style.width=barPct+'%';
+    document.getElementById('gap-pct-label').textContent='Gap: '+gap+'%';
+  }
+
+  function drawBgCanvas(){
+    ctx.clearRect(0,0,W,H);
+    let t=Date.now()/1000;
+
+    // Draw edges
+    bgEdges.forEach(e=>{
+      e.opacity=Math.min(1,e.opacity+0.02);
+      let alpha=e.opacity*0.35;
+      if(e.pruned){
+        ctx.strokeStyle=`rgba(196,74,74,${alpha*0.5})`;
+        ctx.setLineDash([4,4]);
+      } else {
+        ctx.strokeStyle=`rgba(201,168,76,${alpha})`;
+        ctx.setLineDash([]);
+      }
+      ctx.lineWidth=0.8;
+      ctx.beginPath();
+      ctx.moveTo(e.a.x,e.a.y);
+      // Curved edge
+      let mx=(e.a.x+e.b.x)/2;
+      let my=(e.a.y+e.b.y)/2-20;
+      ctx.quadraticCurveTo(mx,my,e.b.x,e.b.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Draw nodes
+    bgNodes.forEach(n=>{
+      n.age++;
+      n.opacity=Math.min(1,n.opacity+0.025);
+      n.pulse+=0.04;
+
+      let alpha=n.opacity;
+      let pulseMag=Math.sin(n.pulse)*0.3+0.7;
+
+      let color, glow, glowAlpha;
+      switch(n.state){
+        case'active':   color=`rgba(201,168,76,${alpha*0.9})`; glow=`rgba(201,168,76,`; glowAlpha=alpha*0.3*pulseMag; break;
+        case'incumbent':color=`rgba(107,174,140,${alpha})`; glow=`rgba(107,174,140,`; glowAlpha=alpha*0.4*pulseMag; break;
+        case'pruned':   color=`rgba(196,74,74,${alpha*0.5})`; glow=null; break;
+        case'solved':   color=`rgba(138,126,201,${alpha*0.7})`; glow=`rgba(138,126,201,`; glowAlpha=alpha*0.15; break;
+        default:        color=`rgba(245,240,232,${alpha*0.3})`; glow=null;
+      }
+
+      // Glow
+      if(glow&&n.state!=='pruned'){
+        let grad=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*3);
+        grad.addColorStop(0,glow+glowAlpha+')');
+        grad.addColorStop(1,glow+'0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,n.r*3,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      // Node
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=color;
+      ctx.fill();
+
+      // Pulse ring for active
+      if(n.state==='active'||n.state==='incumbent'){
+        let ringR=n.r+(3+Math.sin(n.pulse)*3);
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,ringR,0,Math.PI*2);
+        ctx.strokeStyle=color;
+        ctx.lineWidth=0.8;
+        ctx.stroke();
+      }
+
+      // Value label (only for deeper nodes, small font)
+      if(n.depth>0&&n.state!=='pruned'&&n.opacity>0.6){
+        ctx.fillStyle=`rgba(201,168,76,${alpha*0.7})`;
+        ctx.font=`300 9px 'DM Mono',monospace`;
+        ctx.textAlign='center';
+        ctx.fillText(Math.round(n.bound),n.x,n.y-n.r-4);
+      }
+    });
+  }
+
+  function bgLoop(){
+    bgStep();
+    drawBgCanvas();
+    requestAnimationFrame(bgLoop);
+  }
+  bgLoop();
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   INTERACTIVE TREE — Fixed example, step-by-step reveal
+   Problem: max 5x₁ + 4x₂  s.t. 6x₁+4x₂≤24, x₁+2x₂≤6, x₁,x₂≥0 integer
+   Optimal: x₁=4, x₂=0, z*=20
+═══════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('tree-canvas');
+  const ctx=canvas.getContext('2d');
+
+  /* ── Layout constants (portrait-friendly) ── */
+  const NR=20; // node radius
+  // Node x,y defined relative to canvas width later via scale()
+  // We work in a 900×520 logical space
+
+  /* ══════════════════════════════════════════
+     FIXED TREE DATA
+     Each node is fully pre-specified.
+     'visibleFrom' = the step index at which this node first appears.
+     State never changes retroactively — once drawn, stays.
+  ══════════════════════════════════════════ */
+  // Logical coords in 900-wide space
+  const NODES = [
+    {
+      id:'N0', x:450, y:52,
+      lines:['LP relax','z = 21.0','x₁=3, x₂=1.5'],
+      state:'solved', // branched on
+      visibleFrom:1,
+      parentId:null, branchLabel:null,
+    },
+    // Branch on x₂: left x₂≤1, right x₂≥2
+    {
+      id:'N1', x:240, y:178,
+      lines:['x₂ ≤ 1','z = 21.0','x₁=3.33, x₂=1'],
+      state:'solved',
+      visibleFrom:2,
+      parentId:'N0', branchLabel:'x₂ ≤ 1',
+    },
+    {
+      id:'N2', x:660, y:178,
+      lines:['x₂ ≥ 2','z = 20.67','x₁=2.67, x₂=2'],
+      state:'solved',
+      visibleFrom:3,
+      parentId:'N0', branchLabel:'x₂ ≥ 2',
+    },
+    // From N1 branch on x₁: x₁≤3 and x₁≥4
+    {
+      id:'N3', x:120, y:318,
+      lines:['x₁ ≤ 3','z = 19.0','x₁=3, x₂=1','(integer ✓)'],
+      state:'incumbent', // first integer solution
+      visibleFrom:4,
+      parentId:'N1', branchLabel:'x₁ ≤ 3',
+    },
+    {
+      id:'N4', x:360, y:318,
+      lines:['x₁ ≥ 4','z = 20.0','x₁=4, x₂=0','(integer ✓)'],
+      state:'incumbent2', // better incumbent
+      visibleFrom:5,
+      parentId:'N1', branchLabel:'x₁ ≥ 4',
+    },
+    // From N2 branch on x₁: x₁≤2 and x₁≥3
+    {
+      id:'N5', x:570, y:318,
+      lines:['x₁ ≤ 2','z = 20.0','x₁=2, x₂=2','(integer ✓)'],
+      state:'solved', // feasible but not better
+      visibleFrom:6,
+      parentId:'N2', branchLabel:'x₁ ≤ 2',
+    },
+    {
+      id:'N6', x:780, y:318,
+      lines:['x₁ ≥ 3','z = 19.33','bound ≤ z*=20'],
+      state:'pruned',
+      visibleFrom:7,
+      parentId:'N2', branchLabel:'x₁ ≥ 3',
+    },
+    // N3 (z=19) — can we branch further? bound=19 ≤ z*=20 → prune
+    {
+      id:'N7', x:120, y:454,
+      lines:['Prune N3','bound=19','≤ z*=20'],
+      state:'pruned',
+      visibleFrom:8,
+      parentId:'N3', branchLabel:'fathom',
+    },
+  ];
+
+  // Edge list (always follows its child's visibleFrom)
+  // We'll derive edges from parentId automatically
+
+  /* ══════════════════════════════════════════
+     STEP DEFINITIONS
+     Each step reveals exactly one node (or a special action).
+     'revealNode' = id of node to make visible this step.
+     'incumbent' = current z* after this step (null = unchanged)
+  ══════════════════════════════════════════ */
+  const STEPS = [
+    {
+      // Step 0 — initial state, nothing shown
+      revealNode: null,
+      incumbent: null,
+      bestBound: null,
+      icon:'◎',
+      tag:'Ready',
+      text:'This walkthrough uses a fixed example. Press <strong>Next Step →</strong> to begin.',
+    },
+    {
+      revealNode:'N0',
+      incumbent: null,
+      bestBound: 21,
+      icon:'①',
+      tag:'Step 1 — Root Node',
+      text:'<strong>Start:</strong> Solve the LP relaxation of the original problem. We get <span class="mono" style="color:var(--gold-light)">x₁=3, x₂=1.5</span> with <span class="mono" style="color:var(--gold-light)">z=21</span>. Since x₂=1.5 is fractional, we cannot use this as a solution — we must <strong>branch</strong> on x₂.',
+    },
+    {
+      revealNode:'N1',
+      incumbent: null,
+      bestBound: 21,
+      icon:'②',
+      tag:'Step 2 — Branch Left (x₂ ≤ 1)',
+      text:'<strong>Branch left:</strong> Add constraint <span class="mono" style="color:var(--gold-light)">x₂ ≤ 1</span>. Solving the LP gives <span class="mono" style="color:var(--gold-light)">x₁=3.33, x₂=1</span>, z=21. x₁ is still fractional — we note this node for further branching. Best Bound = 21.',
+    },
+    {
+      revealNode:'N2',
+      incumbent: null,
+      bestBound: 21,
+      icon:'③',
+      tag:'Step 3 — Branch Right (x₂ ≥ 2)',
+      text:'<strong>Branch right:</strong> Add constraint <span class="mono" style="color:var(--gold-light)">x₂ ≥ 2</span>. LP gives <span class="mono" style="color:var(--gold-light)">x₁=2.67, x₂=2</span>, z=20.67. x₁ still fractional. Best Bound stays at 21 (highest active node bound). We now explore N1 first (backtracking).',
+    },
+    {
+      revealNode:'N3',
+      incumbent: 19,
+      bestBound: 21,
+      icon:'④',
+      tag:'Step 4 — First Integer Solution! (z=19)',
+      text:'<strong>Branch from N1, x₁ ≤ 3:</strong> LP gives <span class="mono" style="color:var(--gold-light)">x₁=3, x₂=1</span> — both integers! Objective = 5(3)+4(1) = <span class="mono" style="color:var(--success)">z=19</span>. This is our <strong>first incumbent</strong>. z*=19. Gap = (21−19)/21 = 9.5%.',
+    },
+    {
+      revealNode:'N4',
+      incumbent: 20,
+      bestBound: 21,
+      icon:'⑤',
+      tag:'Step 5 — Better Incumbent! (z=20)',
+      text:'<strong>Branch from N1, x₁ ≥ 4:</strong> LP gives <span class="mono" style="color:var(--gold-light)">x₁=4, x₂=0</span> — both integers! Objective = 5(4)+4(0) = <span class="mono" style="color:var(--success)">z=20</span>. This <strong>beats z*=19</strong>. New incumbent: z*=20. Gap = (21−20)/21 = 4.8%.',
+    },
+    {
+      revealNode:'N5',
+      incumbent: 20,
+      bestBound: 21,
+      icon:'⑥',
+      tag:'Step 6 — N2 Left Branch (x₁ ≤ 2)',
+      text:'<strong>Branch from N2, x₁ ≤ 2:</strong> LP gives <span class="mono" style="color:var(--gold-light)">x₁=2, x₂=2</span> — integers! Objective = 5(2)+4(2) = <span class="mono" style="color:var(--info)">z=20</span>. Feasible, but <strong>not better</strong> than z*=20. Fathomed (equal, not strictly better). Gap unchanged.',
+    },
+    {
+      revealNode:'N6',
+      incumbent: 20,
+      bestBound: 20,
+      icon:'⑦',
+      tag:'Step 7 — Pruned! (bound ≤ z*)',
+      text:'<strong>Branch from N2, x₁ ≥ 3:</strong> LP bound = 19.33. Since 19.33 &lt; z*=20, <strong>this entire subtree is pruned</strong> — no descendant can beat our incumbent. Best Bound drops to 20 (= z*). Gap = 0%. <strong>Optimality is proven!</strong>',
+    },
+    {
+      revealNode:'N7',
+      incumbent: 20,
+      bestBound: 20,
+      icon:'★',
+      tag:'Step 8 — N3 Also Fathomed',
+      text:'N3 had bound=19 ≤ z*=20 — it is also fathomed. The active node list is now <strong>empty</strong>. Best Bound = Best Incumbent = 20. <span style="color:var(--success)"><strong>Optimal solution: x₁=4, x₂=0, z*=20.</strong></span> No other solution can do better — proven, not just assumed.',
+    },
+    {
+      revealNode: null,
+      incumbent: 20,
+      bestBound: 20,
+      icon:'✓',
+      tag:'Complete — Optimal Solution Found',
+      text:'<span style="color:var(--success)"><strong>Search complete.</strong></span> The algorithm examined only 8 nodes out of a theoretically infinite integer feasible region. Branch &amp; Bound proved optimality by showing no unexamined subtree could possibly improve z*=20.',
+    },
+  ];
+
+  const TOTAL_STEPS = STEPS.length - 1;
+  document.getElementById('step-total').textContent = TOTAL_STEPS;
+
+  let currentStep = 0;
+  let autoTimer = null;
+  let animFrame = null;
+  // opacity tracker per node for fade-in
+  let nodeOpacity = {};
+  NODES.forEach(n => nodeOpacity[n.id] = 0);
+
+  /* ─ state colours ─ */
+  const COL = {
+    solved:    { fill:'#8A7EC9', ring:'rgba(138,126,201,0.25)', text:'rgba(138,126,201,0.9)' },
+    incumbent: { fill:'#6BAE8C', ring:'rgba(107,174,140,0.35)', text:'rgba(107,174,140,1)' },
+    incumbent2:{ fill:'#6BAE8C', ring:'rgba(107,174,140,0.35)', text:'rgba(107,174,140,1)' },
+    pruned:    { fill:'#C44A4A', ring:null,                     text:'rgba(196,74,74,0.85)' },
+    pending:   { fill:'#383530', ring:null,                     text:'rgba(160,152,128,0.5)' },
+  };
+
+  function getNodeById(id){ return NODES.find(n=>n.id===id); }
+
+  /* ─ Compute scale to fit canvas width ─ */
+  function getScale(){
+    const cw = canvas.offsetWidth || 900;
+    return cw / 900;
+  }
+
+  function resizeCanvas(){
+    const cw = canvas.offsetWidth || 900;
+    const scale = cw/900;
+    canvas.width = cw;
+    canvas.height = Math.round(520 * scale);
+  }
+
+  /* ─ Draw ─ */
+  function draw(){
+    resizeCanvas();
+    const sc = getScale();
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    ctx.scale(sc, sc);
+
+    const visibleIds = new Set(
+      NODES.filter(n => n.visibleFrom !== null && n.visibleFrom <= currentStep).map(n=>n.id)
+    );
+
+    // ─ Edges ─
+    NODES.forEach(n=>{
+      if(!visibleIds.has(n.id)) return;
+      if(!n.parentId) return;
+      const par = getNodeById(n.parentId);
+      if(!par || !visibleIds.has(par.id)) return;
+      const alpha = nodeOpacity[n.id];
+      const isPruned = n.state==='pruned';
+      ctx.globalAlpha = alpha * (isPruned ? 0.45 : 0.55);
+      ctx.strokeStyle = isPruned ? '#C44A4A' : '#C9A84C';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash(isPruned ? [5,4] : []);
+      // Slight curve
+      ctx.beginPath();
+      ctx.moveTo(par.x, par.y + NR);
+      const mx = (par.x+n.x)/2, my = (par.y+NR + n.y-NR)/2 - 10;
+      ctx.quadraticCurveTo(mx, my, n.x, n.y - NR);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+
+      // Branch label on edge midpoint
+      if(n.branchLabel && n.branchLabel !== 'fathom'){
+        const lx = (par.x + n.x)/2 + (n.x<par.x?-6:6);
+        const ly = (par.y+NR + n.y-NR)/2 - 14;
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.fillStyle = isPruned ? 'rgba(196,74,74,0.8)' : 'rgba(201,168,76,0.75)';
+        ctx.font = '300 9px "DM Mono",monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(n.branchLabel, lx, ly);
+        ctx.globalAlpha = 1;
+      }
+    });
+
+    // ─ Nodes ─
+    NODES.forEach(n=>{
+      const visible = visibleIds.has(n.id);
+      if(!visible) return;
+
+      // Animate opacity in
+      if(nodeOpacity[n.id] < 1) nodeOpacity[n.id] = Math.min(1, nodeOpacity[n.id]+0.04);
+
+      const alpha = nodeOpacity[n.id];
+      const col = COL[n.state] || COL.pending;
+      const isActive = (currentStep > 0 && STEPS[currentStep].revealNode === n.id);
+      const r = isActive ? NR+3 : NR;
+
+      // Glow ring
+      if(col.ring && alpha > 0.3){
+        ctx.globalAlpha = alpha * 0.6;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r+10, 0, Math.PI*2);
+        ctx.fillStyle = col.ring;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      // Node circle
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI*2);
+      ctx.fillStyle = col.fill;
+      ctx.fill();
+      // Border highlight for current step
+      if(isActive){
+        ctx.strokeStyle = 'rgba(245,240,232,0.6)';
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = 'rgba(245,240,232,0.1)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      // Node ID top
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.fillStyle = 'rgba(245,240,232,0.65)';
+      ctx.font = '400 10px "DM Mono",monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.id, n.x, n.y - r - 6);
+      ctx.globalAlpha = 1;
+
+      // Lines inside node (drawn below node, stacked)
+      const lineH = 13;
+      const startY = n.y + r + 14;
+      n.lines.forEach((line, i)=>{
+        let lcolor;
+        if(i===0) lcolor = col.text; // constraint line
+        else if(n.state==='pruned') lcolor = 'rgba(196,74,74,0.75)';
+        else if(i===n.lines.length-1 && line.includes('✓')) lcolor = 'rgba(107,174,140,0.9)';
+        else lcolor = 'rgba(245,240,232,0.6)';
+        ctx.globalAlpha = alpha * 0.9;
+        ctx.fillStyle = lcolor;
+        ctx.font = (i===0?'500 ':'300 ')+'9px "DM Mono",monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(line, n.x, startY + i*lineH);
+      });
+      ctx.globalAlpha = 1;
+    });
+
+    ctx.restore();
+  }
+
+  function animLoop(){
+    draw();
+    animFrame = requestAnimationFrame(animLoop);
+  }
+  animLoop();
+
+  /* ─ Update narrative panel ─ */
+  function updateNarrative(){
+    const s = STEPS[currentStep];
+    document.getElementById('step-icon').textContent = s.icon;
+    document.getElementById('step-tag-label').textContent = s.tag;
+    document.getElementById('step-narrative-text').innerHTML = s.text;
+    document.getElementById('step-counter').textContent = currentStep;
+
+    // Metrics
+    const bb = s.bestBound;
+    const bi = s.incumbent;
+    const gap = (bb!==null && bi!==null) ? Math.max(0,Math.round((bb-bi)/bb*100)) : 100;
+    document.getElementById('m-active').textContent =
+      NODES.filter(n=>n.visibleFrom<=currentStep && n.state==='solved' && !['pruned','incumbent','incumbent2'].includes(n.state)).length;
+    document.getElementById('m-bound').textContent = bb!==null ? bb : '—';
+    document.getElementById('m-incumbent').textContent = bi!==null ? bi : '—';
+    document.getElementById('m-gap').textContent = (bb!==null&&bi!==null) ? gap+'%' : '—';
+    document.getElementById('db-bb').textContent = bb!==null ? bb : '—';
+    document.getElementById('db-bi').textContent = bi!==null ? bi : '—';
+    document.getElementById('db-gap').textContent = (bb!==null&&bi!==null) ? gap+'%' : '—';
+    const barPct = (bb!==null&&bi!==null) ? (100-gap) : 0;
+    document.getElementById('gap-bar').style.width = barPct+'%';
+
+    // Pruning stats
+    const visible = NODES.filter(n=>n.visibleFrom<=currentStep);
+    const pruned = visible.filter(n=>n.state==='pruned').length;
+    const gen = visible.length;
+    const eff = gen>0 ? Math.round(pruned/gen*100) : 0;
+    document.getElementById('ps-gen').textContent = gen;
+    document.getElementById('ps-exp').textContent = gen; // all visible = explored
+    document.getElementById('ps-pruned').textContent = pruned;
+    document.getElementById('ps-eff').textContent = eff+'%';
+
+    // Buttons
+    document.getElementById('btn-prev').disabled = currentStep===0;
+    document.getElementById('btn-step').disabled = currentStep>=TOTAL_STEPS;
+    document.getElementById('btn-step').textContent = currentStep>=TOTAL_STEPS ? 'Complete ✓' : 'Next Step →';
+
+    updateDashChart(bb, bi);
+  }
+
+  /* ─ Dashboard chart (reuse same function) ─ */
+  let dashHistory=[];
+  function updateDashChart(bb,bi){
+    if(bb!==null) dashHistory.push({bb, bi: bi!==null?bi:null});
+    if(dashHistory.length>50) dashHistory.shift();
+    drawDashChart();
+  }
+  function drawDashChart(){
+    const dc=document.getElementById('dash-canvas');
+    const dctx=dc.getContext('2d');
+    dc.width=dc.offsetWidth||800; dc.height=200;
+    const dW=dc.width,dH=dc.height;
+    dctx.clearRect(0,0,dW,dH);
+    if(dashHistory.length<2)return;
+    const pad=36;
+    const maxV=Math.max(...dashHistory.map(d=>d.bb),22);
+    const minV=0;
+    const sX=(i)=>pad+i*(dW-pad*2)/(Math.max(1,dashHistory.length-1));
+    const sY=(v)=>dH-pad-(v-minV)/(maxV-minV+1)*(dH-pad*2);
+    // grid
+    dctx.strokeStyle='rgba(245,240,232,0.05)';dctx.lineWidth=0.5;
+    [0,5,10,15,20,25].forEach(v=>{
+      let y=sY(v);
+      dctx.beginPath();dctx.moveTo(pad,y);dctx.lineTo(dW-pad,y);dctx.stroke();
+      dctx.fillStyle='rgba(160,152,128,0.4)';dctx.font='300 9px "DM Mono",monospace';
+      dctx.textAlign='right';dctx.fillText(v,pad-4,y+3);
+    });
+    // BB
+    dctx.strokeStyle='rgba(201,168,76,0.85)';dctx.lineWidth=2;dctx.setLineDash([]);
+    dctx.beginPath();
+    dashHistory.forEach((d,i)=>{let x=sX(i),y=sY(d.bb);i===0?dctx.moveTo(x,y):dctx.lineTo(x,y);});
+    dctx.stroke();
+    // BI
+    let started=false;
+    dctx.strokeStyle='rgba(107,174,140,0.9)';dctx.lineWidth=2;dctx.setLineDash([5,4]);
+    dctx.beginPath();
+    dashHistory.forEach((d,i)=>{
+      if(d.bi===null)return;
+      let x=sX(i),y=sY(d.bi);
+      if(!started){dctx.moveTo(x,y);started=true;}else dctx.lineTo(x,y);
+    });
+    dctx.stroke();dctx.setLineDash([]);
+    dctx.font='300 10px "DM Mono",monospace';
+    dctx.textAlign='left';
+    dctx.fillStyle='rgba(201,168,76,0.7)';dctx.fillText('Best Bound',pad+6,pad+14);
+    dctx.fillStyle='rgba(107,174,140,0.7)';dctx.fillText('Best Incumbent (z*)',pad+6,pad+28);
+  }
+
+  /* ─ Step controls ─ */
+  function goToStep(s){
+    currentStep = Math.max(0, Math.min(TOTAL_STEPS, s));
+    // Reset opacities for nodes that are no longer visible
+    NODES.forEach(n=>{
+      if(n.visibleFrom > currentStep) nodeOpacity[n.id] = 0;
+    });
+    updateNarrative();
+  }
+
+  document.getElementById('btn-step').addEventListener('click',()=>{ goToStep(currentStep+1); });
+  document.getElementById('btn-prev').addEventListener('click',()=>{ goToStep(currentStep-1); });
+  document.getElementById('btn-reset').addEventListener('click',()=>{
+    if(autoTimer){ clearInterval(autoTimer); autoTimer=null; document.getElementById('btn-auto').textContent='Auto Play'; }
+    NODES.forEach(n=>nodeOpacity[n.id]=0);
+    dashHistory=[];
+    goToStep(0);
+  });
+  document.getElementById('btn-auto').addEventListener('click',function(){
+    if(autoTimer){
+      clearInterval(autoTimer); autoTimer=null;
+      this.textContent='Auto Play';
+    } else {
+      if(currentStep>=TOTAL_STEPS) goToStep(0);
+      this.textContent='Pause ⏸';
+      autoTimer=setInterval(()=>{
+        if(currentStep>=TOTAL_STEPS){
+          clearInterval(autoTimer); autoTimer=null;
+          document.getElementById('btn-auto').textContent='Auto Play';
+          return;
+        }
+        goToStep(currentStep+1);
+      }, 2200);
+    }
+  });
+
+  window.addEventListener('resize',()=>{ draw(); });
+  goToStep(0);
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   STRATEGY CANVASES
+═══════════════════════════════════════════════════════ */
+(function(){
+  function drawStrategy(canvasId, strategy){
+    const canvas=document.getElementById(canvasId);
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth||400;
+    canvas.height=220;
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Simple tree layout
+    const nodes=[
+      {id:0,px:null,x:W/2,y:30,bound:100,state:'solved'},
+      {id:1,px:0,x:W/3,y:100,bound:88,state:'solved'},
+      {id:2,px:0,x:W*2/3,y:100,bound:92,state:'solved'},
+      {id:3,px:1,x:W/5,y:170,bound:80,state:'pruned'},
+      {id:4,px:1,x:W*2/5,y:170,bound:85,state:'incumbent'},
+      {id:5,px:2,x:W*3/5,y:170,bound:88,state:'solved'},
+      {id:6,px:2,x:W*4/5,y:170,bound:90,state:'active'},
+    ];
+
+    // Draw edges
+    nodes.forEach(n=>{
+      if(n.px===null)return;
+      let p=nodes[n.px];
+      ctx.strokeStyle=n.state==='pruned'?'rgba(196,74,74,0.4)':'rgba(201,168,76,0.3)';
+      ctx.lineWidth=1;
+      ctx.setLineDash(n.state==='pruned'?[3,3]:[]);
+      ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(n.x,n.y);ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    // Highlight traversal path
+    const btPath=strategy==='bt'?[0,1,3,4,2,5,6]:[0,2,6,1,4,5,3];
+    const colors={pruned:'rgba(196,74,74,0.9)',incumbent:'rgba(107,174,140,1)',
+      active:'rgba(201,168,76,0.9)',solved:'rgba(138,126,201,0.8)'};
+
+    nodes.forEach((n,i)=>{
+      let orderNum=btPath.indexOf(i)+1;
+      let r=10;
+      ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);
+      ctx.fillStyle=colors[n.state];
+      ctx.fill();
+      ctx.fillStyle='rgba(245,240,232,0.9)';
+      ctx.font='500 9px "DM Mono",monospace';
+      ctx.textAlign='center';
+      ctx.fillText(orderNum,n.x,n.y+3.5);
+      ctx.fillStyle='rgba(245,240,232,0.5)';
+      ctx.font='300 8px "DM Mono",monospace';
+      ctx.fillText(Math.round(n.bound),n.x,n.y+r+12);
+    });
+
+    // Label
+    ctx.fillStyle='rgba(201,168,76,0.6)';
+    ctx.font='300 9px "DM Mono",monospace';
+    ctx.textAlign='left';
+    ctx.fillText(strategy==='bt'?'depth-first traversal order':'best-bound traversal order',8,H-8);
+  }
+
+  function initStrategies(){
+    drawStrategy('strategy-bt','bt');
+    drawStrategy('strategy-jt','jt');
+  }
+  initStrategies();
+  window.addEventListener('resize',initStrategies);
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   PRUNING DEMO CANVASES
+═══════════════════════════════════════════════════════ */
+(function(){
+  function drawPruningCanvas(canvasId, pruning){
+    const canvas=document.getElementById(canvasId);
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth||400;
+    canvas.height=240;
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Build tree positions for 4 levels
+    function buildLevel(nodes,levelY,spread){
+      let result=[];
+      nodes.forEach(px=>{
+        result.push({x:px-spread/2,y:levelY,parent:px});
+        result.push({x:px+spread/2,y:levelY,parent:px});
+      });
+      return result;
+    }
+
+    let l0=[{x:W/2,y:20,parent:null}];
+    let spread0=W*0.3;
+    let l1=buildLevel([W/2],70,spread0);
+    let l2=buildLevel(l1.map(n=>n.x),130,spread0*0.45);
+    let l3=buildLevel(l2.map(n=>n.x),185,spread0*0.22);
+
+    let all=[...l0,...l1,...l2,...l3];
+    // Assign pruning status
+    if(pruning){
+      l1[1].pruned=true; // prune right branch at depth 1
+      l2.forEach((n,i)=>{if(n.parent>W/2+10)n.pruned=true;}); // all right-subtree
+      l3.forEach((n,i)=>{if(n.parent>W/2+5)n.pruned=true;if(i>=4)n.pruned=true;});
+    }
+
+    // Propagate pruning to children
+    if(pruning){
+      l2.forEach(n=>{let p=l1.find(p=>Math.abs(p.x-n.parent)<5);if(p&&p.pruned)n.pruned=true;});
+      l3.forEach(n=>{let p=l2.find(p=>Math.abs(p.x-n.parent)<5);if(p&&p.pruned)n.pruned=true;});
+    }
+
+    // Edges
+    function drawEdges(children, parents){
+      children.forEach(c=>{
+        let par=parents.find(p=>Math.abs(p.x-c.parent)<2)||l0[0];
+        let pruned=c.pruned;
+        ctx.strokeStyle=pruned?'rgba(196,74,74,0.35)':'rgba(201,168,76,0.25)';
+        ctx.lineWidth=0.8;
+        ctx.setLineDash(pruned?[3,3]:[]);
+        ctx.beginPath();ctx.moveTo(par.x,par.y);ctx.lineTo(c.x,c.y);ctx.stroke();
+      });
+      ctx.setLineDash([]);
+    }
+    drawEdges(l1,[l0[0]]);
+    drawEdges(l2,l1);
+    drawEdges(l3,l2);
+
+    // Nodes
+    all.forEach(n=>{
+      let r=4.5;
+      let col=n.pruned?'rgba(196,74,74,0.55)':
+        (n===l0[0]?'rgba(201,168,76,0.9)':'rgba(138,126,201,0.75)');
+      ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);
+      ctx.fillStyle=col;ctx.fill();
+    });
+
+    // Incumbent highlight
+    if(pruning){
+      let inc=l2[0]; // leftmost node
+      ctx.beginPath();ctx.arc(inc.x,inc.y,6,0,Math.PI*2);
+      ctx.fillStyle='rgba(107,174,140,0.9)';ctx.fill();
+      ctx.fillStyle='rgba(245,240,232,0.8)';
+      ctx.font='300 8px "DM Mono",monospace';
+      ctx.textAlign='center';
+      ctx.fillText('z*',inc.x,inc.y+3);
+    }
+
+    // Summary
+    let totalNodes=all.length;
+    let prunedN=all.filter(n=>n.pruned).length;
+    let explored=totalNodes-prunedN;
+    ctx.fillStyle=pruning?'rgba(107,174,140,0.7)':'rgba(196,74,74,0.7)';
+    ctx.font='300 9px "DM Mono",monospace';
+    ctx.textAlign='right';
+    ctx.fillText(pruning?`${prunedN} nodes pruned`:`All ${totalNodes} nodes explored`,W-8,H-8);
+  }
+
+  function initPruning(){
+    drawPruningCanvas('prune-canvas-no',false);
+    drawPruningCanvas('prune-canvas-yes',true);
+  }
+  initPruning();
+  window.addEventListener('resize',()=>setTimeout(initPruning,50));
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   INTERSECTION OBSERVER — Reveal animations
+═══════════════════════════════════════════════════════ */
+(function(){
+  const reveals=document.querySelectorAll('.reveal');
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        // Re-draw canvases if they are inside revealed elements
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12});
+  reveals.forEach(r=>obs.observe(r));
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   WORKFLOW STEP REVEAL
+═══════════════════════════════════════════════════════ */
+(function(){
+  const steps=document.querySelectorAll('.workflow-step');
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.2});
+  steps.forEach(s=>obs.observe(s));
+})();
+</script>
+</body>
+</html>
