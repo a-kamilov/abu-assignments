@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimization Models Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0E0D0B;
+    --bg-secondary: #1A1916;
+    --bg-glass: rgba(14,13,11,0.82);
+    --cream-1: #F5F0E8;
+    --cream-2: #FAF7F2;
+    --cream-3: #E8E0CC;
+    --gold: #C9A84C;
+    --gold-light: #E2C97E;
+    --gold-dim: rgba(201,168,76,0.3);
+    --gold-vdim: rgba(201,168,76,0.12);
+    --success: #6BAE8C;
+    --warning: #C46B4A;
+    --info: #8A7EC9;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Crimson Pro', Georgia, serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--cream-1);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── CANVAS ── */
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  /* ── LAYOUT ── */
+  .site-wrap { position: relative; z-index: 1; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ── GOLD DIVIDER ── */
+  .gold-rule {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0;
+    opacity: 0.6;
+  }
+  .gold-rule-sm {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 16px 0 28px;
+  }
+
+  /* ── SECTION ── */
+  section {
+    padding: 96px 0;
+    position: relative;
+  }
+  section.tight { padding: 64px 0; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0.9;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--cream-2);
+    line-height: 1.2;
+    margin-bottom: 0;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .section-body {
+    font-size: 18px;
+    color: var(--cream-3);
+    max-width: 680px;
+    line-height: 1.8;
+  }
+
+  /* ── GLASS CARD ── */
+  .glass {
+    background: rgba(26,25,22,0.72);
+    border: 1px solid rgba(201,168,76,0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 12px;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 28px;
+    position: relative;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 40px;
+    color: var(--gold);
+    background: var(--gold-vdim);
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--cream-2);
+    margin-bottom: 28px;
+    letter-spacing: -0.01em;
+  }
+  .hero-title .accent { color: var(--gold-light); font-style: italic; }
+
+  .hero-sub {
+    font-size: clamp(17px, 2.2vw, 22px);
+    color: var(--cream-3);
+    max-width: 600px;
+    margin: 0 auto 56px;
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    color: var(--gold-light);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    cursor: pointer;
+    background: transparent;
+  }
+  .hero-cta:hover {
+    background: var(--gold-dim);
+    color: var(--cream-2);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.4;
+  }
+  .scroll-hint span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .scroll-hint .arrow {
+    width: 1px;
+    height: 32px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%,100%{opacity:0.3} 50%{opacity:1}
+  }
+
+  /* ── WHY SECTION ── */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .why-card {
+    padding: 32px 28px;
+    border-left: 2px solid var(--gold-dim);
+    background: rgba(26,25,22,0.5);
+    border-radius: 0 8px 8px 0;
+    transition: border-color 0.3s;
+  }
+  .why-card:hover { border-left-color: var(--gold); }
+  .why-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .why-card h3 {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--cream-2);
+    margin-bottom: 10px;
+  }
+  .why-card p {
+    font-size: 15px;
+    color: var(--cream-3);
+    line-height: 1.65;
+  }
+
+  /* ── MODEL SECTIONS ── */
+  .model-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  @media(max-width:720px){ .model-section{grid-template-columns:1fr;gap:36px;} }
+
+  .model-text h2 {
+    font-family: var(--font-display);
+    font-size: clamp(26px,3.5vw,38px);
+    font-weight: 700;
+    color: var(--cream-2);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .model-text h2 em { color: var(--gold-light); font-style: italic; }
+  .model-text p { font-size: 17px; color: var(--cream-3); margin-bottom: 18px; line-height: 1.75; }
+
+  .concept-list {
+    list-style: none;
+    margin-top: 20px;
+  }
+  .concept-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 16px;
+    color: var(--cream-3);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+  .concept-list li::before {
+    content: '—';
+    color: var(--gold);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── MINI SIMULATIONS ── */
+  .sim-panel {
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    min-height: 320px;
+  }
+  .sim-canvas {
+    width: 100%;
+    height: 320px;
+    display: block;
+    border-radius: 12px;
+  }
+  .sim-controls {
+    padding: 18px 22px;
+    background: rgba(14,13,11,0.7);
+    border-top: 1px solid var(--gold-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-radius: 0 0 12px 12px;
+  }
+  .sim-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .sim-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .sim-btn:hover { background: var(--gold-dim); color: var(--cream-2); }
+  .sim-stat {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--success);
+  }
+
+  /* ── COMPARISON CARDS ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+  @media(max-width:700px){ .compare-grid{grid-template-columns:1fr;} }
+
+  .compare-card {
+    padding: 36px 28px;
+    border-radius: 12px;
+    border: 1px solid rgba(201,168,76,0.14);
+    background: rgba(26,25,22,0.6);
+    cursor: pointer;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .compare-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--gold-vdim), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .compare-card:hover { transform: translateY(-4px); border-color: var(--gold); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  .compare-card:hover::before { opacity: 1; }
+
+  .compare-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .compare-card h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cream-2);
+    margin-bottom: 14px;
+  }
+  .compare-card .compare-goal {
+    font-size: 15px;
+    color: var(--cream-3);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+  .compare-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .tag-transport { background: rgba(107,174,140,0.15); color: var(--success); border: 1px solid rgba(107,174,140,0.3); }
+  .tag-assign { background: rgba(138,126,201,0.15); color: var(--info); border: 1px solid rgba(138,126,201,0.3); }
+  .tag-cut { background: rgba(196,107,74,0.15); color: var(--warning); border: 1px solid rgba(196,107,74,0.3); }
+
+  .compare-metric {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--gold-dim);
+  }
+  .compare-metric .metric-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.6);
+    margin-bottom: 6px;
+  }
+  .compare-metric .metric-value {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--cream-3);
+    font-style: italic;
+  }
+
+  /* ── PLAYGROUND ── */
+  .playground-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--gold-dim);
+  }
+  .ptab {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    background: transparent;
+    border: none;
+    color: rgba(201,168,76,0.5);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .ptab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+  .ptab:hover:not(.active) { color: var(--gold); }
+
+  .playground-arena {
+    background: rgba(14,13,11,0.6);
+    border: 1px solid var(--gold-dim);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+  }
+  #playground-canvas {
+    width: 100%;
+    height: 440px;
+    display: block;
+  }
+  .playground-info {
+    padding: 22px 28px;
+    border-top: 1px solid var(--gold-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .pg-desc {
+    font-size: 15px;
+    color: var(--cream-3);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+  .pg-metrics {
+    display: flex;
+    gap: 24px;
+  }
+  .pg-metric {
+    text-align: right;
+  }
+  .pg-metric .pg-metric-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.5);
+    margin-bottom: 4px;
+  }
+  .pg-metric .pg-metric-value {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+
+  /* ── APPLICATIONS ── */
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    margin-top: 56px;
+  }
+  .app-card {
+    padding: 28px 22px;
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 10px;
+    background: rgba(26,25,22,0.4);
+    text-align: center;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .app-card:hover {
+    border-color: rgba(201,168,76,0.35);
+    background: rgba(26,25,22,0.7);
+    transform: translateY(-2px);
+  }
+  .app-icon { font-size: 32px; margin-bottom: 14px; display: block; }
+  .app-card h4 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--cream-2);
+    margin-bottom: 8px;
+  }
+  .app-card p { font-size: 14px; color: var(--cream-3); line-height: 1.55; }
+
+  /* ── TAKEAWAYS ── */
+  .takeaways-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 56px;
+  }
+  @media(max-width:600px){ .takeaways-grid{grid-template-columns:1fr;} }
+  .takeaway {
+    padding: 30px 26px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 10px;
+    background: rgba(26,25,22,0.5);
+    position: relative;
+  }
+  .takeaway-num {
+    position: absolute;
+    top: -1px;
+    right: 20px;
+    font-family: var(--font-display);
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+    user-select: none;
+  }
+  .takeaway h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--cream-2);
+    margin-bottom: 10px;
+  }
+  .takeaway p { font-size: 15px; color: var(--cream-3); line-height: 1.65; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 56px 0 40px;
+    border-top: 1px solid var(--gold-dim);
+    text-align: center;
+  }
+  .footer-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+  .footer-sub {
+    font-size: 15px;
+    color: var(--cream-3);
+    opacity: 0.7;
+    margin-bottom: 32px;
+  }
+  .footer-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+  .footer-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.5);
+    padding: 4px 12px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 20px;
+  }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(245,240,232,0.25);
+    text-transform: uppercase;
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── SECTION BG TINT ── */
+  .bg-alt { background: rgba(26,25,22,0.35); }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,13,11,0.95), transparent);
+    pointer-events: none;
+  }
+  .nav-brand {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--gold);
+    pointer-events: all;
+    letter-spacing: 0.01em;
+  }
+  .nav-mode {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.55);
+    pointer-events: all;
+  }
+
+  /* Separator in hero */
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+    margin: 32px 0;
+  }
+  .ornament span { width: 60px; height: 1px; background: var(--gold-dim); }
+  .ornament i { font-style: normal; color: var(--gold); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <span class="nav-brand">Optimization Playground</span>
+  <span class="nav-mode" id="nav-mode">— Transportation Mode</span>
+</nav>
+
+<div class="site-wrap">
+
+  <!-- ══ HERO ══ -->
+  <section id="hero">
+    <div class="hero-meta reveal">
+      <span class="badge">Transportation</span>
+      <span class="badge">Assignment</span>
+      <span class="badge">Cutting Stock</span>
+      <span class="badge">Optimization</span>
+    </div>
+    <h1 class="hero-title reveal reveal-delay-1">
+      Optimization<br><span class="accent">Models</span><br>Playground
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">
+      Understanding how Management Science transforms complex decisions into structured optimization models.
+    </p>
+    <div class="ornament reveal reveal-delay-3">
+      <span></span><i>◆</i><span></span>
+    </div>
+    <a class="hero-cta reveal reveal-delay-4" href="#why">
+      Explore the Models →
+    </a>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="arrow"></div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ WHY ══ -->
+  <section id="why">
+    <div class="container">
+      <p class="section-label reveal">Foundation</p>
+      <h2 class="section-title reveal reveal-delay-1">Why Optimization<br>Models <em>Exist</em></h2>
+      <div class="gold-rule-sm reveal reveal-delay-1"></div>
+      <p class="section-body reveal reveal-delay-2">
+        Every organization faces decisions involving limited resources. How do we move goods most efficiently? Who should be assigned to which task? How do we cut materials with the least waste? Optimization models give us a rigorous, mathematical way to find the best possible answer.
+      </p>
+      <div class="why-grid">
+        <div class="why-card glass reveal">
+          <span class="why-icon">⚖️</span>
+          <h3>Resources Are Finite</h3>
+          <p>Time, money, materials, and capacity are always limited. Optimization models respect these constraints while seeking the best outcome.</p>
+        </div>
+        <div class="why-card glass reveal reveal-delay-1">
+          <span class="why-icon">🔗</span>
+          <h3>Decisions Have Consequences</h3>
+          <p>Choosing one option often means forgoing another. Models make these trade-offs explicit and quantifiable, removing guesswork.</p>
+        </div>
+        <div class="why-card glass reveal reveal-delay-2">
+          <span class="why-icon">🧩</span>
+          <h3>Different Problems, Different Models</h3>
+          <p>A distribution problem is structurally different from a matching problem. The right model captures the problem's true nature.</p>
+        </div>
+        <div class="why-card glass reveal reveal-delay-3">
+          <span class="why-icon">🎯</span>
+          <h3>Mathematics Finds Optimal Solutions</h3>
+          <p>Human intuition struggles at scale. Mathematical optimization reliably identifies solutions that minimize cost or maximize efficiency.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ TRANSPORTATION ══ -->
+  <section id="transportation" class="bg-alt">
+    <div class="container">
+      <p class="section-label reveal">Model 01</p>
+      <div class="model-section">
+        <div class="model-text">
+          <h2 class="reveal">The <em>Transportation</em> Model</h2>
+          <div class="gold-rule-sm reveal"></div>
+          <p class="reveal reveal-delay-1">
+            Imagine a network of sources with supply and destinations with demand. The Transportation Model asks: what is the cheapest way to ship goods from sources to destinations while satisfying all supply and demand constraints?
+          </p>
+          <p class="reveal reveal-delay-2">
+            This is one of the oldest and most widely-used optimization models. Its elegance lies in how it captures flow — the movement of any resource through a structured network — as a system of linear equations.
+          </p>
+          <ul class="concept-list reveal reveal-delay-3">
+            <li>Supply nodes provide resources at known quantities</li>
+            <li>Demand nodes require specified amounts to be received</li>
+            <li>Each route between them has an associated cost</li>
+            <li>The model minimizes total cost across all shipments</li>
+            <li>Network flows must be balanced: supply equals demand</li>
+          </ul>
+        </div>
+        <div>
+          <div class="glass sim-panel reveal reveal-delay-1">
+            <canvas id="transport-canvas" class="sim-canvas"></canvas>
+            <div class="sim-controls">
+              <span class="sim-label">Transportation Network</span>
+              <span class="sim-stat" id="transport-cost">Total Cost: Calculating...</span>
+              <button class="sim-btn" onclick="resetTransport()">Randomize</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ ASSIGNMENT ══ -->
+  <section id="assignment">
+    <div class="container">
+      <p class="section-label reveal">Model 02</p>
+      <div class="model-section" style="direction:rtl">
+        <div class="model-text" style="direction:ltr">
+          <h2 class="reveal">The <em>Assignment</em> Model</h2>
+          <div class="gold-rule-sm reveal"></div>
+          <p class="reveal reveal-delay-1">
+            The Assignment Model solves a fundamental matching problem: given a set of agents and a set of tasks, how do we assign exactly one agent to each task — and one task to each agent — to minimize total cost or maximize total efficiency?
+          </p>
+          <p class="reveal reveal-delay-2">
+            Unlike the Transportation Model which allows fractional flows, assignment is strictly one-to-one. This binary constraint makes it uniquely suited to scheduling, workforce allocation, and resource matching problems.
+          </p>
+          <ul class="concept-list reveal reveal-delay-3">
+            <li>Each resource (agent) is assigned to exactly one task</li>
+            <li>Each task receives exactly one resource</li>
+            <li>A cost or efficiency matrix defines all possible pairings</li>
+            <li>The Hungarian Algorithm solves this in polynomial time</li>
+            <li>Optimal matches may be unintuitive — math beats intuition</li>
+          </ul>
+        </div>
+        <div style="direction:ltr">
+          <div class="glass sim-panel reveal reveal-delay-1">
+            <canvas id="assign-canvas" class="sim-canvas"></canvas>
+            <div class="sim-controls">
+              <span class="sim-label">Assignment Matching</span>
+              <span class="sim-stat" id="assign-eff">Efficiency: Calculating...</span>
+              <button class="sim-btn" onclick="resetAssign()">Shuffle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ CUTTING STOCK ══ -->
+  <section id="cutting" class="bg-alt">
+    <div class="container">
+      <p class="section-label reveal">Model 03</p>
+      <div class="model-section">
+        <div class="model-text">
+          <h2 class="reveal">The <em>Cutting Stock</em> Model</h2>
+          <div class="gold-rule-sm reveal"></div>
+          <p class="reveal reveal-delay-1">
+            Manufacturing often requires cutting large standard-size raw materials (rolls of paper, sheets of steel, lengths of timber) into smaller pieces of specified sizes. The Cutting Stock Model determines which cutting patterns to use — and how many times — to fulfill all orders while minimizing total material used and waste generated.
+          </p>
+          <p class="reveal reveal-delay-2">
+            This model belongs to the broader family of bin-packing and column generation problems. It balances the combinatorial complexity of pattern selection with the linear structure of demand fulfillment.
+          </p>
+          <ul class="concept-list reveal reveal-delay-3">
+            <li>Raw materials come in fixed standard lengths or dimensions</li>
+            <li>Demand specifies exact quantities of each smaller size needed</li>
+            <li>Cutting patterns define how one raw piece is divided</li>
+            <li>The model chooses patterns that minimize waste and cost</li>
+            <li>Column generation handles the exponential number of patterns</li>
+          </ul>
+        </div>
+        <div>
+          <div class="glass sim-panel reveal reveal-delay-1">
+            <canvas id="cut-canvas" class="sim-canvas"></canvas>
+            <div class="sim-controls">
+              <span class="sim-label">Cutting Patterns</span>
+              <span class="sim-stat" id="cut-eff">Waste: Calculating...</span>
+              <button class="sim-btn" onclick="resetCut()">New Pattern</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ COMPARISON ══ -->
+  <section id="comparison">
+    <div class="container">
+      <p class="section-label reveal">Model Comparison</p>
+      <h2 class="section-title reveal reveal-delay-1">Three Models, <em>One Goal</em></h2>
+      <div class="gold-rule-sm reveal reveal-delay-1"></div>
+      <p class="section-body reveal reveal-delay-2">
+        Each model addresses a structurally distinct type of decision problem. Selecting the right model is itself a key skill in Management Science — it determines what mathematics becomes available to you.
+      </p>
+      <div class="compare-grid">
+        <div class="compare-card reveal">
+          <span class="compare-num">01 — Transportation</span>
+          <h3>Move Resources Efficiently</h3>
+          <p class="compare-goal">Determines the optimal flow of goods from multiple supply points to multiple demand points, minimizing total shipping cost across the entire network.</p>
+          <span class="compare-tag tag-transport">Distribution</span>
+          <span class="compare-tag tag-transport">Logistics</span>
+          <span class="compare-tag tag-transport">Networks</span>
+          <div class="compare-metric">
+            <div class="metric-label">Decision Variable</div>
+            <div class="metric-value">Shipment quantities on each route</div>
+          </div>
+        </div>
+        <div class="compare-card reveal reveal-delay-1">
+          <span class="compare-num">02 — Assignment</span>
+          <h3>Match Resources to Tasks</h3>
+          <p class="compare-goal">Finds the one-to-one pairing of agents to tasks that minimizes total cost or maximizes total effectiveness across the entire set of assignments.</p>
+          <span class="compare-tag tag-assign">Scheduling</span>
+          <span class="compare-tag tag-assign">Workforce</span>
+          <span class="compare-tag tag-assign">Matching</span>
+          <div class="compare-metric">
+            <div class="metric-label">Decision Variable</div>
+            <div class="metric-value">Binary: assign or don't assign</div>
+          </div>
+        </div>
+        <div class="compare-card reveal reveal-delay-2">
+          <span class="compare-num">03 — Cutting Stock</span>
+          <h3>Reduce Material Waste</h3>
+          <p class="compare-goal">Selects cutting patterns and usage frequencies that satisfy all demand requirements for smaller items while minimizing the number of raw materials consumed.</p>
+          <span class="compare-tag tag-cut">Manufacturing</span>
+          <span class="compare-tag tag-cut">Patterns</span>
+          <span class="compare-tag tag-cut">Waste</span>
+          <div class="compare-metric">
+            <div class="metric-label">Decision Variable</div>
+            <div class="metric-value">How many times each pattern is cut</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ PLAYGROUND ══ -->
+  <section id="playground" class="bg-alt">
+    <div class="container">
+      <p class="section-label reveal">Interactive</p>
+      <h2 class="section-title reveal reveal-delay-1"><em>Playground</em></h2>
+      <div class="gold-rule-sm reveal reveal-delay-1"></div>
+      <p class="section-body reveal reveal-delay-2" style="margin-bottom: 40px;">
+        Switch between model types and observe how each optimization process unfolds. Watch as the algorithms search for the best solution in real time.
+      </p>
+      <div class="glass reveal reveal-delay-3">
+        <div class="playground-tabs">
+          <button class="ptab active" onclick="switchPlayground('transport',this)">Transportation</button>
+          <button class="ptab" onclick="switchPlayground('assign',this)">Assignment</button>
+          <button class="ptab" onclick="switchPlayground('cut',this)">Cutting Stock</button>
+        </div>
+        <div class="playground-arena">
+          <canvas id="playground-canvas"></canvas>
+          <div class="playground-info">
+            <p class="pg-desc" id="pg-desc">Observe how goods flow along optimal routes through the transportation network, balancing supply at sources with demand at destinations.</p>
+            <div class="pg-metrics">
+              <div class="pg-metric">
+                <div class="pg-metric-label" id="pg-label-1">Cost</div>
+                <div class="pg-metric-value" id="pg-val-1">—</div>
+              </div>
+              <div class="pg-metric">
+                <div class="pg-metric-label" id="pg-label-2">Efficiency</div>
+                <div class="pg-metric-value" id="pg-val-2">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ APPLICATIONS ══ -->
+  <section id="applications">
+    <div class="container">
+      <p class="section-label reveal">Real World</p>
+      <h2 class="section-title reveal reveal-delay-1">Where These Models<br><em>Live</em></h2>
+      <div class="gold-rule-sm reveal reveal-delay-1"></div>
+      <p class="section-body reveal reveal-delay-2">
+        Optimization models aren't abstract academic exercises — they power the decisions behind billions of dollars of operations every day.
+      </p>
+      <div class="apps-grid">
+        <div class="app-card glass reveal">
+          <span class="app-icon">🏭</span>
+          <h4>Manufacturing</h4>
+          <p>Cutting stock models minimize raw material waste in paper mills, steel plants, and textile production.</p>
+        </div>
+        <div class="app-card glass reveal reveal-delay-1">
+          <span class="app-icon">🚢</span>
+          <h4>Supply Chains</h4>
+          <p>Transportation models route goods from production facilities to distribution centers and customers.</p>
+        </div>
+        <div class="app-card glass reveal reveal-delay-2">
+          <span class="app-icon">👥</span>
+          <h4>Workforce Planning</h4>
+          <p>Assignment models schedule employees to shifts, projects, or roles to maximize productivity.</p>
+        </div>
+        <div class="app-card glass reveal reveal-delay-3">
+          <span class="app-icon">✈️</span>
+          <h4>Transportation Systems</h4>
+          <p>Airlines and freight carriers use network flow models to optimize routes and loading schedules.</p>
+        </div>
+        <div class="app-card glass reveal">
+          <span class="app-icon">📋</span>
+          <h4>Project Scheduling</h4>
+          <p>Assignment models allocate engineers, equipment, and resources to tasks across complex projects.</p>
+        </div>
+        <div class="app-card glass reveal reveal-delay-1">
+          <span class="app-icon">📦</span>
+          <h4>Resource Allocation</h4>
+          <p>Organizations use transportation-style models to distribute budgets, capacity, and personnel optimally.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-rule"></div>
+
+  <!-- ══ TAKEAWAYS ══ -->
+  <section id="takeaways" class="bg-alt">
+    <div class="container">
+      <p class="section-label reveal">Key Takeaways</p>
+      <h2 class="section-title reveal reveal-delay-1">What to Remember</h2>
+      <div class="gold-rule-sm reveal reveal-delay-1"></div>
+      <div class="takeaways-grid">
+        <div class="takeaway glass reveal">
+          <span class="takeaway-num">1</span>
+          <h3>Model Selection Matters</h3>
+          <p>Different decision problems have fundamentally different structures. Choosing the correct model type is the first and most important step in any optimization project.</p>
+        </div>
+        <div class="takeaway glass reveal reveal-delay-1">
+          <span class="takeaway-num">2</span>
+          <h3>Mathematics Simplifies Complexity</h3>
+          <p>What appears impossibly complex as a verbal description often becomes tractable when formulated as a linear program with clear variables, constraints, and an objective function.</p>
+        </div>
+        <div class="takeaway glass reveal reveal-delay-2">
+          <span class="takeaway-num">3</span>
+          <h3>Optimization Improves Efficiency</h3>
+          <p>Even modest improvements in cost or utilization, compounded across thousands of decisions, translate into enormous real-world savings and competitive advantages.</p>
+        </div>
+        <div class="takeaway glass reveal reveal-delay-3">
+          <span class="takeaway-num">4</span>
+          <h3>Management Science Provides Tools</h3>
+          <p>Transportation, Assignment, and Cutting Stock models are just three in a rich toolkit. The discipline continues to evolve with integer programming, metaheuristics, and AI-assisted approaches.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div class="gold-rule"></div>
+    <div class="container" style="padding-top:56px;">
+      <div class="footer-title">Optimization Models Playground</div>
+      <p class="footer-sub">An educational exploration of Management Science optimization models.</p>
+      <div class="footer-tags">
+        <span class="footer-tag">Transportation Models</span>
+        <span class="footer-tag">Assignment Models</span>
+        <span class="footer-tag">Cutting Stock Models</span>
+        <span class="footer-tag">Linear Programming</span>
+        <span class="footer-tag">Network Flows</span>
+        <span class="footer-tag">Operations Research</span>
+      </div>
+      <p class="footer-copy">Management Science · Optimization · Abdurakhmon</p>
+    </div>
+  </footer>
+
+</div><!-- end site-wrap -->
+
+<script>
+/* ════════════════════════════════════════════
+   BACKGROUND CANVAS — Morphing between 3 modes
+   ════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t=0;
+  let mode=0; // 0=transport, 1=assign, 2=cut
+  let modeProgress=0, modeDuration=0;
+  const modeCycleDuration = 320; // frames per mode
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Color helpers
+  const gold = '#C9A84C', goldL = '#E2C97E';
+  const success='#6BAE8C', info='#8A7EC9', warn='#C46B4A';
+  const cream='rgba(245,240,232,';
+
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function easeInOut(t){ return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+
+  // ─ Transport mode ─
+  function drawTransport(alpha){
+    const a = alpha;
+    // Supply nodes (left)
+    const supplies = [
+      {x:W*0.12, y:H*0.28, label:'S1', val:80},
+      {x:W*0.12, y:H*0.50, label:'S2', val:60},
+      {x:W*0.12, y:H*0.72, label:'S3', val:90},
+    ];
+    // Demand nodes (right)
+    const demands = [
+      {x:W*0.88, y:H*0.22, label:'D1', val:70},
+      {x:W*0.88, y:H*0.42, label:'D2', val:85},
+      {x:W*0.88, y:H*0.62, label:'D3', val:55},
+      {x:W*0.88, y:H*0.78, label:'D4', val:45},
+    ];
+
+    // Animate flow particles
+    const routes = [
+      {s:0,d:0,cost:4,flow:0.7},
+      {s:0,d:2,cost:7,flow:0.3},
+      {s:1,d:1,cost:5,flow:0.9},
+      {s:1,d:3,cost:6,flow:0.6},
+      {s:2,d:0,cost:8,flow:0.2},
+      {s:2,d:3,cost:3,flow:0.8},
+    ];
+
+    routes.forEach((r,i)=>{
+      const s = supplies[r.s], d = demands[r.d];
+      const phase = (t*0.8 + i*0.7) % 1;
+      const px = lerp(s.x, d.x, phase);
+      const py = lerp(s.y, d.y, phase);
+      const midX = (s.x+d.x)/2;
+      const midY = (s.y+d.y)/2;
+
+      // Route line
+      ctx.save();
+      ctx.globalAlpha = a * 0.25;
+      ctx.strokeStyle = gold;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4,8]);
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(d.x, d.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Flow particle
+      ctx.save();
+      ctx.globalAlpha = a * r.flow * 0.8;
+      ctx.fillStyle = goldL;
+      ctx.shadowColor = gold;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(px, py, 3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+
+      // Cost label at midpoint
+      ctx.save();
+      ctx.globalAlpha = a * 0.35;
+      ctx.fillStyle = goldL;
+      ctx.font = '11px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('$'+r.cost, midX, midY - 6);
+      ctx.restore();
+    });
+
+    // Draw supply nodes
+    supplies.forEach((n,i)=>{
+      ctx.save();
+      ctx.globalAlpha = a * 0.85;
+      const pulse = 0.5+0.5*Math.sin(t*2+i*1.5);
+      ctx.shadowColor = success;
+      ctx.shadowBlur = 14*pulse;
+      ctx.fillStyle = success;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 16, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = a*0.5;
+      ctx.strokeStyle = goldL;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = a*0.7;
+      ctx.fillStyle = cream+'0.9)';
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, n.x, n.y);
+      ctx.restore();
+    });
+
+    // Draw demand nodes
+    demands.forEach((n,i)=>{
+      ctx.save();
+      ctx.globalAlpha = a * 0.85;
+      const pulse = 0.5+0.5*Math.sin(t*1.7+i*2);
+      ctx.shadowColor = warn;
+      ctx.shadowBlur = 14*pulse;
+      ctx.fillStyle = warn;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 14, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = a*0.5;
+      ctx.strokeStyle = goldL;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = a*0.7;
+      ctx.fillStyle = cream+'0.9)';
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, n.x, n.y);
+      ctx.restore();
+    });
+
+    // Labels
+    ctx.save();
+    ctx.globalAlpha = a*0.4;
+    ctx.fillStyle = success;
+    ctx.font = '12px DM Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('SUPPLY', W*0.12, H*0.14);
+    ctx.fillStyle = warn;
+    ctx.fillText('DEMAND', W*0.88, H*0.14);
+    ctx.restore();
+  }
+
+  // ─ Assignment mode ─
+  function drawAssign(alpha){
+    const n = 5;
+    const agents = Array.from({length:n},(_,i)=>({
+      x:W*0.2, y:H*(0.18 + i*0.16),
+      label:'A'+(i+1)
+    }));
+    const tasks = Array.from({length:n},(_,i)=>({
+      x:W*0.8, y:H*(0.18 + i*0.16),
+      label:'T'+(i+1)
+    }));
+    const optimal = [0,3,1,4,2]; // optimal pairing indices
+
+    // Background connections
+    agents.forEach((a,ai)=>{
+      tasks.forEach((tk,ti)=>{
+        const isOptimal = optimal[ai]===ti;
+        const progress = ((t*0.5 + ai*0.4 + ti*0.3) % 1);
+        ctx.save();
+        ctx.globalAlpha = alpha * (isOptimal ? 0.5 : 0.06);
+        ctx.strokeStyle = isOptimal ? goldL : gold;
+        ctx.lineWidth = isOptimal ? 1.5 : 0.5;
+        if(!isOptimal) ctx.setLineDash([2,6]);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.bezierCurveTo(W*0.5+30, a.y, W*0.5-30, tk.y, tk.x, tk.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      });
+    });
+
+    // Matching particles on optimal routes
+    optimal.forEach((ti,ai)=>{
+      const a=agents[ai], tk=tasks[ti];
+      const phase = (t*0.6 + ai*0.2) % 1;
+      const bx1=W*0.5+30, by1=a.y, bx2=W*0.5-30, by2=tk.y;
+      const bpt = cubicBezier(phase, a.x,a.y,bx1,by1,bx2,by2,tk.x,tk.y);
+      ctx.save();
+      ctx.globalAlpha = alpha*0.9;
+      ctx.fillStyle = goldL;
+      ctx.shadowColor = gold;
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(bpt.x, bpt.y, 4, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Agent nodes
+    agents.forEach((a,i)=>{
+      ctx.save();
+      ctx.globalAlpha = alpha*0.85;
+      const pulse = 0.5+0.5*Math.sin(t*2.2+i);
+      ctx.shadowColor = info;
+      ctx.shadowBlur = 12*pulse;
+      ctx.fillStyle = info;
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, 15, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = alpha*0.7;
+      ctx.fillStyle = cream+'0.9)';
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(a.label, a.x, a.y);
+      ctx.restore();
+    });
+
+    // Task nodes
+    tasks.forEach((tk,i)=>{
+      ctx.save();
+      ctx.globalAlpha = alpha*0.85;
+      const pulse = 0.5+0.5*Math.sin(t*1.8+i*1.3);
+      ctx.shadowColor = gold;
+      ctx.shadowBlur = 12*pulse;
+      ctx.fillStyle = gold;
+      ctx.beginPath();
+      ctx.arc(tk.x, tk.y, 15, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = alpha*0.7;
+      ctx.fillStyle = cream+'0.9)';
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(tk.label, tk.x, tk.y);
+      ctx.restore();
+    });
+
+    ctx.save();
+    ctx.globalAlpha = alpha*0.4;
+    ctx.fillStyle = info;
+    ctx.font='12px DM Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText('AGENTS', W*0.2, H*0.1);
+    ctx.fillStyle = gold;
+    ctx.fillText('TASKS', W*0.8, H*0.1);
+    ctx.restore();
+  }
+
+  // ─ Cutting Stock mode ─
+  function drawCut(alpha){
+    const patterns = [
+      {y:H*0.2,  cuts:[0.45, 0.3], color:success},
+      {y:H*0.42, cuts:[0.25, 0.25, 0.35], color:info},
+      {y:H*0.64, cuts:[0.55, 0.3], color:warn},
+    ];
+    const barW = W*0.7;
+    const barX = W*0.15;
+    const barH = 44;
+
+    patterns.forEach((p,pi)=>{
+      // Full bar background
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.15;
+      ctx.fillStyle = gold;
+      ctx.fillRect(barX, p.y, barW, barH);
+      ctx.restore();
+
+      // Cut segments
+      let cumX = barX;
+      p.cuts.forEach((frac,ci)=>{
+        const segW = barW * frac;
+        const hue = ci * 40;
+        ctx.save();
+        ctx.globalAlpha = alpha * (0.5 + 0.2*Math.sin(t*1.5+pi+ci));
+        ctx.fillStyle = p.color;
+        ctx.fillRect(cumX+2, p.y+2, segW-4, barH-4);
+        ctx.restore();
+
+        // Dimension label
+        ctx.save();
+        ctx.globalAlpha = alpha * 0.6;
+        ctx.fillStyle = goldL;
+        ctx.font = '11px DM Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(Math.round(frac*100)+'u', cumX+segW/2, p.y+barH/2+4);
+        ctx.restore();
+
+        cumX += segW;
+      });
+
+      // Waste indicator (remaining)
+      const usedFrac = p.cuts.reduce((a,b)=>a+b,0);
+      const wasteW = barW * (1 - usedFrac);
+      if(wasteW > 2){
+        ctx.save();
+        ctx.globalAlpha = alpha * 0.2;
+        ctx.fillStyle = '#888';
+        ctx.fillRect(cumX+2, p.y+2, wasteW-4, barH-4);
+        ctx.restore();
+        ctx.save();
+        ctx.globalAlpha = alpha * 0.4;
+        ctx.fillStyle = '#aaa';
+        ctx.font = '10px DM Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('waste', cumX+wasteW/2, p.y+barH/2+4);
+        ctx.restore();
+      }
+
+      // Efficiency bar
+      const eff = usedFrac;
+      ctx.save();
+      ctx.globalAlpha = alpha*0.5;
+      ctx.fillStyle = p.color;
+      ctx.font = '11px DM Mono, monospace';
+      ctx.textAlign='right';
+      ctx.fillText(Math.round(eff*100)+'% util.', barX-10, p.y+barH/2+4);
+      ctx.restore();
+
+      // Cut lines
+      let lx = barX;
+      p.cuts.forEach((frac,ci)=>{
+        lx += barW*frac;
+        if(ci < p.cuts.length-1){
+          ctx.save();
+          ctx.globalAlpha = alpha*0.8;
+          ctx.strokeStyle = goldL;
+          ctx.lineWidth = 2;
+          ctx.setLineDash([3,3]);
+          ctx.beginPath();
+          ctx.moveTo(lx, p.y-8);
+          ctx.lineTo(lx, p.y+barH+8);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+      });
+    });
+
+    ctx.save();
+    ctx.globalAlpha = alpha*0.35;
+    ctx.fillStyle = goldL;
+    ctx.font = '12px DM Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText('CUTTING PATTERNS — WASTE MINIMIZATION', W/2, H*0.13);
+    ctx.restore();
+  }
+
+  function cubicBezier(t,x0,y0,x1,y1,x2,y2,x3,y3){
+    const mt=1-t;
+    return {
+      x: mt*mt*mt*x0 + 3*mt*mt*t*x1 + 3*mt*t*t*x2 + t*t*t*x3,
+      y: mt*mt*mt*y0 + 3*mt*mt*t*y1 + 3*mt*t*t*y2 + t*t*t*y3
+    };
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,W,H);
+    t += 0.012;
+    modeDuration++;
+
+    if(modeDuration > modeCycleDuration){
+      modeDuration = 0;
+      mode = (mode+1) % 3;
+      modeProgress = 0;
+      const modes = ['— Transportation Mode','— Assignment Mode','— Cutting Stock Mode'];
+      const nm = document.getElementById('nav-mode');
+      if(nm) nm.textContent = modes[mode];
+    }
+
+    modeProgress = modeDuration / modeCycleDuration;
+    const fadeIn = Math.min(modeProgress*4, 1);
+    const fadeOut = modeProgress > 0.75 ? 1-(modeProgress-0.75)*4 : 1;
+    const modeAlpha = easeInOut(Math.min(fadeIn, fadeOut));
+
+    if(mode===0) drawTransport(modeAlpha);
+    else if(mode===1) drawAssign(modeAlpha);
+    else drawCut(modeAlpha);
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* ════════════════════════════════════════════
+   MINI SIMULATION — Transportation
+   ════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('transport-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let t=0;
+  let nodes = [], edges=[], particles=[];
+
+  function resize(){
+    canvas.width = canvas.offsetWidth * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+
+  function W(){ return canvas.offsetWidth; }
+  function H(){ return canvas.offsetHeight; }
+
+  function rand(a,b){ return a+Math.random()*(b-a); }
+
+  window.resetTransport = function(){
+    nodes = [
+      {x:W()*0.15, y:H()*0.3, type:'supply', label:'S1', val:Math.round(rand(50,120))},
+      {x:W()*0.15, y:H()*0.7, type:'supply', label:'S2', val:Math.round(rand(40,100))},
+      {x:W()*0.85, y:H()*0.2, type:'demand', label:'D1', val:Math.round(rand(30,80))},
+      {x:W()*0.85, y:H()*0.5, type:'demand', label:'D2', val:Math.round(rand(40,90))},
+      {x:W()*0.85, y:H()*0.8, type:'demand', label:'D3', val:Math.round(rand(20,70))},
+    ];
+    edges = [
+      {from:0,to:2,cost:Math.round(rand(2,9)),active:Math.random()>0.3},
+      {from:0,to:3,cost:Math.round(rand(2,9)),active:true},
+      {from:0,to:4,cost:Math.round(rand(2,9)),active:Math.random()>0.5},
+      {from:1,to:2,cost:Math.round(rand(2,9)),active:Math.random()>0.4},
+      {from:1,to:3,cost:Math.round(rand(2,9)),active:Math.random()>0.5},
+      {from:1,to:4,cost:Math.round(rand(2,9)),active:true},
+    ];
+    particles = edges.filter(e=>e.active).map((e,i)=>({
+      edge:e, progress:Math.random(), speed: rand(0.004,0.009)
+    }));
+    const totalCost = edges.filter(e=>e.active).reduce((s,e)=>s+e.cost,0);
+    const el = document.getElementById('transport-cost');
+    if(el) el.textContent = 'Total Cost: $'+totalCost;
+  };
+
+  resetTransport();
+  resize();
+
+  new ResizeObserver(()=>{ resize(); resetTransport(); }).observe(canvas);
+
+  function draw(){
+    ctx.clearRect(0,0,W(),H());
+    const bg = 'rgba(14,13,11,0.0)';
+
+    // edges
+    edges.forEach(e=>{
+      const s=nodes[e.from], d=nodes[e.to];
+      ctx.save();
+      ctx.strokeStyle = e.active ? 'rgba(201,168,76,0.4)' : 'rgba(201,168,76,0.1)';
+      ctx.lineWidth = e.active ? 1.5 : 0.5;
+      ctx.setLineDash(e.active ? [] : [3,6]);
+      ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(d.x,d.y); ctx.stroke();
+      ctx.setLineDash([]);
+      // cost label
+      if(e.active){
+        ctx.fillStyle='rgba(226,201,126,0.7)';
+        ctx.font='10px DM Mono,monospace';
+        ctx.textAlign='center';
+        ctx.fillText('$'+e.cost, (s.x+d.x)/2, (s.y+d.y)/2-5);
+      }
+      ctx.restore();
+    });
+
+    // particles
+    particles.forEach(p=>{
+      p.progress += p.speed;
+      if(p.progress>1) p.progress=0;
+      const s=nodes[p.edge.from], d=nodes[p.edge.to];
+      const x=s.x+(d.x-s.x)*p.progress;
+      const y=s.y+(d.y-s.y)*p.progress;
+      ctx.save();
+      ctx.shadowColor='#C9A84C';
+      ctx.shadowBlur=8;
+      ctx.fillStyle='#E2C97E';
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    // nodes
+    nodes.forEach(n=>{
+      ctx.save();
+      ctx.shadowColor = n.type==='supply'?'#6BAE8C':'#C46B4A';
+      ctx.shadowBlur=12;
+      ctx.fillStyle = n.type==='supply'?'#6BAE8C':'#C46B4A';
+      ctx.beginPath(); ctx.arc(n.x,n.y,18,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(245,240,232,0.9)';
+      ctx.font='bold 11px DM Mono,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(n.label,n.x,n.y);
+      ctx.fillStyle='rgba(226,201,126,0.7)';
+      ctx.font='10px DM Mono,monospace';
+      ctx.fillText(n.val, n.x, n.y + (n.type==='supply'?-28:26));
+      ctx.restore();
+    });
+
+    t+=0.016;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ════════════════════════════════════════════
+   MINI SIMULATION — Assignment
+   ════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('assign-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let t=0;
+  let agents=[], tasks=[], matching=[];
+
+  function W(){ return canvas.offsetWidth; }
+  function H(){ return canvas.offsetHeight; }
+
+  function rand(a,b){ return a+Math.random()*(b-a); }
+
+  window.resetAssign = function(){
+    const n=4;
+    agents = Array.from({length:n},(_,i)=>({
+      x:W()*0.2, y:H()*(0.2+i*0.2), label:'R'+(i+1), color:'#8A7EC9'
+    }));
+    tasks = Array.from({length:n},(_,i)=>({
+      x:W()*0.8, y:H()*(0.2+i*0.2), label:'T'+(i+1), color:'#C9A84C'
+    }));
+    // random optimal matching
+    const perm = [0,1,2,3].sort(()=>Math.random()-0.5);
+    matching = perm;
+    const eff = Math.round(rand(82,99));
+    const el = document.getElementById('assign-eff');
+    if(el) el.textContent = 'Efficiency: '+eff+'%';
+  };
+
+  resetAssign();
+
+  new ResizeObserver(()=>{ resetAssign(); }).observe(canvas);
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  function cubicBezier(t,x0,y0,x1,y1,x2,y2,x3,y3){
+    const mt=1-t;
+    return {
+      x:mt*mt*mt*x0+3*mt*mt*t*x1+3*mt*t*t*x2+t*t*t*x3,
+      y:mt*mt*mt*y0+3*mt*mt*t*y1+3*mt*t*t*y2+t*t*t*y3
+    };
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W(),H());
+
+    // All possible connections (faint)
+    agents.forEach((a,ai)=>{
+      tasks.forEach((tk,ti)=>{
+        const isOpt = matching[ai]===ti;
+        ctx.save();
+        ctx.strokeStyle = isOpt?'rgba(201,168,76,0.55)':'rgba(201,168,76,0.07)';
+        ctx.lineWidth = isOpt?1.8:0.5;
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(tk.x,tk.y); ctx.stroke();
+        ctx.restore();
+      });
+    });
+
+    // Particles on optimal
+    matching.forEach((ti,ai)=>{
+      const a=agents[ai], tk=tasks[ti];
+      const phase = (t*0.5+ai*0.25)%1;
+      const mx=W()/2, ctrl1y=a.y, ctrl2y=tk.y;
+      const pt = cubicBezier(phase,a.x,a.y,mx,ctrl1y,mx,ctrl2y,tk.x,tk.y);
+      ctx.save();
+      ctx.fillStyle='#E2C97E';
+      ctx.shadowColor='#C9A84C';
+      ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(pt.x,pt.y,5,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    // Agent nodes
+    agents.forEach((a,i)=>{
+      ctx.save();
+      ctx.shadowColor='#8A7EC9'; ctx.shadowBlur=14;
+      ctx.fillStyle='#8A7EC9';
+      ctx.beginPath(); ctx.arc(a.x,a.y,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(245,240,232,0.9)';
+      ctx.font='bold 11px DM Mono,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(a.label,a.x,a.y);
+      ctx.restore();
+    });
+
+    // Task nodes
+    tasks.forEach((tk,i)=>{
+      ctx.save();
+      ctx.shadowColor='#C9A84C'; ctx.shadowBlur=14;
+      ctx.fillStyle='#C9A84C';
+      ctx.beginPath(); ctx.arc(tk.x,tk.y,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(245,240,232,0.9)';
+      ctx.font='bold 11px DM Mono,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(tk.label,tk.x,tk.y);
+      ctx.restore();
+    });
+
+    t+=0.016;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ════════════════════════════════════════════
+   MINI SIMULATION — Cutting Stock
+   ════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('cut-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let t=0;
+  let patterns=[];
+
+  function W(){ return canvas.offsetWidth; }
+  function H(){ return canvas.offsetHeight; }
+  function rand(a,b){ return a+Math.random()*(b-a); }
+
+  const colors = ['#6BAE8C','#8A7EC9','#C46B4A','#C9A84C'];
+
+  window.resetCut = function(){
+    const nPat = 3+Math.floor(Math.random()*2);
+    patterns = Array.from({length:nPat},(_,i)=>{
+      const nCuts = 2+Math.floor(Math.random()*3);
+      let remaining = 1;
+      const cuts=[];
+      for(let j=0;j<nCuts;j++){
+        const max = remaining - (nCuts-j-1)*0.1;
+        const frac = j===nCuts-1 ? remaining*rand(0.6,0.95) : rand(0.1, Math.min(max*0.6,0.45));
+        cuts.push(+frac.toFixed(2));
+        remaining -= frac;
+      }
+      return {cuts, y:H()*(0.1+i*(0.85/nPat)), waste: remaining};
+    });
+    const avgUtil = patterns.reduce((s,p)=>s+(1-p.waste),0)/patterns.length;
+    const el = document.getElementById('cut-eff');
+    if(el) el.textContent = 'Waste: '+Math.round(patterns.reduce((s,p)=>s+p.waste,0)/patterns.length*100)+'% avg';
+  };
+
+  resetCut();
+
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  new ResizeObserver(()=>{ resetCut(); }).observe(canvas);
+
+  function draw(){
+    ctx.clearRect(0,0,W(),H());
+    const barH=38, barW=W()*0.72, barX=W()*0.14;
+
+    patterns.forEach((p,pi)=>{
+      const yOff = pi*(H()/(patterns.length));
+      const barY = yOff + H()/(patterns.length*2) - barH/2;
+
+      // Background bar
+      ctx.save();
+      ctx.globalAlpha=0.12;
+      ctx.fillStyle='#C9A84C';
+      ctx.fillRect(barX, barY, barW, barH);
+      ctx.restore();
+
+      // Pattern label
+      ctx.save();
+      ctx.fillStyle='rgba(201,168,76,0.5)';
+      ctx.font='10px DM Mono,monospace';
+      ctx.textAlign='right';
+      ctx.fillText('P'+(pi+1), barX-8, barY+barH/2+4);
+      ctx.restore();
+
+      // Cut segments
+      let cx=barX;
+      p.cuts.forEach((frac,ci)=>{
+        const sw=barW*frac;
+        const pulse=0.7+0.3*Math.sin(t*1.5+pi+ci);
+        ctx.save();
+        ctx.globalAlpha=pulse*0.75;
+        ctx.fillStyle=colors[ci%colors.length];
+        ctx.fillRect(cx+1,barY+1,sw-2,barH-2);
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha=0.8;
+        ctx.fillStyle='rgba(245,240,232,0.85)';
+        ctx.font='10px DM Mono,monospace';
+        ctx.textAlign='center';
+        ctx.fillText(Math.round(frac*100)+'u',cx+sw/2,barY+barH/2+4);
+        ctx.restore();
+
+        // Cut line
+        if(ci<p.cuts.length-1){
+          ctx.save();
+          ctx.strokeStyle='rgba(226,201,126,0.9)';
+          ctx.lineWidth=1.5;
+          ctx.setLineDash([2,2]);
+          ctx.beginPath(); ctx.moveTo(cx+sw,barY-4); ctx.lineTo(cx+sw,barY+barH+4); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+        cx+=sw;
+      });
+
+      // Waste
+      if(p.waste>0.02){
+        ctx.save();
+        ctx.globalAlpha=0.18;
+        ctx.fillStyle='#888';
+        ctx.fillRect(cx+1,barY+1,barW*p.waste-2,barH-2);
+        ctx.restore();
+        ctx.save();
+        ctx.globalAlpha=0.4;
+        ctx.fillStyle='#aaa';
+        ctx.font='9px DM Mono,monospace';
+        ctx.textAlign='center';
+        ctx.fillText('W',cx+barW*p.waste/2,barY+barH/2+4);
+        ctx.restore();
+      }
+
+      // Utilization label
+      ctx.save();
+      ctx.fillStyle=(1-p.waste)>0.85?'#6BAE8C':'#C46B4A';
+      ctx.font='10px DM Mono,monospace';
+      ctx.textAlign='left';
+      ctx.fillText(Math.round((1-p.waste)*100)+'%',cx+barW*p.waste+8,barY+barH/2+4);
+      ctx.restore();
+    });
+
+    t+=0.016;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ════════════════════════════════════════════
+   PLAYGROUND CANVAS
+   ════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('playground-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let mode='transport', t=0;
+  let pgState={};
+
+  function W(){ return canvas.offsetWidth; }
+  function H(){ return canvas.offsetHeight; }
+
+  function resize(){
+    canvas.width = canvas.offsetWidth * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    initState();
+  }
+
+  function rand(a,b){ return a+Math.random()*(b-a); }
+
+  function initState(){
+    if(mode==='transport'){
+      const nS=3, nD=4;
+      pgState.supplies = Array.from({length:nS},(_,i)=>({
+        x:W()*0.12, y:H()*(0.15+i*(0.7/nS)+0.1),
+        supply:Math.round(rand(40,120))
+      }));
+      pgState.demands = Array.from({length:nD},(_,i)=>({
+        x:W()*0.88, y:H()*(0.1+i*(0.75/nD)+0.05),
+        demand:Math.round(rand(30,90))
+      }));
+      pgState.particles = [];
+      pgState.supplies.forEach((s,si)=>{
+        pgState.demands.forEach((d,di)=>{
+          if(Math.random()>0.35){
+            pgState.particles.push({
+              sx:s.x,sy:s.y,dx:d.x,dy:d.y,
+              progress:Math.random(), speed:rand(0.004,0.01),
+              cost:Math.round(rand(2,12))
+            });
+          }
+        });
+      });
+      const tc = pgState.particles.reduce((s,p)=>s+p.cost,0);
+      document.getElementById('pg-val-1').textContent='$'+tc;
+      document.getElementById('pg-val-2').textContent=Math.round(rand(78,97))+'%';
+      document.getElementById('pg-label-1').textContent='Total Cost';
+      document.getElementById('pg-label-2').textContent='Flow Rate';
+      document.getElementById('pg-desc').textContent='Observe how goods flow along optimal routes through the transportation network, balancing supply at sources with demand at destinations.';
+    } else if(mode==='assign'){
+      const n=5;
+      pgState.agents = Array.from({length:n},(_,i)=>({x:W()*0.15,y:H()*(0.1+i*(0.8/n)+0.05)}));
+      pgState.tasks = Array.from({length:n},(_,i)=>({x:W()*0.85,y:H()*(0.1+i*(0.8/n)+0.05)}));
+      pgState.matching = [0,1,2,3,4].sort(()=>Math.random()-0.5);
+      pgState.particles = pgState.matching.map((ti,ai)=>({
+        ai, ti, progress:Math.random(), speed:rand(0.005,0.01)
+      }));
+      const eff=Math.round(rand(84,99));
+      document.getElementById('pg-val-1').textContent=eff+'%';
+      document.getElementById('pg-val-2').textContent=n+'/'+n;
+      document.getElementById('pg-label-1').textContent='Efficiency';
+      document.getElementById('pg-label-2').textContent='Matched';
+      document.getElementById('pg-desc').textContent='The assignment model finds the optimal one-to-one matching between resources and tasks, maximizing overall efficiency across all pairings simultaneously.';
+    } else {
+      const nPat=4;
+      pgState.patterns = Array.from({length:nPat},(_,pi)=>{
+        const nc=2+Math.floor(Math.random()*3);
+        let rem=1; const cuts=[];
+        for(let j=0;j<nc;j++){
+          const f = j===nc-1?rem*rand(0.6,0.95):rand(0.12,Math.min(rem*0.55,0.4));
+          cuts.push(+f.toFixed(2)); rem-=f;
+        }
+        return {cuts, waste:rem};
+      });
+      const avgWaste = pgState.patterns.reduce((s,p)=>s+p.waste,0)/nPat;
+      document.getElementById('pg-val-1').textContent=Math.round(avgWaste*100)+'%';
+      document.getElementById('pg-val-2').textContent=Math.round((1-avgWaste)*100)+'%';
+      document.getElementById('pg-label-1').textContent='Avg Waste';
+      document.getElementById('pg-label-2').textContent='Utilization';
+      document.getElementById('pg-desc').textContent='The cutting stock model selects cutting patterns that satisfy all demand for smaller pieces while minimizing the total raw material consumed and waste generated.';
+    }
+  }
+
+  window.switchPlayground = function(m, btn){
+    mode = m;
+    document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    initState();
+  };
+
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  const colors=['#6BAE8C','#8A7EC9','#C46B4A','#C9A84C','#E2C97E'];
+
+  function drawPG(){
+    ctx.clearRect(0,0,W(),H());
+
+    if(mode==='transport'){
+      pgState.particles.forEach(p=>{
+        // line
+        ctx.save();
+        ctx.strokeStyle='rgba(201,168,76,0.25)';
+        ctx.lineWidth=1;
+        ctx.setLineDash([3,7]);
+        ctx.beginPath(); ctx.moveTo(p.sx,p.sy); ctx.lineTo(p.dx,p.dy); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
+        // particle
+        p.progress+=p.speed;
+        if(p.progress>1)p.progress=0;
+        const x=p.sx+(p.dx-p.sx)*p.progress;
+        const y=p.sy+(p.dy-p.sy)*p.progress;
+        ctx.save();
+        ctx.fillStyle='#E2C97E'; ctx.shadowColor='#C9A84C'; ctx.shadowBlur=10;
+        ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+      });
+
+      pgState.supplies.forEach((s,i)=>{
+        ctx.save();
+        ctx.shadowColor='#6BAE8C'; ctx.shadowBlur=16;
+        ctx.fillStyle='#6BAE8C';
+        ctx.beginPath(); ctx.arc(s.x,s.y,20,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='rgba(245,240,232,0.95)';
+        ctx.font='bold 12px DM Mono,monospace';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('S'+(i+1),s.x,s.y);
+        ctx.restore();
+        ctx.save();
+        ctx.fillStyle='rgba(107,174,140,0.8)'; ctx.font='10px DM Mono,monospace';
+        ctx.textAlign='center';
+        ctx.fillText(s.supply+'u',s.x,s.y-30);
+        ctx.restore();
+      });
+      pgState.demands.forEach((d,i)=>{
+        ctx.save();
+        ctx.shadowColor='#C46B4A'; ctx.shadowBlur=16;
+        ctx.fillStyle='#C46B4A';
+        ctx.beginPath(); ctx.arc(d.x,d.y,18,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='rgba(245,240,232,0.95)';
+        ctx.font='bold 12px DM Mono,monospace';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('D'+(i+1),d.x,d.y);
+        ctx.restore();
+      });
+
+    } else if(mode==='assign'){
+      pgState.agents.forEach((a,ai)=>{
+        const ti = pgState.matching[ai];
+        const tk = pgState.tasks[ti];
+        ctx.save();
+        ctx.strokeStyle='rgba(201,168,76,0.5)';
+        ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(tk.x,tk.y); ctx.stroke();
+        ctx.restore();
+      });
+
+      pgState.particles.forEach(p=>{
+        p.progress+=p.speed;
+        if(p.progress>1)p.progress=0;
+        const a=pgState.agents[p.ai], tk=pgState.tasks[p.ti];
+        const x=a.x+(tk.x-a.x)*p.progress;
+        const y=a.y+(tk.y-a.y)*p.progress;
+        ctx.save();
+        ctx.fillStyle='#E2C97E'; ctx.shadowColor='#C9A84C'; ctx.shadowBlur=10;
+        ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+      });
+
+      pgState.agents.forEach((a,i)=>{
+        ctx.save();
+        ctx.shadowColor='#8A7EC9'; ctx.shadowBlur=14;
+        ctx.fillStyle='#8A7EC9';
+        ctx.beginPath(); ctx.arc(a.x,a.y,18,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='rgba(245,240,232,0.95)';
+        ctx.font='bold 11px DM Mono,monospace';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('A'+(i+1),a.x,a.y);
+        ctx.restore();
+      });
+
+      pgState.tasks.forEach((tk,i)=>{
+        ctx.save();
+        ctx.shadowColor='#C9A84C'; ctx.shadowBlur=14;
+        ctx.fillStyle='#C9A84C';
+        ctx.beginPath(); ctx.arc(tk.x,tk.y,18,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='rgba(245,240,232,0.95)';
+        ctx.font='bold 11px DM Mono,monospace';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('T'+(i+1),tk.x,tk.y);
+        ctx.restore();
+      });
+
+    } else { // cut
+      const barH=44, barW=W()*0.7, barX=W()*0.15;
+      pgState.patterns.forEach((p,pi)=>{
+        const barY = H()*(0.1+pi*(0.8/pgState.patterns.length)+0.02);
+
+        ctx.save(); ctx.globalAlpha=0.1; ctx.fillStyle='#C9A84C';
+        ctx.fillRect(barX,barY,barW,barH); ctx.restore();
+
+        let cx=barX;
+        p.cuts.forEach((frac,ci)=>{
+          const sw=barW*frac;
+          const pulse=0.7+0.3*Math.sin(t*1.2+pi+ci);
+          ctx.save(); ctx.globalAlpha=pulse*0.8;
+          ctx.fillStyle=colors[ci%colors.length];
+          ctx.fillRect(cx+1,barY+1,sw-2,barH-2); ctx.restore();
+          ctx.save(); ctx.globalAlpha=0.85;
+          ctx.fillStyle='rgba(245,240,232,0.9)';
+          ctx.font='11px DM Mono,monospace'; ctx.textAlign='center';
+          ctx.fillText(Math.round(frac*100)+'u',cx+sw/2,barY+barH/2+4); ctx.restore();
+          if(ci<p.cuts.length-1){
+            ctx.save(); ctx.strokeStyle='rgba(226,201,126,0.9)'; ctx.lineWidth=2;
+            ctx.setLineDash([2,3]); ctx.beginPath();
+            ctx.moveTo(cx+sw,barY-6); ctx.lineTo(cx+sw,barY+barH+6);
+            ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+          }
+          cx+=sw;
+        });
+
+        if(p.waste>0.02){
+          const ww=barW*p.waste;
+          ctx.save(); ctx.globalAlpha=0.15; ctx.fillStyle='#666';
+          ctx.fillRect(cx+1,barY+1,ww-2,barH-2); ctx.restore();
+        }
+
+        ctx.save(); ctx.fillStyle='rgba(201,168,76,0.5)';
+        ctx.font='11px DM Mono,monospace'; ctx.textAlign='right';
+        ctx.fillText('Pattern '+(pi+1),barX-10,barY+barH/2+4); ctx.restore();
+      });
+    }
+
+    t+=0.016;
+    requestAnimationFrame(drawPG);
+  }
+  drawPG();
+})();
+
+/* ════════════════════════════════════════════
+   SCROLL REVEAL
+   ════════════════════════════════════════════ */
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  // immediately reveal above-fold
+  els.forEach(el=>{
+    const r=el.getBoundingClientRect();
+    if(r.top < window.innerHeight) el.classList.add('visible');
+  });
+
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting) e.target.classList.add('visible');
+    });
+  },{threshold:0.12});
+
+  els.forEach(el=>obs.observe(el));
+})();
+</script>
+</body>
+</html>
