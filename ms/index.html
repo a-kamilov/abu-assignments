@@ -276,55 +276,6 @@
     from { opacity: 0; transform: translateY(24px); }
   }
 
-  /* ─── ABOUT ───────────────────────────────────────────── */
-  #about { background: var(--bg-secondary); }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
-  }
-
-  .about-text { font-size: 17px; color: var(--text-muted); font-weight: 300; line-height: 1.9; }
-  .about-text + .about-text { margin-top: 20px; }
-
-  .about-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .about-card {
-    background: var(--bg-glass);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    padding: 22px 20px;
-    border-radius: 4px;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-  .about-card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
-
-  .about-card-icon {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-
-  .about-card-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 6px;
-  }
-
-  .about-card-body {
-    font-size: 14px;
-    color: var(--text-dim);
-    font-family: 'Crimson Pro', serif;
-  }
-
   /* ─── PROJECTS ────────────────────────────────────────── */
   #projects { background: var(--bg-primary); }
 
@@ -450,67 +401,6 @@
   .btn-open svg { transition: transform 0.3s; }
   .btn-open:hover svg { transform: translateX(4px); }
 
-  /* ─── SKILLS ──────────────────────────────────────────── */
-  #skills { background: var(--bg-secondary); }
-
-  .skills-header { margin-bottom: 64px; }
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-  }
-
-  .skill-card {
-    border: 1px solid var(--border);
-    background: var(--bg-glass);
-    backdrop-filter: blur(10px);
-    border-radius: 4px;
-    padding: 28px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: border-color 0.3s, transform 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-  .skill-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
-
-  .skill-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 3px;
-    background: var(--gold-subtle);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-  }
-
-  .skill-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-warm);
-  }
-
-  .skill-bar-track {
-    width: 100%;
-    height: 2px;
-    background: rgba(201,168,76,0.1);
-    border-radius: 1px;
-    overflow: hidden;
-  }
-
-  .skill-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
-    border-radius: 1px;
-    width: 0;
-    transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
-  }
-
   /* ─── STATS ───────────────────────────────────────────── */
   #stats { background: var(--bg-primary); }
 
@@ -567,64 +457,6 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-dim);
-  }
-
-  /* ─── QUOTE ───────────────────────────────────────────── */
-  #quote { background: var(--bg-secondary); }
-
-  .quote-inner {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .quote-card {
-    border: 1px solid var(--border);
-    background: var(--bg-glass);
-    backdrop-filter: blur(20px);
-    border-radius: 6px;
-    padding: 72px 64px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .quote-card::before, .quote-card::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-glow), transparent);
-  }
-  .quote-card::before { top: 0; }
-  .quote-card::after { bottom: 0; }
-
-  .quote-mark {
-    font-family: 'Playfair Display', serif;
-    font-size: 120px;
-    line-height: 0.5;
-    color: var(--gold);
-    opacity: 0.15;
-    display: block;
-    margin-bottom: 24px;
-  }
-
-  .quote-text {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(20px, 3vw, 28px);
-    font-style: italic;
-    font-weight: 400;
-    color: var(--text-warm);
-    line-height: 1.55;
-  }
-
-  .quote-source {
-    margin-top: 28px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    opacity: 0.7;
   }
 
   /* ─── FOOTER ──────────────────────────────────────────── */
@@ -686,19 +518,14 @@
     .nav-links { display: none; }
     .container { padding: 0 24px; }
     .hero-inner { padding: 0 24px; }
-    .about-grid { grid-template-columns: 1fr; gap: 40px; }
-    .about-cards { grid-template-columns: 1fr 1fr; }
     .projects-grid { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .quote-card { padding: 48px 32px; }
     footer { padding: 48px 24px; }
     section { padding: 72px 0; }
   }
 
   @media (max-width: 540px) {
-    .about-cards { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
-    .skills-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -712,9 +539,7 @@
   <nav>
     <div class="nav-brand">MS Portfolio</div>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#skills">Skills</a></li>
       <li><a href="#stats">Statistics</a></li>
     </ul>
   </nav>
@@ -739,57 +564,6 @@
       <div class="scroll-indicator">
         <span>Scroll to explore</span>
         <div class="scroll-track"><div class="scroll-dot"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="container">
-      <div class="about-grid">
-        <div class="reveal">
-          <span class="section-label">About This Portfolio</span>
-          <span class="gold-line"></span>
-          <h2 class="section-heading">A Study in <em>Decision Science</em></h2>
-          <p class="about-text">
-            This portfolio contains interactive projects created throughout the Management Science course at Dong-A University. Each project is designed to make abstract mathematical concepts tangible and explorable.
-          </p>
-          <p class="about-text" style="margin-top:20px;">
-            Through hands-on experimentation, these tools demonstrate how quantitative methods transform real-world complexity into structured, solvable problems.
-          </p>
-        </div>
-        <div class="about-cards reveal reveal-delay-2">
-          <div class="about-card">
-            <div class="about-card-icon">◈</div>
-            <div class="about-card-title">Optimization</div>
-            <div class="about-card-body">Maximizing outcomes under resource constraints</div>
-          </div>
-          <div class="about-card">
-            <div class="about-card-icon">⬡</div>
-            <div class="about-card-title">Modeling</div>
-            <div class="about-card-body">Translating real problems into mathematical form</div>
-          </div>
-          <div class="about-card">
-            <div class="about-card-icon">◇</div>
-            <div class="about-card-title">Allocation</div>
-            <div class="about-card-body">Distributing limited resources efficiently</div>
-          </div>
-          <div class="about-card">
-            <div class="about-card-icon">△</div>
-            <div class="about-card-title">Integer Programming</div>
-            <div class="about-card-body">Exact solutions with discrete decision variables</div>
-          </div>
-          <div class="about-card">
-            <div class="about-card-icon">⬟</div>
-            <div class="about-card-title">Decision Analysis</div>
-            <div class="about-card-body">Structured reasoning under uncertainty</div>
-          </div>
-          <div class="about-card">
-            <div class="about-card-icon">⬙</div>
-            <div class="about-card-title">Transport Models</div>
-            <div class="about-card-body">Efficient movement and assignment of resources</div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -900,60 +674,6 @@
     </div>
   </section>
 
-  <!-- SKILLS -->
-  <section id="skills">
-    <div class="container">
-      <div class="skills-header reveal">
-        <span class="section-label">Learning Outcomes</span>
-        <span class="gold-line"></span>
-        <h2 class="section-heading">Skills <em>Developed</em></h2>
-        <p class="section-sub">Key competencies built across the Management Science curriculum.</p>
-      </div>
-      <div class="skills-grid">
-        <div class="skill-card reveal reveal-delay-1" data-fill="88">
-          <div class="skill-icon">◈</div>
-          <div class="skill-name">Optimization Techniques</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-2" data-fill="92">
-          <div class="skill-icon">⬡</div>
-          <div class="skill-name">Linear Programming</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-1" data-fill="80">
-          <div class="skill-icon">△</div>
-          <div class="skill-name">Integer Programming</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-2" data-fill="85">
-          <div class="skill-icon">⬟</div>
-          <div class="skill-name">Mathematical Modeling</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-3" data-fill="78">
-          <div class="skill-icon">◇</div>
-          <div class="skill-name">Decision Analysis</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-1" data-fill="82">
-          <div class="skill-icon">⬙</div>
-          <div class="skill-name">Resource Management</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-2" data-fill="75">
-          <div class="skill-icon">⟁</div>
-          <div class="skill-name">Transportation Models</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-        <div class="skill-card reveal reveal-delay-3" data-fill="86">
-          <div class="skill-icon">⊕</div>
-          <div class="skill-name">Algorithmic Thinking</div>
-          <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- STATS -->
   <section id="stats">
     <div class="container">
@@ -978,19 +698,6 @@
         <div class="stat-card reveal reveal-delay-4">
           <span class="stat-number" data-target="30">0</span>
           <div class="stat-label">Decision Frameworks</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- QUOTE -->
-  <section id="quote">
-    <div class="container">
-      <div class="quote-inner">
-        <div class="quote-card reveal">
-          <span class="quote-mark">"</span>
-          <p class="quote-text">Management Science transforms complex decisions into structured, data-driven solutions.</p>
-          <p class="quote-source">— Management Science · Dong-A University</p>
         </div>
       </div>
     </div>
@@ -1276,22 +983,6 @@ const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
 }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 reveals.forEach(el => revealObserver.observe(el));
-
-/* ────────────────────────────────────────────────────────
-   Skill Bar Fill (on reveal)
-──────────────────────────────────────────────────────── */
-const skillObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const fill = e.target.querySelector('.skill-bar-fill');
-      if (fill) {
-        const pct = e.target.dataset.fill || 75;
-        setTimeout(() => { fill.style.width = pct + '%'; }, 300);
-      }
-    }
-  });
-}, { threshold: 0.3 });
-document.querySelectorAll('.skill-card').forEach(el => skillObserver.observe(el));
 
 /* ────────────────────────────────────────────────────────
    Counter Animation
