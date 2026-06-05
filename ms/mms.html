@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mathematical Modeling Studio | Operations Research</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0E0D0B;
+            font-family: 'Crimson Pro', Georgia, serif;
+            color: #F5F0E8;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Main Content */
+        .content {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
+        }
+
+        /* Typography */
+        h1, h2, h3, .hero-badge, .card-title, .step-title {
+            font-family: 'Playfair Display', 'Times New Roman', serif;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            background: linear-gradient(135deg, #E2C97E 0%, #C9A84C 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #C9A84C;
+            padding-left: 1.2rem;
+        }
+
+        .gold-divider {
+            height: 2px;
+            background: linear-gradient(90deg, #C9A84C, rgba(201,168,76,0.2), transparent);
+            width: 100%;
+            margin: 1rem 0 2rem 0;
+        }
+
+        /* Glassmorphic Cards */
+        .glass-card {
+            background: rgba(26, 25, 22, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(201,168,76,0.25);
+            border-radius: 28px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(201,168,76,0.6);
+            transform: translateY(-5px);
+            background: rgba(26, 25, 22, 0.85);
+        }
+
+        /* Badges */
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+        .badge {
+            font-family: 'DM Mono', monospace;
+            background: rgba(201,168,76,0.15);
+            border: 1px solid rgba(201,168,76,0.4);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #E2C97E;
+        }
+
+        /* Grids */
+        .grid-2, .grid-3, .grid-4 {
+            display: grid;
+            gap: 2rem;
+            margin: 2.5rem 0;
+        }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+        /* Workflow */
+        .workflow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+            background: rgba(14,13,11,0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 1.8rem;
+            margin: 2rem 0;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-right: 1px solid rgba(201,168,76,0.3);
+        }
+        .step:last-child { border-right: none; }
+        .step-number {
+            font-family: 'DM Mono', monospace;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #C9A84C;
+        }
+        .step-title {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        @media (max-width: 768px) {
+            .workflow { flex-direction: column; border-radius: 2rem; }
+            .step { border-right: none; border-bottom: 1px solid rgba(201,168,76,0.2); padding: 1rem 0; }
+        }
+
+        /* Interactive Builder - Student Friendly */
+        .builder-panel {
+            background: rgba(14,13,11,0.92);
+            backdrop-filter: blur(16px);
+            border-radius: 32px;
+            padding: 1.8rem;
+            border: 1px solid #C9A84C;
+        }
+        .formula-display {
+            font-family: 'DM Mono', monospace;
+            background: #0E0D0B;
+            padding: 1.2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            color: #E2C97E;
+            border-left: 4px solid #C9A84C;
+            overflow-x: auto;
+        }
+        button, select, input {
+            background: #1A1916;
+            border: 1px solid rgba(201,168,76,0.5);
+            color: #FAF7F2;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-family: 'DM Mono', monospace;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #C9A84C;
+            color: #0E0D0B;
+            border-color: #C9A84C;
+        }
+        .constraint-item {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .var-slider {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: #1A1916;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            margin: 0.3rem;
+        }
+        .builder-note {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #E8E0CC;
+            background: rgba(107,174,140,0.15);
+            padding: 0.8rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        /* Canvas Explorer */
+        #constraint-canvas {
+            width: 100%;
+            height: 300px;
+            background: #1A1916;
+            border-radius: 24px;
+            border: 1px solid #C9A84C;
+            display: block;
+            margin-top: 1rem;
+            cursor: crosshair;
+        }
+
+        /* scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(201,168,76,0.3);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+        }
+        a { color: #E2C97E; text-decoration: none; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="content">
+    <!-- Hero Section -->
+    <section class="reveal">
+        <h1>Mathematical Modeling Studio</h1>
+        <p style="font-size: 1.5rem; font-family: 'Crimson Pro'; color: #E8E0CC;">Transforming real-world decisions into optimization models.</p>
+        <div class="badge-group">
+            <span class="badge">Operations Research</span>
+            <span class="badge">Mathematical Modeling</span>
+            <span class="badge">Optimization</span>
+            <span class="badge">Decision Science</span>
+        </div>
+        <div class="gold-divider"></div>
+    </section>
+
+    <!-- Why Models Matter -->
+    <section class="reveal">
+        <h2>Why Models Matter</h2>
+        <div class="grid-2">
+            <div class="glass-card">🌍 <strong style="font-size: 1.3rem;">Complexity tamed</strong><br>Real-world problems are messy. Models distill essence from chaos, enabling structured, data-driven decisions.</div>
+            <div class="glass-card">⚙️ <strong style="font-size: 1.3rem;">Strategic clarity</strong><br>Businesses rely on optimized models for resource allocation, logistics, and scheduling — turning ambiguity into advantage.</div>
+            <div class="glass-card">📈 <strong style="font-size: 1.3rem;">Better decisions, faster</strong><br>Mathematical models simulate outcomes, predict bottlenecks, and reveal optimal paths with precision.</div>
+            <div class="glass-card">🧠 <strong style="font-size: 1.3rem;">Universal framework</strong><br>From supply chains to energy grids, modeling is the language of modern management science.</div>
+        </div>
+    </section>
+
+    <!-- Building Blocks of a Model -->
+    <section class="reveal">
+        <h2>Building Blocks of a Model</h2>
+        <div class="grid-3">
+            <div class="glass-card"><span style="font-family:'DM Mono'; color:#C9A84C;">Decision Variables</span><br>x₁, x₂, ... — choices under control. <span style="font-size:0.9rem;">"How many units?"</span></div>
+            <div class="glass-card"><span style="font-family:'DM Mono'; color:#C9A84C;">Parameters</span><br>Fixed inputs: costs, demands, capacities. Data from reality.</div>
+            <div class="glass-card"><span style="font-family:'DM Mono'; color:#C9A84C;">Objective Function</span><br>Maximize profit or minimize cost — the goal we optimize.</div>
+            <div class="glass-card"><span style="font-family:'DM Mono'; color:#C9A84C;">Constraints</span><br>Limits: budgets, resources, time. The boundaries of possibility.</div>
+            <div class="glass-card"><span style="font-family:'DM Mono'; color:#C9A84C;">Feasible Region</span><br>All decision combinations satisfying constraints.</div>
+            <div class="glass-card"><span style="font-family:'DM Mono'; color:#C9A84C;">Optimal Solution</span><br>The point inside feasible region maximizing/minimizing objective.</div>
+        </div>
+    </section>
+
+    <!-- The Modeling Process animated -->
+    <section class="reveal">
+        <h2>The Modeling Process</h2>
+        <div class="workflow">
+            <div class="step"><div class="step-number">01</div><div class="step-title">Understand</div><div style="font-size:0.85rem;">Define problem & goals</div></div>
+            <div class="step"><div class="step-number">02</div><div class="step-title">Variables</div><div style="font-size:0.85rem;">Identify controllable choices</div></div>
+            <div class="step"><div class="step-number">03</div><div class="step-title">Objective</div><div style="font-size:0.85rem;">Build function to optimize</div></div>
+            <div class="step"><div class="step-number">04</div><div class="step-title">Constraints</div><div style="font-size:0.85rem;">Add real-world limits</div></div>
+            <div class="step"><div class="step-number">05</div><div class="step-title">Optimize</div><div style="font-size:0.85rem;">Find best feasible solution</div></div>
+        </div>
+    </section>
+
+    <!-- IMPROVED INTERACTIVE MODEL BUILDER - Student friendly, simple, intuitive -->
+    <section class="reveal">
+        <h2>Interactive Model Builder</h2>
+        <div class="builder-panel">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem;">
+                <select id="opt-type">
+                    <option value="max">Maximize 📈</option>
+                    <option value="min">Minimize 📉</option>
+                </select>
+                <button id="add-var-btn" style="background:#C9A84C20;">+ Add Product (Variable)</button>
+                <button id="add-constr-btn" style="background:#C9A84C20;">+ Add Constraint (Limit)</button>
+                <button id="reset-example" style="background:#6BAE8C20;">⟳ Reset Example</button>
+            </div>
+            
+            <div id="vars-container" style="margin-bottom: 1.5rem;"></div>
+            <div id="constraints-container" style="margin-bottom: 1.5rem;"></div>
+            
+            <div class="formula-display" id="live-model">
+                Maximize Z = 3x₁ + 5x₂ <br>
+                Subject to:<br>
+                x₁ + x₂ ≤ 100<br>
+                x₁ ≥ 0, x₂ ≥ 0
+            </div>
+            <div class="builder-note">
+                💡 <strong>How to use:</strong> Adjust coefficients (profit per unit), change constraint limits, add variables or constraints. Watch the mathematical model update in real-time!
+            </div>
+        </div>
+    </section>
+
+    <!-- Constraint Explorer interactive (feasibility) -->
+    <section class="reveal">
+        <h2>Constraint Explorer</h2>
+        <div class="glass-card">
+            <p style="margin-bottom: 0.5rem;">Drag the <span style="color:#C9A84C;">●</span> point inside the 2D feasible region. <span style="color:#6BAE8C;">Green</span> = feasible, <span style="color:#C46B4A;">Amber/Red</span> = violates constraints.</p>
+            <canvas id="constraint-canvas" width="600" height="300" style="width:100%; height:auto; max-width:600px; background:#0E0D0B; border-radius: 20px;"></canvas>
+            <div id="feasibility-status" style="margin-top: 12px; font-family:'DM Mono';">Status: Feasible ✓</div>
+        </div>
+    </section>
+
+    <!-- Model Gallery -->
+    <section class="reveal">
+        <h2>Model Gallery</h2>
+        <div class="grid-3">
+            <div class="glass-card"><span style="font-weight:bold;">📦 Production Planning</span><br>Decide product mix to maximize profit under machine hours & materials.</div>
+            <div class="glass-card"><span style="font-weight:bold;">🚚 Logistics</span><br>Vehicle routing & shipment optimization — minimize distance, fulfill demand.</div>
+            <div class="glass-card"><span style="font-weight:bold;">🚉 Transportation</span><br>Minimize shipping cost from sources to destinations.</div>
+            <div class="glass-card"><span style="font-weight:bold;">👥 Workforce Scheduling</span><br>Assign shifts to meet staffing levels while minimizing overtime.</div>
+            <div class="glass-card"><span style="font-weight:bold;">⚙️ Supply Chain Optimization</span><br>Inventory and distribution network design under uncertainty.</div>
+            <div class="glass-card"><span style="font-weight:bold;">💎 Resource Allocation</span><br>Investment portfolio, budget allocation → maximize ROI with risk constraints.</div>
+        </div>
+    </section>
+
+    <!-- From Reality to Mathematics -->
+    <section class="reveal">
+        <h2>From Reality to Mathematics</h2>
+        <div class="glass-card" style="text-align: center; font-family:'DM Mono';">
+            <div style="font-size:1.5rem;">Real Problem</div>
+            <div style="font-size:2rem;">⬇</div>
+            <div>Decision Variables → Parameters</div>
+            <div style="font-size:2rem;">⬇</div>
+            <div>Objective Function + Constraints</div>
+            <div style="font-size:2rem;">⬇</div>
+            <div><span style="color:#E2C97E;">Mathematical Model</span> (Optimization Program)</div>
+            <div style="font-size:2rem;">⬇</div>
+            <div>Optimal Decision → Actionable Insights</div>
+        </div>
+    </section>
+
+    <!-- Key Takeaways -->
+    <section class="reveal">
+        <h2>Key Takeaways</h2>
+        <div class="grid-2">
+            <div class="glass-card">🎯 Models simplify complex decisions, focusing on what truly matters.</div>
+            <div class="glass-card">⚡ Optimization finds the best possible outcome within given limits.</div>
+            <div class="glass-card">🔗 Constraints represent real-world limitations — budgets, time, resources.</div>
+            <div class="glass-card">📊 Mathematical modeling is the foundation of modern decision science & OR.</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Mathematical Modeling Studio — Bridging reality and optimization | Operations Research · Decision Science</p>
+        <p style="margin-top: 0.8rem;">© 2026 — Studio for Management Science Modeling · Abdurakhmon</p>
+    </footer>
+</div>
+
+<script>
+    // ---------- BACKGROUND CANVAS ANIMATION (original style) ----------
+    const bgCanvas = document.getElementById('bg-canvas');
+    let bgCtx = bgCanvas.getContext('2d');
+    let width = window.innerWidth, height = window.innerHeight;
+    let particles = [];
+    let time = 0;
+
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        bgCanvas.width = width;
+        bgCanvas.height = height;
+    }
+    window.addEventListener('resize', () => { resizeCanvas(); });
+
+    class ModelParticle {
+        constructor(x, y, type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            this.vx = (Math.random() - 0.5) * 0.3;
+            this.vy = (Math.random() - 0.5) * 0.2;
+            this.alpha = 0.3 + Math.random() * 0.5;
+            this.label = type === 'var' ? `x${Math.floor(Math.random()*4)+1}` : (type === 'param' ? `c${Math.floor(Math.random()*20)+1}` : `g${Math.floor(Math.random()*10)+1}`);
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+        }
+        draw(ctx) {
+            ctx.font = "bold 18px 'DM Mono'";
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = "rgba(201,168,76,0.5)";
+            if (this.type === 'var') ctx.fillStyle = `rgba(226, 201, 126, ${this.alpha})`;
+            else if (this.type === 'param') ctx.fillStyle = `rgba(107, 174, 140, ${this.alpha})`;
+            else ctx.fillStyle = `rgba(196, 107, 74, ${this.alpha})`;
+            ctx.fillText(this.label, this.x, this.y);
+        }
+    }
+
+    function initBackground() {
+        for (let i = 0; i < 35; i++) {
+            particles.push(new ModelParticle(Math.random() * width, Math.random() * height, 'var'));
+            particles.push(new ModelParticle(Math.random() * width, Math.random() * height, 'param'));
+            particles.push(new ModelParticle(Math.random() * width, Math.random() * height, 'constraint'));
+        }
+    }
+
+    function drawConstraintNetworks(ctx, t) {
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 15; i++) {
+            let x1 = (Math.sin(t * 0.2 + i) * 0.2 + 0.5) * width * 0.7 + width*0.15;
+            let y1 = (Math.cos(t * 0.3 + i*0.5) * 0.2 + 0.5) * height * 0.7;
+            let x2 = (Math.sin(t * 0.25 + i*1.2) * 0.25 + 0.5) * width * 0.8;
+            let y2 = (Math.cos(t * 0.18 + i*0.7) * 0.22 + 0.5) * height * 0.7;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = `rgba(201,168,76,0.2)`;
+            ctx.stroke();
+        }
+        ctx.beginPath();
+        for (let x = 0; x < width; x += 30) {
+            let y = height/2 + 50 * Math.sin(x * 0.01 + t);
+            if (x===0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = `rgba(226, 201, 126, 0.3)`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = `rgba(107,174,140,0.05)`;
+        for (let i=0;i<4;i++) {
+            ctx.beginPath();
+            let offset = t * 0.5;
+            ctx.moveTo(100 + i*70 + 20*Math.sin(offset), height-80);
+            ctx.lineTo(300 + i*40 + 30*Math.cos(offset), height-150);
+            ctx.lineTo(450 + i*20, height-50);
+            ctx.fill();
+        }
+    }
+
+    function animateBackground() {
+        if (!bgCtx) return;
+        bgCtx.clearRect(0, 0, width, height);
+        bgCtx.fillStyle = '#0E0D0B';
+        bgCtx.fillRect(0, 0, width, height);
+        drawConstraintNetworks(bgCtx, time);
+        particles.forEach(p => { p.update(); p.draw(bgCtx); });
+        bgCtx.font = "14px 'DM Mono'";
+        bgCtx.fillStyle = `rgba(200,180,120,0.25)`;
+        bgCtx.fillText("max Z = Σ cⱼxⱼ", width-150, 50 + Math.sin(time)*10);
+        bgCtx.fillText("s.t. Ax ≤ b", width-130, 80 + Math.cos(time*0.9)*8);
+        bgCtx.fillText("x ≥ 0", width-100, 110);
+        time += 0.02;
+        requestAnimationFrame(animateBackground);
+    }
+
+    resizeCanvas();
+    initBackground();
+    animateBackground();
+
+    // ---------- IMPROVED INTERACTIVE MODEL BUILDER (simple & student-friendly) ----------
+    let variables = [
+        { name: 'x₁', coeff: 3 },
+        { name: 'x₂', coeff: 5 }
+    ];
+    let constraints = [
+        { lhs: 'x₁ + x₂', rhs: 100, sign: '≤' }
+    ];
+    let optType = 'max';
+
+    function updateModelDisplay() {
+        let objExpr = variables.map(v => `${v.coeff >= 0 ? '' : '-'}${Math.abs(v.coeff)}${v.name}`).join(' + ').replace(/^\+/, '');
+        if (objExpr.startsWith('-')) objExpr = objExpr;
+        let objWord = optType === 'max' ? 'Maximize' : 'Minimize';
+        let constrText = constraints.map(c => `${c.lhs} ${c.sign} ${c.rhs}`).join('<br>');
+        let nonneg = variables.map(v => `${v.name} ≥ 0`).join(', ');
+        let modelHTML = `${objWord} Z = ${objExpr}<br>Subject to:<br>${constrText}<br>${nonneg}`;
+        document.getElementById('live-model').innerHTML = modelHTML;
+    }
+
+    function renderVarInputs() {
+        let container = document.getElementById('vars-container');
+        container.innerHTML = '<strong style="color:#C9A84C; font-family:DM Mono;">📦 Decision Variables (products/choices):</strong><br>';
+        variables.forEach((v, idx) => {
+            container.innerHTML += `
+                <div class="var-slider">
+                    <span style="font-family:'DM Mono';">${v.name}</span>
+                    <span>Profit/Cost coeff:</span>
+                    <input type="number" value="${v.coeff}" class="var-coeff" data-idx="${idx}" style="width:80px;" step="1">
+                    <button class="remove-var" data-idx="${idx}" style="background:#4a2a1a; padding:0.3rem 0.8rem;">✖</button>
+                </div>
+            `;
+        });
+        document.querySelectorAll('.var-coeff').forEach(inp => {
+            inp.addEventListener('change', (e) => {
+                let idx = parseInt(e.target.dataset.idx);
+                variables[idx].coeff = parseFloat(e.target.value) || 0;
+                updateModelDisplay();
+                drawFeasibilityRegion();
+            });
+        });
+        document.querySelectorAll('.remove-var').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = parseInt(btn.dataset.idx);
+                if (variables.length > 1) {
+                    variables.splice(idx, 1);
+                    renderVarInputs();
+                    updateModelDisplay();
+                    drawFeasibilityRegion();
+                } else {
+                    alert("Keep at least one decision variable!");
+                }
+            });
+        });
+    }
+
+    function renderConstraints() {
+        let container = document.getElementById('constraints-container');
+        container.innerHTML = '<strong style="color:#C9A84C; font-family:DM Mono;">🔒 Constraints (real-world limits):</strong><br>';
+        constraints.forEach((c, idx) => {
+            container.innerHTML += `
+                <div class="constraint-item">
+                    <span style="font-family:'DM Mono';">${c.lhs}</span>
+                    <select class="constr-sign" data-idx="${idx}">
+                        <option ${c.sign === '≤' ? 'selected' : ''}>≤</option>
+                        <option ${c.sign === '≥' ? 'selected' : ''}>≥</option>
+                        <option ${c.sign === '=' ? 'selected' : ''}>=</option>
+                    </select>
+                    <input type="number" value="${c.rhs}" class="constr-rhs" data-idx="${idx}" style="width:100px;">
+                    <button class="remove-constr" data-idx="${idx}" style="background:#4a2a1a;">✖</button>
+                </div>
+            `;
+        });
+        document.querySelectorAll('.constr-sign').forEach(sel => {
+            sel.addEventListener('change', (e) => {
+                let idx = parseInt(e.target.dataset.idx);
+                constraints[idx].sign = sel.value;
+                updateModelDisplay();
+                drawFeasibilityRegion();
+            });
+        });
+        document.querySelectorAll('.constr-rhs').forEach(inp => {
+            inp.addEventListener('change', (e) => {
+                let idx = parseInt(e.target.dataset.idx);
+                constraints[idx].rhs = parseFloat(e.target.value) || 0;
+                updateModelDisplay();
+                drawFeasibilityRegion();
+            });
+        });
+        document.querySelectorAll('.remove-constr').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = parseInt(btn.dataset.idx);
+                constraints.splice(idx, 1);
+                renderConstraints();
+                updateModelDisplay();
+                drawFeasibilityRegion();
+            });
+        });
+    }
+
+    document.getElementById('add-var-btn').addEventListener('click', () => {
+        let newIdx = variables.length + 1;
+        variables.push({ name: `x${newIdx}`, coeff: 1 });
+        renderVarInputs();
+        updateModelDisplay();
+        drawFeasibilityRegion();
+    });
+    
+    document.getElementById('add-constr-btn').addEventListener('click', () => {
+        let lastVar = variables.map(v=>v.name).join(' + ');
+        constraints.push({ lhs: lastVar, rhs: 50, sign: '≤' });
+        renderConstraints();
+        updateModelDisplay();
+        drawFeasibilityRegion();
+    });
+    
+    document.getElementById('reset-example').addEventListener('click', () => {
+        variables = [
+            { name: 'x₁', coeff: 3 },
+            { name: 'x₂', coeff: 5 }
+        ];
+        constraints = [
+            { lhs: 'x₁ + x₂', rhs: 100, sign: '≤' }
+        ];
+        optType = 'max';
+        document.getElementById('opt-type').value = 'max';
+        renderVarInputs();
+        renderConstraints();
+        updateModelDisplay();
+        drawFeasibilityRegion();
+    });
+    
+    document.getElementById('opt-type').addEventListener('change', (e) => {
+        optType = e.target.value;
+        updateModelDisplay();
+    });
+
+    renderVarInputs();
+    renderConstraints();
+    updateModelDisplay();
+
+    // ---------- CONSTRAINT EXPLORER (2D feasibility visualization) ----------
+    const canvasExplore = document.getElementById('constraint-canvas');
+    const ctxExplore = canvasExplore.getContext('2d');
+    let exploreWidth = 600, exploreHeight = 300;
+    function setCanvasSize() {
+        canvasExplore.width = 600;
+        canvasExplore.height = 300;
+        exploreWidth = 600;
+        exploreHeight = 300;
+        drawFeasibilityRegion();
+    }
+    let dragPoint = { x: 60, y: 60 };
+    let dragging = false;
+
+    function isFeasible(x, y) {
+        // Simple 2D constraints for explorer: x>=0, y>=0, x+y <= 180, 2x+y <= 280
+        if (x < 0 || y < 0) return false;
+        if (x + y > 180) return false;
+        if (2*x + y > 280) return false;
+        return true;
+    }
+
+    function drawFeasibilityRegion() {
+        if (!ctxExplore) return;
+        ctxExplore.clearRect(0, 0, exploreWidth, exploreHeight);
+        ctxExplore.fillStyle = "#1A1916";
+        ctxExplore.fillRect(0, 0, exploreWidth, exploreHeight);
+        // Draw feasible region
+        for (let px = 0; px <= exploreWidth; px+=2) {
+            for (let py = 0; py <= exploreHeight; py+=2) {
+                let xVal = px * 200 / exploreWidth;
+                let yVal = (exploreHeight - py) * 200 / exploreHeight;
+                if (isFeasible(xVal, yVal)) {
+                    ctxExplore.fillStyle = "rgba(107,174,140,0.3)";
+                    ctxExplore.fillRect(px, py, 2, 2);
+                }
+            }
+        }
+        // Draw constraint boundaries
+        ctxExplore.beginPath();
+        ctxExplore.strokeStyle = "#E2C97E";
+        ctxExplore.lineWidth = 1.5;
+        ctxExplore.moveTo(0, exploreHeight - (180/200)*exploreHeight);
+        ctxExplore.lineTo(exploreWidth, exploreHeight);
+        ctxExplore.stroke();
+        ctxExplore.beginPath();
+        ctxExplore.moveTo(0, exploreHeight);
+        ctxExplore.lineTo(exploreWidth/2, exploreHeight - (280/200)*exploreHeight/2);
+        ctxExplore.stroke();
+        
+        let markerX = dragPoint.x * exploreWidth / 200;
+        let markerY = exploreHeight - (dragPoint.y * exploreHeight / 200);
+        let feasible = isFeasible(dragPoint.x, dragPoint.y);
+        ctxExplore.beginPath();
+        ctxExplore.arc(markerX, markerY, 8, 0, 2*Math.PI);
+        ctxExplore.fillStyle = feasible ? "#6BAE8C" : "#C46B4A";
+        ctxExplore.fill();
+        ctxExplore.strokeStyle = "white";
+        ctxExplore.lineWidth = 2;
+        ctxExplore.stroke();
+        document.getElementById('feasibility-status').innerHTML = feasible ? "✅ Status: Feasible (Satisfies all constraints)" : "❌ Status: Infeasible (Violates constraints)";
+        ctxExplore.fillStyle = "#E8E0CC";
+        ctxExplore.font = "10px 'DM Mono'";
+        ctxExplore.fillText("x₁ (units)", exploreWidth-40, exploreHeight-5);
+        ctxExplore.fillText("x₂", 10, 20);
+    }
+
+    function handleMouse(e) {
+        const rect = canvasExplore.getBoundingClientRect();
+        const scaleX = canvasExplore.width / rect.width;
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if (e.touches) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        }
+        let mouseX = (clientX - rect.left) * scaleX;
+        let mouseY = (clientY - rect.top) * scaleX;
+        mouseX = Math.min(exploreWidth, Math.max(0, mouseX));
+        mouseY = Math.min(exploreHeight, Math.max(0, mouseY));
+        let modelX = mouseX * 200 / exploreWidth;
+        let modelY = (exploreHeight - mouseY) * 200 / exploreHeight;
+        dragPoint.x = Math.min(200, Math.max(0, modelX));
+        dragPoint.y = Math.min(200, Math.max(0, modelY));
+        drawFeasibilityRegion();
+    }
+
+    canvasExplore.addEventListener('mousedown', (e) => { dragging=true; handleMouse(e); });
+    window.addEventListener('mousemove', (e) => { if(dragging) handleMouse(e); });
+    window.addEventListener('mouseup', () => { dragging=false; });
+    canvasExplore.addEventListener('touchstart', (e) => { e.preventDefault(); dragging=true; handleMouse(e); });
+    window.addEventListener('touchmove', (e) => { if(dragging){ e.preventDefault(); handleMouse(e); } });
+    window.addEventListener('touchend', () => { dragging=false; });
+    setCanvasSize();
+    window.addEventListener('resize', () => { setCanvasSize(); drawFeasibilityRegion(); });
+    drawFeasibilityRegion();
+
+    // scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    function checkReveal() {
+        reveals.forEach(el => {
+            let rect = el.getBoundingClientRect();
+            let windowHeight = window.innerHeight;
+            if (rect.top < windowHeight - 100) {
+                el.classList.add('visible');
+            }
+        });
+    }
+    window.addEventListener('scroll', checkReveal);
+    checkReveal();
+</script>
+</body>
+</html>
