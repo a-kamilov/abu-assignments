@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TSP — The Traveling Salesman Problem</title>
+<title>TSP — The Traveling Salesman Problem | Interactive Solver</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 
@@ -18,9 +18,8 @@
     --gold-light: #E2C97E;
     --gold-dim: rgba(201, 168, 76, 0.3);
     --gold-faint: rgba(201, 168, 76, 0.08);
-    --text-dark: #1A1916;
-    --text-mid: #4A4538;
-    --text-light: #7A7060;
+    --success: #6BAE8C;
+    --info: #8A7EC9;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,7 +35,6 @@
     overflow-x: hidden;
   }
 
-  /* ─── CANVAS BACKGROUND ─── */
   #tsp-canvas {
     position: fixed;
     top: 0; left: 0;
@@ -45,13 +43,11 @@
     pointer-events: none;
   }
 
-  /* ─── LAYOUT ─── */
   .content-layer {
     position: relative;
     z-index: 1;
   }
 
-  /* ─── HERO ─── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -123,26 +119,9 @@
     animation: fadeUp 1s 0.9s forwards;
   }
 
-  .meta-item {
-    text-align: center;
-  }
-
-  .meta-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1;
-    display: block;
-  }
-
-  .meta-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    color: rgba(245,240,232,0.4);
-    text-transform: uppercase;
-  }
+  .meta-item { text-align: center; }
+  .meta-number { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700; color: var(--gold); line-height: 1; display: block; }
+  .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.4); text-transform: uppercase; }
 
   .scroll-indicator {
     position: absolute;
@@ -156,291 +135,54 @@
     opacity: 0;
     animation: fadeUp 1s 1.4s forwards;
   }
+  .scroll-indicator span { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(245,240,232,0.35); text-transform: uppercase; }
+  .scroll-line { width: 1px; height: 3rem; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollPulse 2s ease-in-out infinite; }
 
-  .scroll-indicator span {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
-    color: rgba(245,240,232,0.35);
-    text-transform: uppercase;
-  }
+  section { padding: 7rem 2rem; position: relative; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-backdrop { background: rgba(14,13,11,0.82); backdrop-filter: blur(12px); border-radius: 2px; padding: 5rem 4rem; }
+  .section-tag { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1rem; }
+  .section-tag::after { content: ''; flex: 1; height: 1px; max-width: 60px; background: var(--gold-dim); }
+  h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 700; line-height: 1.1; color: var(--cream); margin-bottom: 2rem; }
+  h2 em { font-style: italic; color: var(--gold-light); }
+  h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--cream); margin-bottom: 0.8rem; }
+  p { color: rgba(245,240,232,0.75); margin-bottom: 1.4rem; font-size: 1.1rem; max-width: 70ch; }
+  .gold-rule { width: 80px; height: 2px; background: linear-gradient(to right, var(--gold), transparent); margin: 2rem 0; }
 
-  .scroll-line {
-    width: 1px;
-    height: 3rem;
-    background: linear-gradient(to bottom, var(--gold), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
+  .tsp-definition { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
+  .definition-visual { position: relative; aspect-ratio: 1; max-width: 360px; }
+  #mini-canvas { width: 100%; height: 100%; border: 1px solid var(--gold-dim); border-radius: 2px; }
+  .complexity-callout { background: var(--gold-faint); border-left: 3px solid var(--gold); padding: 1.5rem 2rem; margin-top: 2rem; }
+  .complexity-callout p { font-family: 'DM Mono', monospace; font-size: 0.85rem; line-height: 1.6; color: rgba(245,240,232,0.7); margin: 0; }
+  .complexity-callout .formula { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: var(--gold-light); display: block; margin-bottom: 0.5rem; }
 
-  /* ─── SECTIONS ─── */
-  section {
-    padding: 7rem 2rem;
-    position: relative;
-  }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5px; margin-top: 3rem; background: var(--gold-dim); }
+  .step-card { background: rgba(14,13,11,0.9); padding: 2.5rem 2rem; position: relative; overflow: hidden; transition: background 0.3s; }
+  .step-card:hover { background: rgba(201,168,76,0.06); }
+  .step-number { font-family: 'Playfair Display', serif; font-size: 5rem; font-weight: 900; color: rgba(201,168,76,0.12); position: absolute; top: -0.5rem; right: 1rem; line-height: 1; pointer-events: none; }
 
-  .section-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .section-backdrop {
-    background: rgba(14,13,11,0.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 2px;
-    padding: 5rem 4rem;
-  }
-
-  .section-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .section-tag::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    max-width: 60px;
-    background: var(--gold-dim);
-  }
-
-  h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 4vw, 3.6rem);
-    font-weight: 700;
-    line-height: 1.1;
-    color: var(--cream);
-    margin-bottom: 2rem;
-  }
-
-  h2 em {
-    font-style: italic;
-    color: var(--gold-light);
-  }
-
-  h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--cream);
-    margin-bottom: 0.8rem;
-  }
-
-  p {
-    color: rgba(245,240,232,0.75);
-    margin-bottom: 1.4rem;
-    font-size: 1.1rem;
-    max-width: 70ch;
-  }
-
-  /* ─── DIVIDER ─── */
-  .gold-rule {
-    width: 80px;
-    height: 2px;
-    background: linear-gradient(to right, var(--gold), transparent);
-    margin: 2rem 0;
-  }
-
-  /* ─── WHAT IS TSP ─── */
-  .tsp-definition {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-    margin-top: 3rem;
-  }
-
-  .definition-visual {
-    position: relative;
-    aspect-ratio: 1;
-    max-width: 360px;
-  }
-
-  #mini-canvas {
-    width: 100%;
-    height: 100%;
-    border: 1px solid var(--gold-dim);
-    border-radius: 2px;
-  }
-
-  .complexity-callout {
-    background: var(--gold-faint);
-    border-left: 3px solid var(--gold);
-    padding: 1.5rem 2rem;
-    margin-top: 2rem;
-  }
-
-  .complexity-callout p {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: rgba(245,240,232,0.7);
-    margin: 0;
-  }
-
-  .complexity-callout .formula {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-style: italic;
-    color: var(--gold-light);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  /* ─── HOW IT WORKS ─── */
-  .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5px;
-    margin-top: 3rem;
-    background: var(--gold-dim);
-  }
-
-  .step-card {
-    background: rgba(14,13,11,0.9);
-    padding: 2.5rem 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-  }
-
-  .step-card:hover {
-    background: rgba(201,168,76,0.06);
-  }
-
-  .step-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 5rem;
-    font-weight: 900;
-    color: rgba(201,168,76,0.12);
-    position: absolute;
-    top: -0.5rem;
-    right: 1rem;
-    line-height: 1;
-    pointer-events: none;
-  }
-
-  /* ─── ALGORITHMS ─── */
-  .algo-list {
-    display: grid;
-    gap: 1.5px;
-    margin-top: 3rem;
-    background: var(--gold-dim);
-  }
-
-  .algo-row {
-    background: rgba(14,13,11,0.9);
-    padding: 2.5rem 3rem;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 2rem;
-    align-items: center;
-    transition: background 0.3s;
-  }
-
+  .algo-list { display: grid; gap: 1.5px; margin-top: 3rem; background: var(--gold-dim); }
+  .algo-row { background: rgba(14,13,11,0.9); padding: 2.5rem 3rem; display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 2rem; align-items: center; transition: background 0.3s; }
   .algo-row:hover { background: rgba(201,168,76,0.05); }
-
-  .algo-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--cream);
-  }
-
-  .algo-desc {
-    font-size: 0.95rem;
-    color: rgba(245,240,232,0.6);
-    margin: 0;
-    max-width: none;
-  }
-
-  .algo-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    padding: 0.4rem 0.8rem;
-    border: 1px solid;
-    text-align: center;
-    border-radius: 1px;
-  }
-
+  .algo-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--cream); }
+  .algo-desc { font-size: 0.95rem; color: rgba(245,240,232,0.6); margin: 0; max-width: none; }
+  .algo-badge { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; padding: 0.4rem 0.8rem; border: 1px solid; text-align: center; border-radius: 1px; }
   .badge-exact { border-color: #C46B4A; color: #C46B4A; }
   .badge-heuristic { border-color: var(--gold); color: var(--gold); }
-  .badge-optimal { border-color: #6BAE8C; color: #6BAE8C; }
-  .badge-meta { border-color: #8A7EC9; color: #8A7EC9; }
+  .badge-optimal { border-color: var(--success); color: var(--success); }
+  .badge-meta { border-color: var(--info); color: var(--info); }
 
-  /* ─── APPLICATIONS ─── */
-  .apps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5px;
-    margin-top: 3rem;
-    background: var(--gold-dim);
-  }
-
-  .app-tile {
-    background: rgba(14,13,11,0.9);
-    padding: 3rem 2rem;
-    text-align: center;
-    transition: background 0.3s;
-    cursor: default;
-  }
-
+  .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5px; margin-top: 3rem; background: var(--gold-dim); }
+  .app-tile { background: rgba(14,13,11,0.9); padding: 3rem 2rem; text-align: center; transition: background 0.3s; cursor: default; }
   .app-tile:hover { background: rgba(201,168,76,0.07); }
+  .app-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; filter: grayscale(0.2); }
+  .app-tile h3 { font-size: 1rem; margin-bottom: 0.6rem; color: var(--gold-light); }
+  .app-tile p { font-size: 0.85rem; color: rgba(245,240,232,0.5); max-width: none; margin: 0; }
 
-  .app-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    display: block;
-    filter: grayscale(0.2);
-  }
-
-  .app-tile h3 {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
-    color: var(--gold-light);
-  }
-
-  .app-tile p {
-    font-size: 0.85rem;
-    color: rgba(245,240,232,0.5);
-    max-width: none;
-    margin: 0;
-  }
-
-  /* ─── DEMO SECTION ─── */
-  .demo-section {
-    padding: 7rem 2rem;
-  }
-
-  .demo-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .demo-backdrop {
-    background: rgba(14,13,11,0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 4rem;
-    border: 1px solid var(--gold-dim);
-  }
-
-  .demo-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
+  .demo-section { padding: 7rem 2rem; }
+  .demo-inner { max-width: 1100px; margin: 0 auto; }
+  .demo-backdrop { background: rgba(14,13,11,0.88); backdrop-filter: blur(12px); padding: 4rem; border: 1px solid var(--gold-dim); }
+  .demo-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
 
   #demo-canvas {
     width: 100%;
@@ -449,131 +191,37 @@
     border: 1px solid rgba(201,168,76,0.15);
     display: block;
     cursor: crosshair;
+    position: relative;
   }
 
-  .demo-controls {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .demo-controls { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; align-items: center; }
+  .btn { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.8rem 1.8rem; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; transition: all 0.2s; border-radius: 1px; }
+  .btn:hover { background: var(--gold); color: var(--black); }
+  .btn-secondary { border-color: rgba(245,240,232,0.25); color: rgba(245,240,232,0.5); }
+  .btn-secondary:hover { background: rgba(245,240,232,0.1); color: var(--cream); }
+  .btn-success { border-color: var(--success); color: var(--success); }
+  .btn-success:hover { background: var(--success); color: var(--black); }
+  .btn-active { background: var(--gold); color: var(--black); }
 
-  .btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 0.8rem 1.8rem;
-    border: 1px solid var(--gold);
-    background: transparent;
-    color: var(--gold);
-    cursor: pointer;
-    transition: all 0.2s;
-    border-radius: 1px;
-  }
+  .demo-stats { display: flex; gap: 3rem; margin-left: auto; flex-wrap: wrap; }
+  .stat-item { text-align: right; }
+  .stat-val { font-family: 'DM Mono', monospace; font-size: 1.3rem; color: var(--gold); display: block; line-height: 1; }
+  .stat-lbl { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.3); text-transform: uppercase; }
 
-  .btn:hover {
-    background: var(--gold);
-    color: var(--black);
-  }
+  .demo-hint { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: rgba(245,240,232,0.3); letter-spacing: 0.1em; margin-top: 0.8rem; }
+  .compare-badge { font-family: 'DM Mono', monospace; font-size: 0.65rem; padding: 0.3rem 0.8rem; background: var(--gold-dim); border-radius: 20px; margin-left: 1rem; }
 
-  .btn-secondary {
-    border-color: rgba(245,240,232,0.25);
-    color: rgba(245,240,232,0.5);
-  }
+  footer { padding: 3rem 2rem; text-align: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-top: 1px solid var(--gold-dim); }
+  footer p { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.2); max-width: none; text-align: center; margin: 0; }
+  footer .footer-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold-dim); margin-bottom: 0.5rem; display: block; letter-spacing: 0.1em; }
 
-  .btn-secondary:hover {
-    background: rgba(245,240,232,0.1);
-    color: var(--cream);
-  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.8); } 50% { opacity: 1; transform: scaleY(1); } }
+  @keyframes walkPulse { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-3px); } }
 
-  .demo-stats {
-    display: flex;
-    gap: 3rem;
-    margin-left: auto;
-    flex-wrap: wrap;
-  }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  .stat-item {
-    text-align: right;
-  }
-
-  .stat-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.3rem;
-    color: var(--gold);
-    display: block;
-    line-height: 1;
-  }
-
-  .stat-lbl {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: rgba(245,240,232,0.3);
-    text-transform: uppercase;
-  }
-
-  .demo-hint {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: rgba(245,240,232,0.3);
-    letter-spacing: 0.1em;
-    margin-top: 0.8rem;
-  }
-
-  /* ─── FOOTER ─── */
-  footer {
-    padding: 3rem 2rem;
-    text-align: center;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid var(--gold-dim);
-  }
-
-  footer p {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    color: rgba(245,240,232,0.2);
-    max-width: none;
-    text-align: center;
-    margin: 0;
-  }
-
-  footer .footer-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--gold-dim);
-    margin-bottom: 0.5rem;
-    display: block;
-    letter-spacing: 0.1em;
-  }
-
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
-    50%       { opacity: 1;   transform: scaleY(1); }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ─── RESPONSIVE ─── */
   @media (max-width: 768px) {
     .tsp-definition { grid-template-columns: 1fr; }
     .algo-row { grid-template-columns: 1fr; }
@@ -586,208 +234,90 @@
 </head>
 <body>
 
-<!-- FULLSCREEN BACKGROUND CANVAS -->
 <canvas id="tsp-canvas"></canvas>
 
 <div class="content-layer">
-
-  <!-- ─── HERO ─── -->
   <section class="hero">
     <div class="hero-eyebrow">Combinatorial Optimization · NP-Hard</div>
     <h1>The Traveling<br><em>Salesman</em><br>Problem</h1>
     <p class="hero-subtitle">A deceptively simple question that has challenged mathematicians, computer scientists, and logisticians for over a century.</p>
     <div class="hero-meta">
-      <div class="meta-item">
-        <span class="meta-number">NP-Hard</span>
-        <span class="meta-label">Complexity Class</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-number">(n−1)!/2</span>
-        <span class="meta-label">Brute-Force Routes</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-number">1930s</span>
-        <span class="meta-label">First Formalized</span>
-      </div>
+      <div class="meta-item"><span class="meta-number">NP-Hard</span><span class="meta-label">Complexity Class</span></div>
+      <div class="meta-item"><span class="meta-number">(n−1)!/2</span><span class="meta-label">Brute-Force Routes</span></div>
+      <div class="meta-item"><span class="meta-number">1930s</span><span class="meta-label">First Formalized</span></div>
     </div>
-    <div class="scroll-indicator">
-      <div class="scroll-line"></div>
-      <span>Scroll to explore</span>
-    </div>
+    <div class="scroll-indicator"><div class="scroll-line"></div><span>Scroll to explore</span></div>
   </section>
 
-  <!-- ─── WHAT IS TSP ─── -->
   <section>
     <div class="section-inner">
       <div class="section-backdrop reveal">
         <div class="section-tag">01 — Definition</div>
         <h2>What is the<br><em>Traveling Salesman?</em></h2>
         <div class="gold-rule"></div>
-
         <div class="tsp-definition">
           <div>
-            <p>Imagine a salesman who must visit a set of cities — each city exactly once — and then return home. The goal is to find the <strong style="color:var(--gold-light)">shortest possible route</strong> that accomplishes this. Simple to state, extraordinarily difficult to solve.</p>
-            <p>First studied in the 1930s by mathematicians Karl Menger and Hassler Whitney, TSP has become one of the most intensively studied problems in all of optimization. It belongs to the class of <strong style="color:var(--gold-light)">NP-hard</strong> problems — meaning no known algorithm can guarantee an optimal solution in polynomial time as the number of cities grows.</p>
-            <p>With just 10 cities, there are over 180,000 possible routes. With 20 cities: over 60 quadrillion. No computer can brute-force its way through large instances.</p>
-
-            <div class="complexity-callout">
-              <span class="formula">Routes = (n − 1)! / 2</span>
-              <p>For n cities, the number of distinct tours grows factorially. At n = 30, this exceeds the estimated number of atoms in the observable universe.</p>
-            </div>
+            <p>Imagine a salesman who must visit a set of cities — each city exactly once — and then return home. The goal is to find the <strong style="color:var(--gold-light)">shortest possible route</strong> that accomplishes this.</p>
+            <p>TSP belongs to the class of <strong style="color:var(--gold-light)">NP-hard</strong> problems — meaning no known algorithm can guarantee an optimal solution in polynomial time as the number of cities grows.</p>
+            <div class="complexity-callout"><span class="formula">Routes = (n − 1)! / 2</span><p>For n = 30, this exceeds the estimated number of atoms in the observable universe.</p></div>
           </div>
-
-          <div class="definition-visual">
-            <canvas id="mini-canvas"></canvas>
-          </div>
+          <div class="definition-visual"><canvas id="mini-canvas"></canvas></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── HOW IT WORKS ─── -->
   <section>
     <div class="section-inner">
       <div class="section-backdrop reveal">
         <div class="section-tag">02 — Mechanics</div>
         <h2>How Does<br><em>It Work?</em></h2>
         <div class="gold-rule"></div>
-        <p>TSP can be modeled as a graph: cities are nodes, and routes between them are weighted edges. The objective is to find the minimum-weight Hamiltonian cycle — a closed loop that visits every node exactly once.</p>
-
+        <p>TSP can be modeled as a graph: cities are nodes, and routes between them are weighted edges. The objective is to find the minimum-weight Hamiltonian cycle.</p>
         <div class="steps-grid">
-          <div class="step-card">
-            <span class="step-number">1</span>
-            <h3>Define Cities</h3>
-            <p style="font-size:0.9rem;margin:0">Represent each location as a point in space with coordinates. Distance is typically Euclidean, but can account for real-world travel times.</p>
-          </div>
-          <div class="step-card">
-            <span class="step-number">2</span>
-            <h3>Build Distance Matrix</h3>
-            <p style="font-size:0.9rem;margin:0">Calculate the cost (distance, time, or money) between every pair of cities — forming an n×n matrix of all possible edge weights.</p>
-          </div>
-          <div class="step-card">
-            <span class="step-number">3</span>
-            <h3>Search for Tour</h3>
-            <p style="font-size:0.9rem;margin:0">Apply an algorithm — exact or approximate — to explore the space of possible routes and find one that minimizes total distance.</p>
-          </div>
-          <div class="step-card">
-            <span class="step-number">4</span>
-            <h3>Evaluate & Improve</h3>
-            <p style="font-size:0.9rem;margin:0">Iteratively test modifications — swapping city order, reversing sub-tours — and keep improvements until no further gains can be found.</p>
-          </div>
+          <div class="step-card"><span class="step-number">1</span><h3>Define Cities</h3><p style="font-size:0.9rem;margin:0">Represent each location as a point in space with coordinates.</p></div>
+          <div class="step-card"><span class="step-number">2</span><h3>Build Distance Matrix</h3><p style="font-size:0.9rem;margin:0">Calculate the cost between every pair of cities.</p></div>
+          <div class="step-card"><span class="step-number">3</span><h3>Search for Tour</h3><p style="font-size:0.9rem;margin:0">Apply an algorithm to explore possible routes.</p></div>
+          <div class="step-card"><span class="step-number">4</span><h3>Evaluate & Improve</h3><p style="font-size:0.9rem;margin:0">Test modifications and keep improvements.</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── ALGORITHMS ─── -->
   <section>
     <div class="section-inner">
       <div class="section-backdrop reveal">
         <div class="section-tag">03 — Solution Methods</div>
         <h2>Approaches to<br><em>Solving TSP</em></h2>
         <div class="gold-rule"></div>
-        <p>No single method dominates for all cases. The choice of algorithm depends on the number of cities, required accuracy, and available computation time.</p>
-
         <div class="algo-list">
-          <div class="algo-row">
-            <div>
-              <div class="algo-name">Brute Force</div>
-              <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:0.3rem;letter-spacing:0.1em">O((n−1)!)</div>
-            </div>
-            <p class="algo-desc">Enumerate every possible permutation of cities and select the shortest. Guaranteed optimal, but completely impractical beyond roughly 12 cities due to factorial growth.</p>
-            <span class="algo-badge badge-exact">Exact</span>
-          </div>
-          <div class="algo-row">
-            <div>
-              <div class="algo-name">Nearest Neighbor</div>
-              <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:0.3rem;letter-spacing:0.1em">O(n²)</div>
-            </div>
-            <p class="algo-desc">A greedy heuristic: always travel to the closest unvisited city. Fast and simple, but typically yields routes 20–25% longer than optimal. Good as a starting point.</p>
-            <span class="algo-badge badge-heuristic">Heuristic</span>
-          </div>
-          <div class="algo-row">
-            <div>
-              <div class="algo-name">Dynamic Programming</div>
-              <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:0.3rem;letter-spacing:0.1em">O(n² · 2ⁿ)</div>
-            </div>
-            <p class="algo-desc">Held-Karp algorithm stores results of sub-problems to avoid recomputation. Optimal and feasible up to ~20–25 cities; still exponential, but far better than brute force.</p>
-            <span class="algo-badge badge-exact">Exact</span>
-          </div>
-          <div class="algo-row">
-            <div>
-              <div class="algo-name">2-Opt / 3-Opt</div>
-              <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:0.3rem;letter-spacing:0.1em">O(n²) per pass</div>
-            </div>
-            <p class="algo-desc">Local search improvement: repeatedly reverse segments of the tour if doing so reduces total length. Highly effective in practice and easy to implement alongside other methods.</p>
-            <span class="algo-badge badge-heuristic">Local Search</span>
-          </div>
-          <div class="algo-row">
-            <div>
-              <div class="algo-name">Genetic Algorithm</div>
-              <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:0.3rem;letter-spacing:0.1em">Configurable</div>
-            </div>
-            <p class="algo-desc">Inspired by natural selection: maintain a population of tours, select the fittest, cross them over, and mutate offspring. Scales to thousands of cities with near-optimal results.</p>
-            <span class="algo-badge badge-meta">Metaheuristic</span>
-          </div>
-          <div class="algo-row">
-            <div>
-              <div class="algo-name">Christofides</div>
-              <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:0.3rem;letter-spacing:0.1em">≤ 1.5× optimal</div>
-            </div>
-            <p class="algo-desc">A polynomial-time approximation with a proven guarantee: the tour is at most 1.5× the optimal. Uses minimum spanning trees and minimum weight matching — a landmark result from 1976.</p>
-            <span class="algo-badge badge-heuristic">Approximation</span>
-          </div>
+          <div class="algo-row"><div><div class="algo-name">Brute Force</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">O((n−1)!)</div></div><p class="algo-desc">Enumerate every permutation. Guaranteed optimal but impractical beyond 12 cities.</p><span class="algo-badge badge-exact">Exact</span></div>
+          <div class="algo-row"><div><div class="algo-name">Nearest Neighbor</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">O(n²)</div></div><p class="algo-desc">Greedy heuristic: always go to the closest unvisited city. Fast but ~20-25% longer.</p><span class="algo-badge badge-heuristic">Heuristic</span></div>
+          <div class="algo-row"><div><div class="algo-name">2-Opt</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">O(n²) per pass</div></div><p class="algo-desc">Local search: reverse segments if it reduces total length. Highly effective.</p><span class="algo-badge badge-heuristic">Local Search</span></div>
+          <div class="algo-row"><div><div class="algo-name">Genetic Algorithm</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">Configurable</div></div><p class="algo-desc">Inspired by evolution: selection, crossover, mutation. Scales to thousands of cities.</p><span class="algo-badge badge-meta">Metaheuristic</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── APPLICATIONS ─── -->
   <section>
     <div class="section-inner">
       <div class="section-backdrop reveal">
         <div class="section-tag">04 — Real-World Impact</div>
         <h2>Why Does<br><em>It Matter?</em></h2>
         <div class="gold-rule"></div>
-        <p>TSP is not merely academic. Variants of this problem govern billions of decisions made every day in logistics, manufacturing, and infrastructure.</p>
-
         <div class="apps-grid">
-          <div class="app-tile">
-            <span class="app-icon">📦</span>
-            <h3>Last-Mile Delivery</h3>
-            <p>UPS, FedEx, and Amazon optimize thousands of delivery routes daily — shaving seconds per stop translates to millions in fuel savings annually.</p>
-          </div>
-          <div class="app-tile">
-            <span class="app-icon">🔬</span>
-            <h3>DNA Sequencing</h3>
-            <p>Sequencing genome fragments requires ordering overlapping DNA strands — mathematically equivalent to finding a short Hamiltonian path.</p>
-          </div>
-          <div class="app-tile">
-            <span class="app-icon">🖨️</span>
-            <h3>PCB Drilling</h3>
-            <p>Manufacturing circuit boards requires drilling thousands of holes; minimizing drill-head travel is a direct TSP application reducing production time.</p>
-          </div>
-          <div class="app-tile">
-            <span class="app-icon">✈️</span>
-            <h3>Flight Scheduling</h3>
-            <p>Airlines optimize crew rotations, gate assignments, and aircraft routing using TSP-based models to reduce costs and turnaround times.</p>
-          </div>
-          <div class="app-tile">
-            <span class="app-icon">🤖</span>
-            <h3>Robotics</h3>
-            <p>Warehouse robots, surgical systems, and autonomous vehicles all employ TSP-style optimization to plan efficient movement through constrained spaces.</p>
-          </div>
-          <div class="app-tile">
-            <span class="app-icon">🌐</span>
-            <h3>Network Routing</h3>
-            <p>Optimizing data packet transmission, laying fibre optic cables, and planning infrastructure all rely on related shortest-path problems.</p>
-          </div>
+          <div class="app-tile"><span class="app-icon">📦</span><h3>Last-Mile Delivery</h3><p>UPS, FedEx optimize millions of routes daily</p></div>
+          <div class="app-tile"><span class="app-icon">🔬</span><h3>DNA Sequencing</h3><p>Ordering overlapping genome fragments</p></div>
+          <div class="app-tile"><span class="app-icon">🖨️</span><h3>PCB Drilling</h3><p>Minimizing drill-head travel time</p></div>
+          <div class="app-tile"><span class="app-icon">✈️</span><h3>Flight Scheduling</h3><p>Crew rotations and gate assignments</p></div>
+          <div class="app-tile"><span class="app-icon">🤖</span><h3>Robotics</h3><p>Warehouse and autonomous vehicle routing</p></div>
+          <div class="app-tile"><span class="app-icon">🌐</span><h3>Network Routing</h3><p>Data packet and infrastructure optimization</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── INTERACTIVE DEMO ─── -->
   <section class="demo-section">
     <div class="demo-inner">
       <div class="demo-backdrop reveal">
@@ -797,689 +327,440 @@
             <h2 style="font-size:2.2rem;margin-bottom:0.5rem">Interactive<br><em>Solver</em></h2>
           </div>
           <div class="demo-stats">
-            <div class="stat-item">
-              <span class="stat-val" id="stat-cities">0</span>
-              <span class="stat-lbl">Cities</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-val" id="stat-dist">—</span>
-              <span class="stat-lbl">Tour Length</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-val" id="stat-iter">0</span>
-              <span class="stat-lbl">Iterations</span>
-            </div>
+            <div class="stat-item"><span class="stat-val" id="stat-cities">0</span><span class="stat-lbl">Cities</span></div>
+            <div class="stat-item"><span class="stat-val" id="stat-dist">—</span><span class="stat-lbl">Tour Length</span></div>
+            <div class="stat-item"><span class="stat-val" id="stat-iter">0</span><span class="stat-lbl">Iterations</span></div>
           </div>
         </div>
 
-        <canvas id="demo-canvas"></canvas>
+        <canvas id="demo-canvas" width="800" height="500"></canvas>
 
         <div class="demo-controls">
-          <button class="btn" id="btn-add-random">+ Add Random Cities</button>
-          <button class="btn" id="btn-solve">▶ Run 2-Opt Solver</button>
+          <button class="btn" id="btn-add-random">+ Add Random</button>
+          <button class="btn" id="btn-solve">▶ Run 2-Opt</button>
           <button class="btn btn-secondary" id="btn-clear">✕ Clear</button>
-          <div style="margin-left:auto">
-            <span id="demo-status" style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);letter-spacing:0.1em">READY</span>
-          </div>
+          <button class="btn btn-success" id="btn-walk">🚶 Walk Salesman</button>
+          <button class="btn" id="btn-compare">🔄 Compare (Before/After)</button>
+          <div style="margin-left:auto"><span id="demo-status">READY</span></div>
         </div>
-        <p class="demo-hint">Click on the canvas to add cities, or use the button to place them randomly. Then run the solver to watch 2-opt optimization in action.</p>
+        <p class="demo-hint">👆 Click to add cities → Run solver → Walk the salesman → Compare original vs optimized route</p>
       </div>
     </div>
   </section>
 
-  <!-- ─── FOOTER ─── -->
   <footer>
     <span class="footer-title">TSP</span>
-    <p>THE TRAVELING SALESMAN PROBLEM · AN EDUCATIONAL VISUALIZATION<br>
-    P ≠ NP (probably) · Est. 1930s · Still unsolved in polynomial time</p>
+    <p>THE TRAVELING SALESMAN PROBLEM · AN EDUCATIONAL VISUALIZATION<br>P ≠ NP (probably) · Est. 1930s</p>
   </footer>
-
-</div><!-- /content-layer -->
+</div>
 
 <script>
 // ═══════════════════════════════════════════
-//  BACKGROUND CANVAS — TSP AUTO-SOLVER (Fixed)
+//  BACKGROUND CANVAS — TSP AUTO-SOLVER
 // ═══════════════════════════════════════════
 (function() {
   const canvas = document.getElementById('tsp-canvas');
   const ctx = canvas.getContext('2d');
-
   const GOLD = 'rgba(201,168,76,';
   const CREAM = 'rgba(245,240,232,';
-
-  let W, H, cities = [], bestTour = [], bestDist = Infinity;
-  let state = { name: 'init', age: 0 };
+  let W, H, cities = [], bestTour = [], state = { name: 'init', age: 0 };
   let particles = [];
-  let iterCount = 0;
 
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
 
   function randomCities(n) {
     const margin = Math.min(W, H) * 0.08;
-    const arr = [];
-    for (let i = 0; i < n; i++) {
-      arr.push({
-        x: margin + Math.random() * (W - margin * 2),
-        y: margin + Math.random() * (H - margin * 2),
-        r: 2.5 + Math.random() * 1.5
-      });
-    }
-    return arr;
+    return Array.from({ length: n }, () => ({ x: margin + Math.random() * (W - margin * 2), y: margin + Math.random() * (H - margin * 2), r: 2.5 + Math.random() * 1.5 }));
   }
-
-  function dist(a, b) {
-    const dx = a.x - b.x, dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function tourLength(t) {
-    if (!t || t.length < 2) return Infinity;
-    let d = 0;
-    for (let i = 0; i < t.length; i++) {
-      d += dist(cities[t[i]], cities[t[(i + 1) % t.length]]);
-    }
-    return d;
-  }
-
-  function nearestNeighborTour() {
-    if (cities.length === 0) return [];
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+  function tourLength(t) { let d = 0; for (let i = 0; i < t.length; i++) d += dist(cities[t[i]], cities[t[(i + 1) % t.length]]); return d; }
+  function nearestNeighbor() {
     const visited = new Array(cities.length).fill(false);
-    const t = [0];
-    visited[0] = true;
+    const t = [0]; visited[0] = true;
     while (t.length < cities.length) {
       const cur = t[t.length - 1];
       let best = -1, bestD = Infinity;
-      for (let i = 0; i < cities.length; i++) {
-        if (!visited[i]) {
-          const d = dist(cities[cur], cities[i]);
-          if (d < bestD) { bestD = d; best = i; }
-        }
-      }
+      for (let i = 0; i < cities.length; i++) if (!visited[i] && dist(cities[cur], cities[i]) < bestD) { bestD = dist(cities[cur], cities[i]); best = i; }
       if (best === -1) break;
-      t.push(best);
-      visited[best] = true;
+      t.push(best); visited[best] = true;
     }
     return t;
   }
-
   function twoOptStep(t) {
-    let bestImprovement = 0;
-    let bestI = -1, bestK = -1;
-    
     for (let i = 0; i < t.length - 2; i++) {
       for (let k = i + 2; k < t.length; k++) {
         const before = dist(cities[t[i]], cities[t[i + 1]]) + dist(cities[t[k]], cities[t[(k + 1) % t.length]]);
         const after = dist(cities[t[i]], cities[t[k]]) + dist(cities[t[i + 1]], cities[t[(k + 1) % t.length]]);
-        const improvement = before - after;
-        if (improvement > bestImprovement) {
-          bestImprovement = improvement;
-          bestI = i;
-          bestK = k;
-        }
+        if (after < before - 0.001) return [...t.slice(0, i + 1), ...t.slice(i + 1, k + 1).reverse(), ...t.slice(k + 1)];
       }
-    }
-    
-    if (bestImprovement > 0.001) {
-      const newTour = [...t.slice(0, bestI + 1), ...t.slice(bestI + 1, bestK + 1).reverse(), ...t.slice(bestK + 1)];
-      return newTour;
     }
     return null;
   }
+  function spawnParticle(x, y) { particles.push({ x: x + (Math.random() - 0.5) * 10, y: y + (Math.random() - 0.5) * 10, vx: (Math.random() - 0.5) * 2, vy: -1 - Math.random() * 2, life: 1, size: 2 + Math.random() * 3 }); }
+  function initRound() { cities = randomCities(7 + Math.floor(Math.random() * 9)); bestTour = nearestNeighbor(); state = { name: 'drawing', age: 0, progress: 0 }; }
 
-  function spawnParticle(x, y) {
-    particles.push({ 
-      x: x + (Math.random() - 0.5) * 10, 
-      y: y + (Math.random() - 0.5) * 10, 
-      vx: (Math.random() - 0.5) * 2, 
-      vy: -1 - Math.random() * 2, 
-      life: 1, 
-      size: 2 + Math.random() * 3 
-    });
-  }
-
-  function initNewRound() {
-    const n = 7 + Math.floor(Math.random() * 9); // 7-15 cities
-    cities = randomCities(n);
-    bestTour = nearestNeighborTour();
-    bestDist = tourLength(bestTour);
-    iterCount = 0;
-    state = { name: 'drawing', age: 0, progress: 0 };
-  }
-
-  let lastTimestamp = 0;
-  
-  function animate(timestamp) {
-    const dt = Math.min((timestamp - (lastTimestamp || timestamp)) / 1000, 0.05);
-    lastTimestamp = timestamp;
-    
-    if (state.name !== 'init') {
-      state.age += dt;
-    }
-    
+  let lastTime = 0;
+  function animate(ts) {
+    const dt = Math.min((ts - (lastTime || ts)) / 1000, 0.05);
+    lastTime = ts;
+    if (state.name !== 'init') state.age += dt;
     ctx.clearRect(0, 0, W, H);
-    
-    // Draw subtle grid
     ctx.strokeStyle = 'rgba(201,168,76,0.02)';
-    ctx.lineWidth = 1;
-    const gs = 70;
-    for (let x = 0; x < W; x += gs) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, H);
-      ctx.stroke();
-    }
-    for (let y = 0; y < H; y += gs) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(W, y);
-      ctx.stroke();
-    }
-    
-    if (cities.length === 0) {
-      // Initial cities if needed
-      initNewRound();
-    }
-    
-    // State machine
-    if (state.name === 'init') {
-      initNewRound();
-    }
-    else if (state.name === 'drawing') {
-      const drawSpeed = 0.8;
-      state.progress = Math.min(1, state.age * drawSpeed);
-      
-      // Draw partial tour
+    for (let g = 70; g < W + H; g += 70) { ctx.beginPath(); ctx.moveTo(g, 0); ctx.lineTo(g, H); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, g); ctx.lineTo(W, g); ctx.stroke(); }
+    if (!cities.length) initRound();
+
+    if (state.name === 'drawing') {
+      state.progress = Math.min(1, state.age * 0.8);
       if (bestTour.length > 1) {
-        const totalEdges = bestTour.length;
-        const edgesToDraw = Math.floor(state.progress * totalEdges);
-        
-        ctx.strokeStyle = GOLD + '0.45)';
-        ctx.lineWidth = 1.2;
-        ctx.lineJoin = 'round';
-        
-        for (let i = 0; i < edgesToDraw; i++) {
-          const a = cities[bestTour[i]];
-          const b = cities[bestTour[(i + 1) % bestTour.length]];
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-        
-        // Partial last edge
-        if (edgesToDraw < totalEdges && state.progress < 1) {
-          const frac = (state.progress * totalEdges) - edgesToDraw;
-          const a = cities[bestTour[edgesToDraw]];
-          const b = cities[bestTour[(edgesToDraw + 1) % bestTour.length]];
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(a.x + (b.x - a.x) * frac, a.y + (b.y - a.y) * frac);
-          ctx.stroke();
+        const edges = Math.floor(state.progress * bestTour.length);
+        ctx.strokeStyle = GOLD + '0.5)'; ctx.lineWidth = 1.2;
+        for (let i = 0; i < edges; i++) { const a = cities[bestTour[i]], b = cities[bestTour[(i + 1) % bestTour.length]]; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+        if (edges < bestTour.length && state.progress < 1) {
+          const f = (state.progress * bestTour.length) - edges;
+          const a = cities[bestTour[edges]], b = cities[bestTour[(edges + 1) % bestTour.length]];
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f); ctx.stroke();
         }
       }
-      
-      drawCities(cities, GOLD + '0.55)');
-      
-      if (state.progress >= 1) {
-        state = { name: 'optimizing', age: 0, lastImprovement: 0 };
-      }
-    }
-    else if (state.name === 'optimizing') {
-      // Draw current tour
-      if (bestTour.length > 1) {
-        ctx.strokeStyle = GOLD + '0.7)';
-        ctx.lineWidth = 1.5;
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
-        for (let i = 1; i < bestTour.length; i++) {
-          ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-      
-      drawCities(cities, CREAM + '0.85)');
-      
-      // Apply 2-opt steps periodically
-      if (state.age - state.lastImprovement > 0.15) {
+      cities.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = GOLD + '0.6)'; ctx.fill(); });
+      if (state.progress >= 1) state = { name: 'optimizing', age: 0, lastImp: 0 };
+    } else if (state.name === 'optimizing') {
+      ctx.strokeStyle = GOLD + '0.8)'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
+      for (let i = 1; i < bestTour.length; i++) ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
+      ctx.closePath(); ctx.stroke();
+      cities.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.r + 1, 0, Math.PI * 2); ctx.fillStyle = CREAM + '0.9)'; ctx.fill(); });
+      if (state.age - state.lastImp > 0.15) {
         const improved = twoOptStep(bestTour);
-        if (improved) {
-          bestTour = improved;
-          bestDist = tourLength(bestTour);
-          iterCount++;
-          state.lastImprovement = state.age;
-          
-          // Spawn particles at random city
-          const randomCity = cities[bestTour[Math.floor(Math.random() * bestTour.length)]];
-          for (let i = 0; i < 4; i++) {
-            spawnParticle(randomCity.x, randomCity.y);
-          }
-        }
+        if (improved) { bestTour = improved; state.lastImp = state.age; spawnParticle(cities[bestTour[0]].x, cities[bestTour[0]].y); }
       }
-      
-      // Move to showcase after optimization period
-      if (state.age > 5) {
-        state = { name: 'showcase', age: 0 };
-      }
-    }
-    else if (state.name === 'showcase') {
-      // Highlight the final tour with pulsing effect
+      if (state.age > 5) state = { name: 'showcase', age: 0 };
+    } else if (state.name === 'showcase') {
       const pulse = 0.6 + 0.3 * Math.sin(state.age * 4);
-      
-      if (bestTour.length > 1) {
-        ctx.strokeStyle = GOLD + pulse + ')';
-        ctx.lineWidth = 2.2;
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
-        for (let i = 1; i < bestTour.length; i++) {
-          ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-      
-      // Glowing cities
-      cities.forEach(city => {
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = GOLD + '0.8)';
-        ctx.beginPath();
-        ctx.arc(city.x, city.y, city.r + 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = CREAM + '0.95)';
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      });
-      
-      if (state.age > 2.5) {
-        state = { name: 'reset', age: 0 };
-      }
-    }
-    else if (state.name === 'reset') {
-      // Fade out
+      ctx.strokeStyle = GOLD + pulse + ')'; ctx.lineWidth = 2.2;
+      ctx.beginPath(); ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
+      for (let i = 1; i < bestTour.length; i++) ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
+      ctx.closePath(); ctx.stroke();
+      cities.forEach(c => { ctx.shadowBlur = 10; ctx.shadowColor = GOLD + '0.8)'; ctx.beginPath(); ctx.arc(c.x, c.y, c.r + 1.5, 0, Math.PI * 2); ctx.fillStyle = CREAM + '0.95)'; ctx.fill(); ctx.shadowBlur = 0; });
+      if (state.age > 2.5) state = { name: 'reset', age: 0 };
+    } else if (state.name === 'reset') {
       const fade = Math.max(0, 1 - state.age * 1.8);
-      
-      if (bestTour.length > 1 && fade > 0) {
-        ctx.strokeStyle = GOLD + (fade * 0.6) + ')';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
-        for (let i = 1; i < bestTour.length; i++) {
-          ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-      
-      drawCities(cities, CREAM + fade + ')');
-      
-      if (fade <= 0.05) {
-        initNewRound();
-      }
+      ctx.strokeStyle = GOLD + (fade * 0.7) + ')'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
+      for (let i = 1; i < bestTour.length; i++) ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
+      ctx.closePath(); ctx.stroke();
+      cities.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = CREAM + fade + ')'; ctx.fill(); });
+      if (fade <= 0.05) initRound();
     }
-    
-    // Draw particles
     particles = particles.filter(p => p.life > 0);
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.08;
-      p.life -= dt * 1.8;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-      ctx.fillStyle = GOLD + (p.life * 0.8) + ')';
-      ctx.fill();
-    });
-    
+    particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life -= dt * 1.8; ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fillStyle = GOLD + (p.life * 0.8) + ')'; ctx.fill(); });
     requestAnimationFrame(animate);
   }
-  
-  function drawCities(c, color) {
-    c.forEach(city => {
-      ctx.beginPath();
-      ctx.arc(city.x, city.y, city.r, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-      ctx.strokeStyle = GOLD + '0.4)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    });
-  }
-  
-  initNewRound();
-  requestAnimationFrame(animate);
+  initRound(); requestAnimationFrame(animate);
 })();
 
-
-// ═══════════════════════════════════════════
-//  MINI CANVAS (Definition Section)
-// ═══════════════════════════════════════════
+// ─── MINI CANVAS ───
 (function() {
   const canvas = document.getElementById('mini-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let W, H;
-  
-  const pts = [
-    [0.2, 0.15], [0.75, 0.2], [0.88, 0.55], [0.65, 0.85],
-    [0.35, 0.82], [0.12, 0.6], [0.5, 0.5], [0.8, 0.35]
-  ];
-  
-  const optTour = [0, 1, 7, 2, 3, 4, 5, 6];
-  let t = 0;
-  
-  function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.width;
-    W = canvas.width;
-    H = canvas.height;
-  }
-  
+  let W, H, t = 0;
+  const pts = [[0.2,0.15],[0.75,0.2],[0.88,0.55],[0.65,0.85],[0.35,0.82],[0.12,0.6],[0.5,0.5],[0.8,0.35]];
+  const tour = [0,1,7,2,3,4,5,6];
+  function resize() { const rect = canvas.parentElement.getBoundingClientRect(); canvas.width = rect.width; canvas.height = rect.width; W = canvas.width; H = canvas.height; }
   function draw() {
     if (!W || !H) return;
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(0,0,0,0.65)';
-    ctx.fillRect(0, 0, W, H);
-    
+    ctx.fillStyle = 'rgba(14,13,11,0.7)'; ctx.fillRect(0, 0, W, H);
     const progress = (Math.sin(t * 0.35) * 0.5 + 0.5);
-    
-    // Draw edges
-    const totalEdges = optTour.length;
-    const edgesDraw = Math.floor(progress * totalEdges);
-    
-    ctx.strokeStyle = `rgba(201,168,76,${0.35 + progress * 0.4})`;
-    ctx.lineWidth = 1.8;
-    ctx.lineJoin = 'round';
-    
-    for (let i = 0; i < edgesDraw; i++) {
-      const a = pts[optTour[i]];
-      const b = pts[optTour[(i + 1) % optTour.length]];
-      ctx.beginPath();
-      ctx.moveTo(a[0] * W, a[1] * H);
-      ctx.lineTo(b[0] * W, b[1] * H);
-      ctx.stroke();
-    }
-    
-    // Partial edge
-    if (edgesDraw < totalEdges) {
-      const frac = (progress * totalEdges) - edgesDraw;
-      const a = pts[optTour[edgesDraw]];
-      const b = pts[optTour[(edgesDraw + 1) % optTour.length]];
-      ctx.beginPath();
-      ctx.moveTo(a[0] * W, a[1] * H);
-      ctx.lineTo(a[0] * W + (b[0] - a[0]) * W * frac, a[1] * H + (b[1] - a[1]) * H * frac);
-      ctx.stroke();
-    }
-    
-    // Draw cities
-    pts.forEach((p, i) => {
-      ctx.beginPath();
-      ctx.arc(p[0] * W, p[1] * H, 5, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(245,240,232,0.85)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(201,168,76,0.8)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      ctx.fillStyle = 'rgba(201,168,76,0.7)';
-      ctx.font = `${Math.max(10, Math.round(W * 0.035))}px 'DM Mono', monospace`;
-      ctx.fillText(String.fromCharCode(65 + i), p[0] * W + 6, p[1] * H - 8);
-    });
-    
-    ctx.fillStyle = 'rgba(201,168,76,0.35)';
-    ctx.font = `${Math.max(9, Math.round(W * 0.03))}px 'DM Mono', monospace`;
-    ctx.fillText('▶ ROUTE EXPLORATION', W * 0.05, H * 0.93);
-    
-    t += 0.016;
-    requestAnimationFrame(draw);
+    const edges = Math.floor(progress * tour.length);
+    ctx.strokeStyle = `rgba(201,168,76,${0.4 + progress * 0.5})`; ctx.lineWidth = 1.8;
+    for (let i = 0; i < edges; i++) { const a = pts[tour[i]], b = pts[tour[(i+1)%tour.length]]; ctx.beginPath(); ctx.moveTo(a[0]*W, a[1]*H); ctx.lineTo(b[0]*W, b[1]*H); ctx.stroke(); }
+    if (edges < tour.length) { const f = progress * tour.length - edges; const a = pts[tour[edges]], b = pts[tour[(edges+1)%tour.length]]; ctx.beginPath(); ctx.moveTo(a[0]*W, a[1]*H); ctx.lineTo(a[0]*W + (b[0]-a[0])*W*f, a[1]*H + (b[1]-a[1])*H*f); ctx.stroke(); }
+    pts.forEach((p,i) => { ctx.beginPath(); ctx.arc(p[0]*W, p[1]*H, 5, 0, Math.PI*2); ctx.fillStyle = '#E2C97E'; ctx.fill(); ctx.fillStyle = '#C9A84C'; ctx.font = `${Math.max(10, Math.round(W*0.035))}px 'DM Mono'`; ctx.fillText(String.fromCharCode(65+i), p[0]*W+6, p[1]*H-8); });
+    t += 0.016; requestAnimationFrame(draw);
   }
-  
-  const observer = new ResizeObserver(() => { resize(); });
-  if (canvas.parentElement) observer.observe(canvas.parentElement);
-  resize();
-  draw();
+  const obs = new ResizeObserver(() => resize()); if (canvas.parentElement) obs.observe(canvas.parentElement);
+  resize(); draw();
 })();
 
-
 // ═══════════════════════════════════════════
-//  INTERACTIVE DEMO CANVAS (Fixed)
+//  INTERACTIVE DEMO with WALKING SALESMAN & COMPARE
 // ═══════════════════════════════════════════
 (function() {
   const canvas = document.getElementById('demo-canvas');
-  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   
   let cities = [];
-  let tour = [];
+  let currentTour = [];      // current displayed tour (can be before or after)
+  let originalTour = [];     // original unsolved order (before solving)
+  let solvedTour = [];       // solved optimal tour
+  let isShowingSolved = false;
   let solving = false;
   let iterCount = 0;
   let solveTimeout = null;
   
-  function resize() {
+  // Walking salesman animation
+  let walking = false;
+  let walkStep = 0;
+  let walkProgress = 0;
+  let walkAnimFrame = null;
+  let salesmanPos = null;
+  
+  function resizeCanvas() {
     const rect = canvas.parentElement.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = 500;
     render();
   }
+  window.addEventListener('resize', resizeCanvas);
   
-  window.addEventListener('resize', resize);
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
   
-  canvas.addEventListener('click', e => {
-    if (solving) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
-    cities.push({ x: x, y: y });
-    tour = cities.map((_, i) => i);
-    iterCount = 0;
-    updateStats();
-    render();
-  });
-  
-  function dist(a, b) {
-    return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
-  }
-  
-  function tourLength() {
-    if (tour.length < 2) return 0;
+  function tourLength(t) {
+    if (!t || t.length < 2) return 0;
     let d = 0;
-    for (let i = 0; i < tour.length; i++) {
-      d += dist(cities[tour[i]], cities[tour[(i + 1) % tour.length]]);
-    }
+    for (let i = 0; i < t.length; i++) d += dist(cities[t[i]], cities[t[(i+1)%t.length]]);
     return d;
   }
   
   function updateStats() {
     document.getElementById('stat-cities').textContent = cities.length;
-    const len = tourLength();
-    document.getElementById('stat-dist').textContent = tour.length > 1 ? Math.round(len) : '—';
+    const len = tourLength(currentTour);
+    document.getElementById('stat-dist').textContent = currentTour.length > 1 ? Math.round(len) : '—';
     document.getElementById('stat-iter').textContent = iterCount;
   }
   
   function render() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
-    
-    // Background
-    ctx.fillStyle = 'rgba(10,10,8,0.85)';
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(14,13,11,0.85)'; ctx.fillRect(0, 0, W, H);
     
     // Grid
-    ctx.strokeStyle = 'rgba(201,168,76,0.05)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 60) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, H);
-      ctx.stroke();
-    }
-    for (let y = 0; y < H; y += 60) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(W, y);
-      ctx.stroke();
-    }
+    ctx.strokeStyle = 'rgba(201,168,76,0.06)'; ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
     
     if (cities.length === 0) {
-      ctx.fillStyle = 'rgba(201,168,76,0.25)';
-      ctx.font = "14px 'DM Mono', monospace";
-      ctx.textAlign = 'center';
-      ctx.fillText('⤹ CLICK TO ADD CITIES ⤸', W / 2, H / 2);
+      ctx.fillStyle = 'rgba(201,168,76,0.35)'; ctx.font = "14px 'DM Mono'"; ctx.textAlign = 'center';
+      ctx.fillText('⤹ CLICK TO ADD CITIES ⤸', W/2, H/2);
       ctx.textAlign = 'left';
       return;
     }
     
     // Draw tour edges
-    if (tour.length > 1) {
-      ctx.strokeStyle = 'rgba(201,168,76,0.75)';
-      ctx.lineWidth = 1.8;
+    if (currentTour.length > 1) {
+      ctx.strokeStyle = isShowingSolved ? '#6BAE8C' : '#C9A84C';
+      ctx.lineWidth = 2;
       ctx.lineJoin = 'round';
       ctx.beginPath();
-      ctx.moveTo(cities[tour[0]].x, cities[tour[0]].y);
-      for (let i = 1; i < tour.length; i++) {
-        ctx.lineTo(cities[tour[i]].x, cities[tour[i]].y);
-      }
+      ctx.moveTo(cities[currentTour[0]].x, cities[currentTour[0]].y);
+      for (let i = 1; i < currentTour.length; i++) ctx.lineTo(cities[currentTour[i]].x, cities[currentTour[i]].y);
       ctx.closePath();
       ctx.stroke();
     }
     
-    // Draw cities with glow
+    // Draw cities
     cities.forEach((c, i) => {
-      // Outer glow
       const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, 14);
-      grad.addColorStop(0, 'rgba(201,168,76,0.3)');
-      grad.addColorStop(1, 'transparent');
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, 14, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-      
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(245,240,232,0.95)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(201,168,76,1)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      
-      ctx.fillStyle = 'rgba(201,168,76,0.9)';
-      ctx.font = "11px 'DM Mono', monospace";
-      ctx.fillText(i + 1, c.x + 8, c.y - 7);
+      grad.addColorStop(0, 'rgba(201,168,76,0.3)'); grad.addColorStop(1, 'transparent');
+      ctx.beginPath(); ctx.arc(c.x, c.y, 14, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(c.x, c.y, 6, 0, Math.PI*2); ctx.fillStyle = '#F5F0E8'; ctx.fill();
+      ctx.strokeStyle = '#C9A84C'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = '#C9A84C'; ctx.font = "11px 'DM Mono'"; ctx.fillText(i+1, c.x+8, c.y-7);
     });
+    
+    // Draw walking salesman
+    if (walking && salesmanPos) {
+      ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(201,168,76,0.8)';
+      ctx.beginPath(); ctx.arc(salesmanPos.x, salesmanPos.y, 12, 0, Math.PI*2);
+      ctx.fillStyle = '#E2C97E'; ctx.fill();
+      ctx.beginPath(); ctx.arc(salesmanPos.x, salesmanPos.y, 8, 0, Math.PI*2);
+      ctx.fillStyle = '#C9A84C'; ctx.fill();
+      ctx.fillStyle = '#0E0D0B'; ctx.font = "bold 14px 'DM Mono'"; ctx.textAlign = 'center'; ctx.fillText('👤', salesmanPos.x, salesmanPos.y+5);
+      ctx.textAlign = 'left';
+      ctx.shadowBlur = 0;
+    }
+    
+    // Show comparison badge
+    if (solvedTour.length > 0 && originalTour.length > 0) {
+      ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fillRect(10, 10, 180, 28);
+      ctx.fillStyle = isShowingSolved ? '#6BAE8C' : '#C9A84C';
+      ctx.font = "10px 'DM Mono'";
+      ctx.fillText(isShowingSolved ? '✓ AFTER (OPTIMIZED)' : '📋 BEFORE (UNSOLVED)', 18, 30);
+    }
   }
   
   function nearestNeighborDemo() {
-    if (cities.length < 2) return [];
+    if (cities.length < 2) return cities.map((_,i)=>i);
     const visited = new Array(cities.length).fill(false);
-    const t = [0];
-    visited[0] = true;
+    const t = [0]; visited[0] = true;
     while (t.length < cities.length) {
-      const cur = t[t.length - 1];
+      const cur = t[t.length-1];
       let best = -1, bestD = Infinity;
-      for (let i = 0; i < cities.length; i++) {
-        if (!visited[i] && dist(cities[cur], cities[i]) < bestD) {
-          bestD = dist(cities[cur], cities[i]);
-          best = i;
-        }
-      }
+      for (let i = 0; i < cities.length; i++) if (!visited[i] && dist(cities[cur], cities[i]) < bestD) { bestD = dist(cities[cur], cities[i]); best = i; }
       if (best === -1) break;
-      t.push(best);
-      visited[best] = true;
+      t.push(best); visited[best] = true;
     }
     return t;
   }
   
-  function twoOptStepDemo(currentTour) {
-    let bestImprovement = 0;
-    let bestI = -1, bestK = -1;
-    
-    for (let i = 0; i < currentTour.length - 2; i++) {
-      for (let k = i + 2; k < currentTour.length; k++) {
-        const before = dist(cities[currentTour[i]], cities[currentTour[i + 1]]) + 
-                       dist(cities[currentTour[k]], cities[currentTour[(k + 1) % currentTour.length]]);
-        const after = dist(cities[currentTour[i]], cities[currentTour[k]]) + 
-                      dist(cities[currentTour[i + 1]], cities[currentTour[(k + 1) % currentTour.length]]);
-        const improvement = before - after;
-        if (improvement > bestImprovement) {
-          bestImprovement = improvement;
-          bestI = i;
-          bestK = k;
-        }
+  function twoOptStepDemo(t) {
+    for (let i = 0; i < t.length - 2; i++) {
+      for (let k = i + 2; k < t.length; k++) {
+        const before = dist(cities[t[i]], cities[t[i+1]]) + dist(cities[t[k]], cities[t[(k+1)%t.length]]);
+        const after = dist(cities[t[i]], cities[t[k]]) + dist(cities[t[i+1]], cities[t[(k+1)%t.length]]);
+        if (after < before - 0.001) return [...t.slice(0, i+1), ...t.slice(i+1, k+1).reverse(), ...t.slice(k+1)];
       }
-    }
-    
-    if (bestImprovement > 0.001) {
-      const newTour = [...currentTour.slice(0, bestI + 1), 
-                       ...currentTour.slice(bestI + 1, bestK + 1).reverse(), 
-                       ...currentTour.slice(bestK + 1)];
-      return newTour;
     }
     return null;
   }
   
   function solveStep() {
     if (!solving) return;
-    
-    const improved = twoOptStepDemo(tour);
+    const improved = twoOptStepDemo(currentTour);
     if (improved) {
-      tour = improved;
+      currentTour = improved;
       iterCount++;
       updateStats();
       render();
-      solveTimeout = setTimeout(solveStep, 80);
+      solveTimeout = setTimeout(solveStep, 70);
     } else {
       solving = false;
-      document.getElementById('demo-status').textContent = 'OPTIMAL (LOCAL)';
+      solvedTour = [...currentTour];
+      isShowingSolved = true;
+      document.getElementById('demo-status').textContent = '✓ OPTIMIZED';
+      document.getElementById('demo-status').style.color = '#6BAE8C';
+      render();
+      setTimeout(() => { if (!solving) document.getElementById('demo-status').style.color = ''; }, 2000);
     }
   }
   
   function startSolving() {
     if (solving || cities.length < 3) return;
+    if (walking) stopWalking();
     solving = true;
     iterCount = 0;
-    document.getElementById('demo-status').textContent = 'SOLVING...';
+    document.getElementById('demo-status').textContent = '⟳ SOLVING...';
+    document.getElementById('demo-status').style.color = '#8A7EC9';
+    
+    // Save original unsolved order
+    originalTour = [...currentTour];
+    isShowingSolved = false;
     
     // Start with nearest neighbor
-    tour = nearestNeighborDemo();
+    currentTour = nearestNeighborDemo();
     render();
     updateStats();
-    
     solveTimeout = setTimeout(solveStep, 100);
   }
   
-  // Button handlers
-  document.getElementById('btn-add-random').addEventListener('click', () => {
-    if (solving) return;
-    const W = canvas.width, H = canvas.height;
-    const margin = 60;
-    const n = 4 + Math.floor(Math.random() * 6);
-    for (let i = 0; i < n; i++) {
-      cities.push({
-        x: margin + Math.random() * (W - margin * 2),
-        y: margin + Math.random() * (H - margin * 2)
-      });
+  function startWalking() {
+    if (solving) {
+      document.getElementById('demo-status').textContent = 'Wait for solver!';
+      return;
     }
-    tour = cities.map((_, i) => i);
+    if (currentTour.length < 2) return;
+    if (walking) stopWalking();
+    
+    walking = true;
+    walkStep = 0;
+    walkProgress = 0;
+    
+    function walkAnimation() {
+      if (!walking || currentTour.length < 2) return;
+      
+      const totalSegments = currentTour.length;
+      const segmentIndex = Math.floor(walkProgress);
+      const segmentT = walkProgress - segmentIndex;
+      
+      if (segmentIndex >= totalSegments) {
+        stopWalking();
+        return;
+      }
+      
+      const from = cities[currentTour[segmentIndex % currentTour.length]];
+      const to = cities[currentTour[(segmentIndex + 1) % currentTour.length]];
+      
+      salesmanPos = {
+        x: from.x + (to.x - from.x) * segmentT,
+        y: from.y + (to.y - from.y) * segmentT
+      };
+      
+      render();
+      
+      walkProgress += 0.008;
+      walkAnimFrame = requestAnimationFrame(walkAnimation);
+    }
+    
+    walkAnimation();
+    document.getElementById('demo-status').textContent = '🚶 WALKING...';
+    document.getElementById('demo-status').style.color = '#C9A84C';
+  }
+  
+  function stopWalking() {
+    walking = false;
+    if (walkAnimFrame) cancelAnimationFrame(walkAnimFrame);
+    salesmanPos = null;
+    render();
+    if (!solving) document.getElementById('demo-status').textContent = 'READY';
+    document.getElementById('demo-status').style.color = '';
+  }
+  
+  function toggleCompare() {
+    if (solving || walking) return;
+    if (originalTour.length === 0 || solvedTour.length === 0) {
+      document.getElementById('demo-status').textContent = 'Run solver first!';
+      setTimeout(() => { if (!solving) document.getElementById('demo-status').textContent = 'READY'; }, 1500);
+      return;
+    }
+    isShowingSolved = !isShowingSolved;
+    currentTour = isShowingSolved ? [...solvedTour] : [...originalTour];
+    render();
+    document.getElementById('demo-status').textContent = isShowingSolved ? 'SHOWING: OPTIMIZED' : 'SHOWING: ORIGINAL';
+    setTimeout(() => { if (!solving && !walking) document.getElementById('demo-status').textContent = 'READY'; }, 1500);
+  }
+  
+  // Event handlers
+  canvas.addEventListener('click', e => {
+    if (solving || walking) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    cities.push({ x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY });
+    currentTour = cities.map((_, i) => i);
+    originalTour = [...currentTour];
+    solvedTour = [];
+    isShowingSolved = false;
     iterCount = 0;
     updateStats();
     render();
   });
   
+  document.getElementById('btn-add-random').addEventListener('click', () => {
+    if (solving || walking) return;
+    const W = canvas.width, H = canvas.height;
+    const margin = 60;
+    const n = 4 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < n; i++) cities.push({ x: margin + Math.random() * (W - margin * 2), y: margin + Math.random() * (H - margin * 2) });
+    currentTour = cities.map((_, i) => i);
+    originalTour = [...currentTour];
+    solvedTour = [];
+    isShowingSolved = false;
+    iterCount = 0;
+    updateStats();
+    render();
+    document.getElementById('demo-status').textContent = 'READY';
+  });
+  
   document.getElementById('btn-clear').addEventListener('click', () => {
-    if (solving) {
-      solving = false;
-      if (solveTimeout) clearTimeout(solveTimeout);
-    }
+    if (solving) { solving = false; if (solveTimeout) clearTimeout(solveTimeout); }
+    if (walking) stopWalking();
     cities = [];
-    tour = [];
+    currentTour = [];
+    originalTour = [];
+    solvedTour = [];
+    isShowingSolved = false;
     iterCount = 0;
     updateStats();
     render();
@@ -1487,28 +768,19 @@
   });
   
   document.getElementById('btn-solve').addEventListener('click', startSolving);
+  document.getElementById('btn-walk').addEventListener('click', startWalking);
+  document.getElementById('btn-compare').addEventListener('click', toggleCompare);
   
-  resize();
+  resizeCanvas();
   updateStats();
   render();
 })();
 
-
-// ═══════════════════════════════════════════
-//  REVEAL ON SCROLL
-// ═══════════════════════════════════════════
+// Scroll reveal
 (function() {
   const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  
-  reveals.forEach(el => observer.observe(el));
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
+  reveals.forEach(el => obs.observe(el));
 })();
 </script>
 </body>
