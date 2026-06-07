@@ -3,784 +3,1072 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TSP — The Traveling Salesman Problem | Interactive Solver</title>
+<title>TSP — Management Science Course Project</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-
 <style>
-  :root {
-    --cream: #F5F0E8;
-    --cream-light: #FAF7F2;
-    --cream-dark: #E8E0CC;
-    --black: #0E0D0B;
-    --black-soft: #1A1916;
-    --gold: #C9A84C;
-    --gold-light: #E2C97E;
-    --gold-dim: rgba(201, 168, 76, 0.3);
-    --gold-faint: rgba(201, 168, 76, 0.08);
-    --success: #6BAE8C;
-    --info: #8A7EC9;
-  }
+/* ─── TOKENS ─── */
+:root {
+  --cream: #F5F0E8;
+  --cream-light: #FAF7F2;
+  --cream-dark: #E8E0CC;
+  --black: #0E0D0B;
+  --black-soft: #1A1916;
+  --gold: #C9A84C;
+  --gold-light: #E2C97E;
+  --gold-dim: rgba(201,168,76,0.3);
+  --gold-faint: rgba(201,168,76,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--cream);font-family:'Crimson Pro',Georgia,serif;font-size:18px;line-height:1.7;overflow-x:hidden}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ─── BG CANVAS ─── */
+#tsp-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
-  html { scroll-behavior: smooth; }
+/* ─── CONTENT LAYER ─── */
+.content-layer{position:relative;z-index:1}
 
-  body {
-    background: var(--black);
-    color: var(--cream);
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-size: 18px;
-    line-height: 1.7;
-    overflow-x: hidden;
-  }
+/* ─── NAV BAR ─── */
+.course-nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.9rem 2.5rem;
+  background:rgba(14,13,11,0.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--gold-dim);
+}
+.nav-left{display:flex;flex-direction:column;gap:0.1rem}
+.nav-course{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.28em;color:var(--gold);text-transform:uppercase}
+.nav-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--cream)}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,240,232,0.4);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:var(--gold)}
 
-  #tsp-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
+/* ─── HERO ─── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 2rem 4rem;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 50%,rgba(14,13,11,0.5) 0%,rgba(14,13,11,0.88) 100%);z-index:0}
+.hero>*{position:relative;z-index:1}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:0.68rem;font-weight:500;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1.2rem;opacity:0;animation:fadeUp 1s 0.3s forwards}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,8vw,7.5rem);font-weight:900;line-height:0.95;letter-spacing:-0.02em;color:var(--cream);margin-bottom:0.5rem;opacity:0;animation:fadeUp 1s 0.5s forwards}
+.hero h1 em{font-style:italic;color:var(--gold-light)}
+.hero-subtitle{font-family:'Playfair Display',serif;font-size:clamp(1rem,2.5vw,1.5rem);font-weight:400;font-style:italic;color:rgba(245,240,232,0.55);margin-bottom:2.5rem;max-width:560px;opacity:0;animation:fadeUp 1s 0.7s forwards}
 
-  .content-layer {
-    position: relative;
-    z-index: 1;
-  }
+/* project card in hero */
+.hero-card{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5px;background:var(--gold-dim);max-width:700px;width:100%;opacity:0;animation:fadeUp 1s 0.9s forwards}
+.hero-card-item{background:rgba(14,13,11,0.88);padding:1.2rem 1.4rem;text-align:left}
+.hci-label{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.22em;color:rgba(201,168,76,0.6);text-transform:uppercase;margin-bottom:0.3rem}
+.hci-val{font-family:'Crimson Pro',serif;font-size:0.95rem;color:var(--cream);line-height:1.2}
 
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 4rem 2rem;
-    position: relative;
-  }
+.scroll-indicator{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.5rem;opacity:0;animation:fadeUp 1s 1.4s forwards}
+.scroll-indicator span{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.25em;color:rgba(245,240,232,0.3);text-transform:uppercase}
+.scroll-line{width:1px;height:3rem;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollPulse 2s ease-in-out infinite}
 
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(14,13,11,0.55) 0%, rgba(14,13,11,0.85) 100%);
-    z-index: 0;
-  }
+/* ─── SECTIONS ─── */
+section{padding:6rem 2rem;position:relative}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-backdrop{background:rgba(14,13,11,0.83);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:4.5rem 4rem}
+.section-tag{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1.1rem;display:flex;align-items:center;gap:1rem}
+.section-tag::after{content:'';flex:1;height:1px;max-width:60px;background:var(--gold-dim)}
+h2{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,3.4rem);font-weight:700;line-height:1.1;color:var(--cream);margin-bottom:1.8rem}
+h2 em{font-style:italic;color:var(--gold-light)}
+h3{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--cream);margin-bottom:0.7rem}
+p{color:rgba(245,240,232,0.75);margin-bottom:1.3rem;font-size:1.05rem;max-width:70ch}
+.gold-rule{width:80px;height:2px;background:linear-gradient(to right,var(--gold),transparent);margin:1.8rem 0}
 
-  .hero > * { position: relative; z-index: 1; }
+/* ─── ACTIVITY OVERVIEW ─── */
+.overview-grid{display:grid;grid-template-columns:2fr 1fr;gap:2px;margin-top:3rem;background:var(--gold-dim)}
+.overview-main{background:rgba(14,13,11,0.92);padding:3rem}
+.overview-sidebar{background:rgba(14,13,11,0.92);padding:2.5rem 2rem;display:flex;flex-direction:column;gap:1.5px}
+.sidebar-item{background:var(--gold-faint);padding:1.2rem 1.4rem}
+.si-label{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-bottom:0.4rem}
+.si-val{font-size:1rem;color:var(--cream);line-height:1.3}
+.objective-list{list-style:none;margin-top:1.5rem;display:flex;flex-direction:column;gap:0.8rem}
+.objective-list li{display:flex;align-items:flex-start;gap:1rem;font-size:1rem;color:rgba(245,240,232,0.75)}
+.obj-num{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);background:var(--gold-faint);border:1px solid var(--gold-dim);min-width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.15rem}
 
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.3s forwards;
-  }
+/* ─── PROBLEM STATEMENT ─── */
+.problem-split{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;margin-top:3rem;align-items:start}
+.problem-rules{display:flex;flex-direction:column;gap:1.2rem;margin-top:1.5rem}
+.rule-card{display:flex;gap:1.2rem;align-items:flex-start;border-left:2px solid var(--gold-dim);padding-left:1.2rem}
+.rule-card.active{border-left-color:var(--gold)}
+.rule-icon{font-size:1.5rem;margin-top:0.1rem;flex-shrink:0}
+.rule-card h4{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:0.2rem}
+.rule-card p{font-size:0.9rem;margin:0;max-width:none}
+.mini-viz-wrap{position:relative}
+#mini-canvas{width:100%;aspect-ratio:1;border:1px solid var(--gold-dim);display:block}
+.mini-caption{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:rgba(201,168,76,0.5);margin-top:0.8rem;text-align:center;text-transform:uppercase}
 
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(3rem, 8vw, 8rem);
-    font-weight: 900;
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-    color: var(--cream);
-    margin-bottom: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.5s forwards;
-  }
+/* complexity callout */
+.complexity-callout{background:var(--gold-faint);border-left:3px solid var(--gold);padding:1.4rem 1.8rem;margin-top:1.8rem}
+.complexity-callout .formula{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;color:var(--gold-light);display:block;margin-bottom:0.4rem}
+.complexity-callout p{font-family:'DM Mono',monospace;font-size:0.8rem;line-height:1.6;color:rgba(245,240,232,0.65);margin:0;max-width:none}
 
-  .hero h1 em {
-    font-style: italic;
-    color: var(--gold-light);
-  }
+/* ─── DIFFICULTY SECTION ─── */
+.difficulty-table{margin-top:3rem;background:var(--gold-dim);display:grid;gap:1.5px}
+.diff-header{background:rgba(14,13,11,0.95);display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:0;padding:1rem 2rem}
+.diff-header span{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase}
+.diff-row{background:rgba(14,13,11,0.88);display:grid;grid-template-columns:2fr 1fr 1fr 2fr;align-items:center;padding:1.2rem 2rem;transition:background 0.25s}
+.diff-row:hover{background:rgba(201,168,76,0.05)}
+.diff-n{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--cream)}
+.diff-routes{font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--gold)}
+.diff-feasible{font-family:'DM Mono',monospace;font-size:0.75rem;text-align:center}
+.feasible-yes{color:#6BAE8C} .feasible-hard{color:var(--gold)} .feasible-no{color:#C46B4A}
+.diff-bar-wrap{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+.diff-bar{height:100%;border-radius:3px;background:linear-gradient(to right,var(--gold),#C46B4A);transition:width 0.5s}
 
-  .hero-subtitle {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1rem, 2.5vw, 1.6rem);
-    font-weight: 400;
-    font-style: italic;
-    color: rgba(245,240,232,0.6);
-    margin-bottom: 3rem;
-    max-width: 600px;
-    opacity: 0;
-    animation: fadeUp 1s 0.7s forwards;
-  }
+.insight-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5px;margin-top:2rem;background:var(--gold-dim)}
+.insight-card{background:rgba(14,13,11,0.9);padding:2rem 1.8rem}
+.insight-card .ic-num{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:rgba(201,168,76,0.15);line-height:1;margin-bottom:0.5rem}
+.insight-card h4{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:0.4rem}
+.insight-card p{font-size:0.88rem;color:rgba(245,240,232,0.55);margin:0;max-width:none}
 
-  .hero-meta {
-    display: flex;
-    gap: 3rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 1s 0.9s forwards;
-  }
+/* ─── METHOD / DEMO ─── */
+.method-intro{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:2.5rem}
+.algo-steps{display:flex;flex-direction:column;gap:1.2rem;margin-top:0.5rem}
+.algo-step{display:flex;gap:1rem;align-items:flex-start}
+.step-dot{width:2rem;height:2rem;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.2rem}
+.step-dot span{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold)}
+.step-body h4{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:0.2rem}
+.step-body p{font-size:0.9rem;margin:0;max-width:none}
 
-  .meta-item { text-align: center; }
-  .meta-number { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700; color: var(--gold); line-height: 1; display: block; }
-  .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.4); text-transform: uppercase; }
+/* demo canvas area */
+.demo-wrap{margin-top:3rem;background:var(--gold-dim);display:grid;gap:1.5px}
+.demo-toolbar{background:rgba(14,13,11,0.95);padding:1.2rem 2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.demo-toolbar-title{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-right:auto}
+.btn{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.65rem 1.5rem;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:all 0.2s;border-radius:1px}
+.btn:hover{background:var(--gold);color:var(--black)}
+.btn-ghost{border-color:rgba(245,240,232,0.2);color:rgba(245,240,232,0.45)}
+.btn-ghost:hover{background:rgba(245,240,232,0.08);color:var(--cream)}
+#demo-canvas{width:100%;height:460px;background:rgba(0,0,0,0.5);display:block;cursor:crosshair}
+.demo-footer{background:rgba(14,13,11,0.95);padding:1rem 2rem;display:flex;align-items:center;gap:3rem;flex-wrap:wrap}
+.demo-stat{text-align:center}
+.ds-val{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gold);display:block;line-height:1}
+.ds-lbl{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:rgba(245,240,232,0.3);text-transform:uppercase}
+#demo-status{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);letter-spacing:0.12em;margin-left:auto}
+.demo-hint{font-family:'DM Mono',monospace;font-size:0.62rem;color:rgba(245,240,232,0.25);letter-spacing:0.08em;margin-top:0.8rem}
 
-  .scroll-indicator {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 1.4s forwards;
-  }
-  .scroll-indicator span { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(245,240,232,0.35); text-transform: uppercase; }
-  .scroll-line { width: 1px; height: 3rem; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+/* placeholder */
+.placeholder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5px;margin-top:2.5rem;background:var(--gold-dim)}
+.placeholder-card{background:rgba(14,13,11,0.9);padding:2.5rem 2rem;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1rem;border:2px dashed rgba(201,168,76,0.2)}
+.placeholder-card:hover{border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.04)}
+.ph-icon{font-size:2.5rem;opacity:0.4}
+.ph-label{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase}
+.ph-desc{font-size:0.88rem;color:rgba(245,240,232,0.35);max-width:24ch;margin:0}
 
-  section { padding: 7rem 2rem; position: relative; }
-  .section-inner { max-width: 1100px; margin: 0 auto; }
-  .section-backdrop { background: rgba(14,13,11,0.82); backdrop-filter: blur(12px); border-radius: 2px; padding: 5rem 4rem; }
-  .section-tag { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1rem; }
-  .section-tag::after { content: ''; flex: 1; height: 1px; max-width: 60px; background: var(--gold-dim); }
-  h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 700; line-height: 1.1; color: var(--cream); margin-bottom: 2rem; }
-  h2 em { font-style: italic; color: var(--gold-light); }
-  h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--cream); margin-bottom: 0.8rem; }
-  p { color: rgba(245,240,232,0.75); margin-bottom: 1.4rem; font-size: 1.1rem; max-width: 70ch; }
-  .gold-rule { width: 80px; height: 2px; background: linear-gradient(to right, var(--gold), transparent); margin: 2rem 0; }
+/* ─── FINDINGS ─── */
+.findings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5px;margin-top:3rem;background:var(--gold-dim)}
+.finding-card{background:rgba(14,13,11,0.9);padding:2.5rem 2rem;position:relative;overflow:hidden;transition:background 0.3s}
+.finding-card:hover{background:rgba(201,168,76,0.06)}
+.fc-accent{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:rgba(201,168,76,0.1);line-height:1;position:absolute;top:0.5rem;right:1rem}
+.fc-tag{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:0.7rem}
+.finding-card h3{font-size:1.1rem;margin-bottom:0.5rem}
+.finding-card p{font-size:0.9rem;margin:0;max-width:none}
 
-  .tsp-definition { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
-  .definition-visual { position: relative; aspect-ratio: 1; max-width: 360px; }
-  #mini-canvas { width: 100%; height: 100%; border: 1px solid var(--gold-dim); border-radius: 2px; }
-  .complexity-callout { background: var(--gold-faint); border-left: 3px solid var(--gold); padding: 1.5rem 2rem; margin-top: 2rem; }
-  .complexity-callout p { font-family: 'DM Mono', monospace; font-size: 0.85rem; line-height: 1.6; color: rgba(245,240,232,0.7); margin: 0; }
-  .complexity-callout .formula { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: var(--gold-light); display: block; margin-bottom: 0.5rem; }
+/* ─── REFLECTION ─── */
+.reflection-body{display:grid;grid-template-columns:3fr 2fr;gap:3rem;margin-top:2.5rem;align-items:start}
+.reflection-text{font-family:'Crimson Pro',serif;font-size:1.15rem;font-style:italic;color:rgba(245,240,232,0.8);line-height:1.9}
+.reflection-text p{max-width:none;font-size:1.15rem;color:rgba(245,240,232,0.78)}
+.reflection-text p+p{margin-top:0}
+.learned-list{display:flex;flex-direction:column;gap:1.2rem}
+.learned-item{display:flex;gap:1rem;align-items:flex-start;padding:1.2rem;background:var(--gold-faint);border-left:2px solid var(--gold-dim)}
+.li-icon{font-size:1.2rem;flex-shrink:0;margin-top:0.1rem}
+.li-text h4{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--cream);margin-bottom:0.2rem}
+.li-text p{font-size:0.85rem;margin:0;max-width:none;color:rgba(245,240,232,0.55)}
 
-  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5px; margin-top: 3rem; background: var(--gold-dim); }
-  .step-card { background: rgba(14,13,11,0.9); padding: 2.5rem 2rem; position: relative; overflow: hidden; transition: background 0.3s; }
-  .step-card:hover { background: rgba(201,168,76,0.06); }
-  .step-number { font-family: 'Playfair Display', serif; font-size: 5rem; font-weight: 900; color: rgba(201,168,76,0.12); position: absolute; top: -0.5rem; right: 1rem; line-height: 1; pointer-events: none; }
+/* ─── COURSE CONNECTION ─── */
+.course-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5px;margin-top:3rem;background:var(--gold-dim)}
+.pillar{background:rgba(14,13,11,0.9);padding:2.5rem 2rem;text-align:center;transition:background 0.3s}
+.pillar:hover{background:rgba(201,168,76,0.07)}
+.pillar-icon{font-size:2.2rem;margin-bottom:1rem;display:block}
+.pillar h3{font-size:1.05rem;color:var(--gold-light);margin-bottom:0.5rem}
+.pillar p{font-size:0.85rem;color:rgba(245,240,232,0.5);margin:0;max-width:none}
 
-  .algo-list { display: grid; gap: 1.5px; margin-top: 3rem; background: var(--gold-dim); }
-  .algo-row { background: rgba(14,13,11,0.9); padding: 2.5rem 3rem; display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 2rem; align-items: center; transition: background 0.3s; }
-  .algo-row:hover { background: rgba(201,168,76,0.05); }
-  .algo-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--cream); }
-  .algo-desc { font-size: 0.95rem; color: rgba(245,240,232,0.6); margin: 0; max-width: none; }
-  .algo-badge { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; padding: 0.4rem 0.8rem; border: 1px solid; text-align: center; border-radius: 1px; }
-  .badge-exact { border-color: #C46B4A; color: #C46B4A; }
-  .badge-heuristic { border-color: var(--gold); color: var(--gold); }
-  .badge-optimal { border-color: var(--success); color: var(--success); }
-  .badge-meta { border-color: var(--info); color: var(--info); }
+/* ─── PORTFOLIO PANEL ─── */
+.portfolio-section{padding:4rem 2rem}
+.portfolio-inner{max-width:1100px;margin:0 auto}
+.portfolio-panel{background:rgba(14,13,11,0.9);border:1px solid var(--gold-dim);display:grid;grid-template-columns:1fr 3fr;gap:0}
+.pp-sidebar{background:rgba(201,168,76,0.06);padding:3rem 2rem;border-right:1px solid var(--gold-dim);display:flex;flex-direction:column;gap:0.5rem;justify-content:center}
+.pp-sidebar-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--gold-light);line-height:1.2;margin-bottom:0.5rem}
+.pp-sidebar-sub{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;color:rgba(245,240,232,0.3);text-transform:uppercase}
+.pp-meta{padding:3rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.pp-field{}
+.pp-field-label{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-bottom:0.3rem}
+.pp-field-val{font-size:1rem;color:var(--cream)}
+.pp-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.4rem}
+.tag{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;padding:0.3rem 0.7rem;border:1px solid var(--gold-dim);color:rgba(245,240,232,0.5);text-transform:uppercase}
 
-  .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5px; margin-top: 3rem; background: var(--gold-dim); }
-  .app-tile { background: rgba(14,13,11,0.9); padding: 3rem 2rem; text-align: center; transition: background 0.3s; cursor: default; }
-  .app-tile:hover { background: rgba(201,168,76,0.07); }
-  .app-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; filter: grayscale(0.2); }
-  .app-tile h3 { font-size: 1rem; margin-bottom: 0.6rem; color: var(--gold-light); }
-  .app-tile p { font-size: 0.85rem; color: rgba(245,240,232,0.5); max-width: none; margin: 0; }
+/* ─── FOOTER ─── */
+footer{padding:2.5rem 2rem;text-align:center;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);border-top:1px solid var(--gold-dim)}
+footer p{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.18em;color:rgba(245,240,232,0.2);max-width:none;text-align:center;margin:0}
+.footer-brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:rgba(201,168,76,0.3);display:block;margin-bottom:0.5rem;letter-spacing:0.1em}
 
-  .demo-section { padding: 7rem 2rem; }
-  .demo-inner { max-width: 1100px; margin: 0 auto; }
-  .demo-backdrop { background: rgba(14,13,11,0.88); backdrop-filter: blur(12px); padding: 4rem; border: 1px solid var(--gold-dim); }
-  .demo-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scrollPulse{0%,100%{opacity:0.3;transform:scaleY(0.8)}50%{opacity:1;transform:scaleY(1)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-  #demo-canvas {
-    width: 100%;
-    height: 500px;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(201,168,76,0.15);
-    display: block;
-    cursor: crosshair;
-    position: relative;
-  }
-
-  .demo-controls { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; align-items: center; }
-  .btn { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.8rem 1.8rem; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; transition: all 0.2s; border-radius: 1px; }
-  .btn:hover { background: var(--gold); color: var(--black); }
-  .btn-secondary { border-color: rgba(245,240,232,0.25); color: rgba(245,240,232,0.5); }
-  .btn-secondary:hover { background: rgba(245,240,232,0.1); color: var(--cream); }
-  .btn-success { border-color: var(--success); color: var(--success); }
-  .btn-success:hover { background: var(--success); color: var(--black); }
-  .btn-active { background: var(--gold); color: var(--black); }
-
-  .demo-stats { display: flex; gap: 3rem; margin-left: auto; flex-wrap: wrap; }
-  .stat-item { text-align: right; }
-  .stat-val { font-family: 'DM Mono', monospace; font-size: 1.3rem; color: var(--gold); display: block; line-height: 1; }
-  .stat-lbl { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.3); text-transform: uppercase; }
-
-  .demo-hint { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: rgba(245,240,232,0.3); letter-spacing: 0.1em; margin-top: 0.8rem; }
-  .compare-badge { font-family: 'DM Mono', monospace; font-size: 0.65rem; padding: 0.3rem 0.8rem; background: var(--gold-dim); border-radius: 20px; margin-left: 1rem; }
-
-  footer { padding: 3rem 2rem; text-align: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-top: 1px solid var(--gold-dim); }
-  footer p { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(245,240,232,0.2); max-width: none; text-align: center; margin: 0; }
-  footer .footer-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold-dim); margin-bottom: 0.5rem; display: block; letter-spacing: 0.1em; }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.8); } 50% { opacity: 1; transform: scaleY(1); } }
-  @keyframes walkPulse { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-3px); } }
-
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  @media (max-width: 768px) {
-    .tsp-definition { grid-template-columns: 1fr; }
-    .algo-row { grid-template-columns: 1fr; }
-    .section-backdrop { padding: 3rem 1.5rem; }
-    .demo-backdrop { padding: 2rem 1.5rem; }
-    .demo-stats { margin-left: 0; }
-    .demo-header { flex-direction: column; }
-  }
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  .course-nav{padding:0.8rem 1.2rem}.nav-links{display:none}
+  .hero-card{grid-template-columns:1fr 1fr}
+  .overview-grid,.problem-split,.method-intro,.reflection-body{grid-template-columns:1fr}
+  .diff-header,.diff-row{grid-template-columns:1fr 1fr;gap:0.5rem}
+  .section-backdrop{padding:3rem 1.5rem}
+  .portfolio-panel{grid-template-columns:1fr}.pp-sidebar{border-right:none;border-bottom:1px solid var(--gold-dim)}
+  .pp-meta{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
+<!-- FULLSCREEN BACKGROUND CANVAS -->
 <canvas id="tsp-canvas"></canvas>
 
 <div class="content-layer">
-  <section class="hero">
-    <div class="hero-eyebrow">Combinatorial Optimization · NP-Hard</div>
-    <h1>The Traveling<br><em>Salesman</em><br>Problem</h1>
-    <p class="hero-subtitle">A deceptively simple question that has challenged mathematicians, computer scientists, and logisticians for over a century.</p>
-    <div class="hero-meta">
-      <div class="meta-item"><span class="meta-number">NP-Hard</span><span class="meta-label">Complexity Class</span></div>
-      <div class="meta-item"><span class="meta-number">(n−1)!/2</span><span class="meta-label">Brute-Force Routes</span></div>
-      <div class="meta-item"><span class="meta-number">1930s</span><span class="meta-label">First Formalized</span></div>
-    </div>
-    <div class="scroll-indicator"><div class="scroll-line"></div><span>Scroll to explore</span></div>
-  </section>
 
-  <section>
-    <div class="section-inner">
-      <div class="section-backdrop reveal">
-        <div class="section-tag">01 — Definition</div>
-        <h2>What is the<br><em>Traveling Salesman?</em></h2>
-        <div class="gold-rule"></div>
-        <div class="tsp-definition">
-          <div>
-            <p>Imagine a salesman who must visit a set of cities — each city exactly once — and then return home. The goal is to find the <strong style="color:var(--gold-light)">shortest possible route</strong> that accomplishes this.</p>
-            <p>TSP belongs to the class of <strong style="color:var(--gold-light)">NP-hard</strong> problems — meaning no known algorithm can guarantee an optimal solution in polynomial time as the number of cities grows.</p>
-            <div class="complexity-callout"><span class="formula">Routes = (n − 1)! / 2</span><p>For n = 30, this exceeds the estimated number of atoms in the observable universe.</p></div>
+<!-- ─── COURSE NAV ─── -->
+<nav class="course-nav">
+  <div class="nav-left">
+    <span class="nav-course">Management Science · Course Project</span>
+    <span class="nav-title">Traveling Salesman Problem</span>
+  </div>
+  <div class="nav-links">
+    <a href="#activity">Activity</a>
+    <a href="#problem">Problem</a>
+    <a href="#difficulty">Complexity</a>
+    <a href="#method">Method</a>
+    <a href="#findings">Findings</a>
+    <a href="#reflection">Reflection</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-eyebrow">Management Science · Optimization Activity</div>
+  <h1>The Traveling<br><em>Salesman</em><br>Problem</h1>
+  <p class="hero-subtitle">A course project exploring route optimization, combinatorial complexity, and the practical limits of algorithmic decision-making.</p>
+
+  <div class="hero-card">
+    <div class="hero-card-item">
+      <div class="hci-label">Course</div>
+      <div class="hci-val">Management Science</div>
+    </div>
+    <div class="hero-card-item">
+      <div class="hci-label">Project Type</div>
+      <div class="hci-val">Optimization Activity</div>
+    </div>
+    <div class="hero-card-item">
+      <div class="hci-label">Topic</div>
+      <div class="hci-val">Traveling Salesman Problem</div>
+    </div>
+    <div class="hero-card-item">
+      <div class="hci-label">Focus</div>
+      <div class="hci-val">Route Optimization</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll to explore</span>
+  </div>
+</section>
+
+<!-- ─── ACTIVITY OVERVIEW ─── -->
+<section id="activity">
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">01 — Activity Overview</div>
+      <h2>About This<br><em>Project</em></h2>
+      <div class="gold-rule"></div>
+      <p>This project was completed as part of a <strong style="color:var(--gold-light)">Management Science</strong> course activity focused on optimization and decision-making under constraints. The objective was to investigate the Traveling Salesman Problem — a classic combinatorial optimization challenge — and understand why finding the shortest route becomes increasingly difficult as the number of locations grows.</p>
+
+      <div class="overview-grid">
+        <div class="overview-main">
+          <h3>Project Objectives</h3>
+          <p style="max-width:none">Through this activity, the goal was to understand and demonstrate each of the following outcomes:</p>
+          <ul class="objective-list">
+            <li><span class="obj-num">01</span><span>Define the Traveling Salesman Problem and explain what makes it computationally challenging as a routing problem.</span></li>
+            <li><span class="obj-num">02</span><span>Explore how the number of possible routes grows factorially with each additional city, making brute-force search impractical at scale.</span></li>
+            <li><span class="obj-num">03</span><span>Apply and compare optimization approaches — including nearest neighbor heuristics and 2-opt improvement — to find efficient solutions.</span></li>
+            <li><span class="obj-num">04</span><span>Connect TSP concepts to real-world Management Science applications in logistics, delivery routing, and resource allocation.</span></li>
+            <li><span class="obj-num">05</span><span>Reflect on how optimization algorithms support better decision-making in situations where evaluating every option is infeasible.</span></li>
+          </ul>
+        </div>
+        <div class="overview-sidebar">
+          <div class="sidebar-item">
+            <div class="si-label">Course</div>
+            <div class="si-val">Management Science</div>
           </div>
-          <div class="definition-visual"><canvas id="mini-canvas"></canvas></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-inner">
-      <div class="section-backdrop reveal">
-        <div class="section-tag">02 — Mechanics</div>
-        <h2>How Does<br><em>It Work?</em></h2>
-        <div class="gold-rule"></div>
-        <p>TSP can be modeled as a graph: cities are nodes, and routes between them are weighted edges. The objective is to find the minimum-weight Hamiltonian cycle.</p>
-        <div class="steps-grid">
-          <div class="step-card"><span class="step-number">1</span><h3>Define Cities</h3><p style="font-size:0.9rem;margin:0">Represent each location as a point in space with coordinates.</p></div>
-          <div class="step-card"><span class="step-number">2</span><h3>Build Distance Matrix</h3><p style="font-size:0.9rem;margin:0">Calculate the cost between every pair of cities.</p></div>
-          <div class="step-card"><span class="step-number">3</span><h3>Search for Tour</h3><p style="font-size:0.9rem;margin:0">Apply an algorithm to explore possible routes.</p></div>
-          <div class="step-card"><span class="step-number">4</span><h3>Evaluate & Improve</h3><p style="font-size:0.9rem;margin:0">Test modifications and keep improvements.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-inner">
-      <div class="section-backdrop reveal">
-        <div class="section-tag">03 — Solution Methods</div>
-        <h2>Approaches to<br><em>Solving TSP</em></h2>
-        <div class="gold-rule"></div>
-        <div class="algo-list">
-          <div class="algo-row"><div><div class="algo-name">Brute Force</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">O((n−1)!)</div></div><p class="algo-desc">Enumerate every permutation. Guaranteed optimal but impractical beyond 12 cities.</p><span class="algo-badge badge-exact">Exact</span></div>
-          <div class="algo-row"><div><div class="algo-name">Nearest Neighbor</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">O(n²)</div></div><p class="algo-desc">Greedy heuristic: always go to the closest unvisited city. Fast but ~20-25% longer.</p><span class="algo-badge badge-heuristic">Heuristic</span></div>
-          <div class="algo-row"><div><div class="algo-name">2-Opt</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">O(n²) per pass</div></div><p class="algo-desc">Local search: reverse segments if it reduces total length. Highly effective.</p><span class="algo-badge badge-heuristic">Local Search</span></div>
-          <div class="algo-row"><div><div class="algo-name">Genetic Algorithm</div><div style="font-family:'DM Mono';font-size:0.65rem;color:var(--gold);">Configurable</div></div><p class="algo-desc">Inspired by evolution: selection, crossover, mutation. Scales to thousands of cities.</p><span class="algo-badge badge-meta">Metaheuristic</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-inner">
-      <div class="section-backdrop reveal">
-        <div class="section-tag">04 — Real-World Impact</div>
-        <h2>Why Does<br><em>It Matter?</em></h2>
-        <div class="gold-rule"></div>
-        <div class="apps-grid">
-          <div class="app-tile"><span class="app-icon">📦</span><h3>Last-Mile Delivery</h3><p>UPS, FedEx optimize millions of routes daily</p></div>
-          <div class="app-tile"><span class="app-icon">🔬</span><h3>DNA Sequencing</h3><p>Ordering overlapping genome fragments</p></div>
-          <div class="app-tile"><span class="app-icon">🖨️</span><h3>PCB Drilling</h3><p>Minimizing drill-head travel time</p></div>
-          <div class="app-tile"><span class="app-icon">✈️</span><h3>Flight Scheduling</h3><p>Crew rotations and gate assignments</p></div>
-          <div class="app-tile"><span class="app-icon">🤖</span><h3>Robotics</h3><p>Warehouse and autonomous vehicle routing</p></div>
-          <div class="app-tile"><span class="app-icon">🌐</span><h3>Network Routing</h3><p>Data packet and infrastructure optimization</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="demo-section">
-    <div class="demo-inner">
-      <div class="demo-backdrop reveal">
-        <div class="demo-header">
-          <div>
-            <div class="section-tag">05 — Live Demonstration</div>
-            <h2 style="font-size:2.2rem;margin-bottom:0.5rem">Interactive<br><em>Solver</em></h2>
+          <div class="sidebar-item">
+            <div class="si-label">Activity Type</div>
+            <div class="si-val">Optimization Problem Investigation</div>
           </div>
-          <div class="demo-stats">
-            <div class="stat-item"><span class="stat-val" id="stat-cities">0</span><span class="stat-lbl">Cities</span></div>
-            <div class="stat-item"><span class="stat-val" id="stat-dist">—</span><span class="stat-lbl">Tour Length</span></div>
-            <div class="stat-item"><span class="stat-val" id="stat-iter">0</span><span class="stat-lbl">Iterations</span></div>
+          <div class="sidebar-item">
+            <div class="si-label">Problem Class</div>
+            <div class="si-val">NP-Hard Combinatorial Optimization</div>
+          </div>
+          <div class="sidebar-item">
+            <div class="si-label">Methods Applied</div>
+            <div class="si-val">Nearest Neighbor, 2-Opt Local Search</div>
+          </div>
+          <div class="sidebar-item">
+            <div class="si-label">Key Takeaway</div>
+            <div class="si-val">Small increases in problem size cause massive increases in complexity</div>
           </div>
         </div>
-
-        <canvas id="demo-canvas" width="800" height="500"></canvas>
-
-        <div class="demo-controls">
-          <button class="btn" id="btn-add-random">+ Add Random</button>
-          <button class="btn" id="btn-solve">▶ Run 2-Opt</button>
-          <button class="btn btn-secondary" id="btn-clear">✕ Clear</button>
-          <button class="btn btn-success" id="btn-walk">🚶 Walk Salesman</button>
-          <button class="btn" id="btn-compare">🔄 Compare (Before/After)</button>
-          <div style="margin-left:auto"><span id="demo-status">READY</span></div>
-        </div>
-        <p class="demo-hint">👆 Click to add cities → Run solver → Walk the salesman → Compare original vs optimized route</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer>
-    <span class="footer-title">TSP</span>
-    <p>THE TRAVELING SALESMAN PROBLEM · AN EDUCATIONAL VISUALIZATION<br>P ≠ NP (probably) · Abdurakhmon</p>
-  </footer>
-</div>
+<!-- ─── PROBLEM STATEMENT ─── -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">02 — Problem Statement</div>
+      <h2>Defining the<br><em>Problem</em></h2>
+      <div class="gold-rule"></div>
+
+      <div class="problem-split">
+        <div>
+          <p>The Traveling Salesman Problem poses a deceptively simple question: given a set of cities and the distances between them, what is the shortest route a traveler can take to visit every city exactly once and return to where they started?</p>
+          <p>Despite how straightforward it sounds, this problem belongs to a class of problems that have no known efficient general solution. It is formally classified as <strong style="color:var(--gold-light)">NP-hard</strong> — meaning that as the number of cities grows, the time needed to guarantee an optimal answer grows faster than any polynomial function.</p>
+
+          <div class="problem-rules">
+            <div class="rule-card active">
+              <span class="rule-icon">📍</span>
+              <div>
+                <h4>Visit Every City Exactly Once</h4>
+                <p>The traveler must pass through each location in the set — no skipping, no revisiting. Every node in the graph must appear in the tour exactly one time.</p>
+              </div>
+            </div>
+            <div class="rule-card active">
+              <span class="rule-icon">🔄</span>
+              <div>
+                <h4>Return to the Starting Point</h4>
+                <p>The route must form a complete loop — a closed Hamiltonian cycle — ending at the same city where it began, making it a circular rather than a one-way journey.</p>
+              </div>
+            </div>
+            <div class="rule-card active">
+              <span class="rule-icon">📏</span>
+              <div>
+                <h4>Minimize Total Distance</h4>
+                <p>Among all valid tours, the objective is to find the one with the smallest total travel distance (or cost), requiring comparison across a rapidly expanding set of possibilities.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="complexity-callout">
+            <span class="formula">Possible Tours = (n − 1)! ÷ 2</span>
+            <p>For n cities, the number of distinct tours grows factorially. With just 10 cities there are 181,440 routes. With 20 cities: over 60 quadrillion. No computer can exhaustively check large instances.</p>
+          </div>
+        </div>
+
+        <div class="mini-viz-wrap">
+          <canvas id="mini-canvas"></canvas>
+          <p class="mini-caption">Live animation — tour exploration across 8 nodes</p>
+          <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:1rem">
+            <div style="background:var(--gold-faint);border-left:2px solid var(--gold-dim);padding:1rem 1.2rem">
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:0.4rem">Graph Representation</div>
+              <p style="font-size:0.88rem;margin:0;max-width:none;color:rgba(245,240,232,0.6)">Cities are modeled as <strong style="color:var(--cream)">nodes</strong>. Paths between them are <strong style="color:var(--cream)">weighted edges</strong>. The goal is to find the minimum-weight Hamiltonian cycle through all nodes.</p>
+            </div>
+            <div style="background:var(--gold-faint);border-left:2px solid var(--gold-dim);padding:1rem 1.2rem">
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:0.4rem">Distance Matrix</div>
+              <p style="font-size:0.88rem;margin:0;max-width:none;color:rgba(245,240,232,0.6)">All pairwise distances are stored in an n×n matrix. The algorithm references this matrix when evaluating and comparing candidate routes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DIFFICULTY / COMPLEXITY ─── -->
+<section id="difficulty">
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">03 — Why It's Difficult</div>
+      <h2>The Scale of<br><em>Complexity</em></h2>
+      <div class="gold-rule"></div>
+      <p>A key insight from this activity is how rapidly the problem becomes intractable. The table below shows how the number of possible tours explodes with each additional city — quickly surpassing what any computer could evaluate in reasonable time using brute force alone.</p>
+
+      <div class="difficulty-table">
+        <div class="diff-header">
+          <span>Cities (n)</span>
+          <span>Possible Routes</span>
+          <span>Brute Force</span>
+          <span>Difficulty Scale</span>
+        </div>
+        <div class="diff-row"><div class="diff-n">4 cities</div><div class="diff-routes">3</div><div class="diff-feasible feasible-yes">✓ Trivial</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:2%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">6 cities</div><div class="diff-routes">60</div><div class="diff-feasible feasible-yes">✓ Easy</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:4%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">8 cities</div><div class="diff-routes">2,520</div><div class="diff-feasible feasible-yes">✓ Fast</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:8%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">10 cities</div><div class="diff-routes">181,440</div><div class="diff-feasible feasible-hard">~ Manageable</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:18%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">12 cities</div><div class="diff-routes">19,958,400</div><div class="diff-feasible feasible-hard">~ Slow</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:34%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">15 cities</div><div class="diff-routes">43,589,145,600</div><div class="diff-feasible feasible-no">✗ Hours</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:58%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">20 cities</div><div class="diff-routes">60,822,550,204,416,000</div><div class="diff-feasible feasible-no">✗ Impossible</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:88%"></div></div></div>
+        <div class="diff-row"><div class="diff-n">30 cities</div><div class="diff-routes">&gt; atoms in universe</div><div class="diff-feasible feasible-no">✗ Never</div><div class="diff-bar-wrap"><div class="diff-bar" style="width:100%"></div></div></div>
+      </div>
+
+      <div class="insight-cards">
+        <div class="insight-card">
+          <div class="ic-num">1</div>
+          <h4>Factorial Growth</h4>
+          <p>Each new city multiplies the number of possible routes by (n−1), causing exponential-like growth that outpaces any linear improvement in computing power.</p>
+        </div>
+        <div class="insight-card">
+          <div class="ic-num">2</div>
+          <h4>Heuristics Are Essential</h4>
+          <p>For real problems with dozens or hundreds of locations, we must accept approximate solutions — good enough routes found quickly — rather than provably optimal ones.</p>
+        </div>
+        <div class="insight-card">
+          <div class="ic-num">3</div>
+          <h4>P ≠ NP (Probably)</h4>
+          <p>It is widely believed (but not proven) that no polynomial-time algorithm exists for TSP. This makes it one of the great open questions in computer science.</p>
+        </div>
+        <div class="insight-card">
+          <div class="ic-num">4</div>
+          <h4>Local Search Works</h4>
+          <p>Methods like 2-opt — which swaps route segments to reduce distance — reliably find near-optimal solutions in practical time by improving iteratively rather than searching exhaustively.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── METHOD & DEMONSTRATION ─── -->
+<section id="method">
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">04 — Method &amp; Demonstration</div>
+      <h2>Approach &amp;<br><em>Solver</em></h2>
+      <div class="gold-rule"></div>
+
+      <div class="method-intro">
+        <div>
+          <p>For this activity, two methods were applied in sequence to find efficient tours: a <strong style="color:var(--gold-light)">Nearest Neighbor</strong> greedy construction heuristic to build an initial route, followed by <strong style="color:var(--gold-light)">2-Opt local search</strong> to iteratively improve it by eliminating crossing edges.</p>
+          <p>This combination reflects a practical Management Science approach: start with a fast, reasonable solution, then refine it systematically until no further improvements can be found within the chosen method's scope.</p>
+
+          <div class="algo-steps">
+            <div class="algo-step">
+              <div class="step-dot"><span>01</span></div>
+              <div class="step-body">
+                <h4>Represent Cities as Nodes</h4>
+                <p>Each location is placed on a coordinate plane. Distances between all pairs are computed and stored for reference during optimization.</p>
+              </div>
+            </div>
+            <div class="algo-step">
+              <div class="step-dot"><span>02</span></div>
+              <div class="step-body">
+                <h4>Build Initial Tour (Nearest Neighbor)</h4>
+                <p>Starting from city 1, always travel next to the closest unvisited city. Repeat until all cities are visited, then return to start. This gives a reasonable — though not optimal — starting route.</p>
+              </div>
+            </div>
+            <div class="algo-step">
+              <div class="step-dot"><span>03</span></div>
+              <div class="step-body">
+                <h4>Improve with 2-Opt Swaps</h4>
+                <p>Examine every pair of edges in the tour. If reversing the segment between them shortens the total distance, apply the swap. Repeat until no improvement is found.</p>
+              </div>
+            </div>
+            <div class="algo-step">
+              <div class="step-dot"><span>04</span></div>
+              <div class="step-body">
+                <h4>Compare Before &amp; After</h4>
+                <p>Record the initial tour length and the optimized tour length. The percentage reduction demonstrates the value of iterative improvement over a greedy starting point.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="background:var(--gold-faint);border:1px solid var(--gold-dim);padding:2rem">
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem">Why This Approach?</div>
+            <p style="font-size:0.95rem;max-width:none;color:rgba(245,240,232,0.7)">Nearest Neighbor is a well-known construction heuristic that produces tours roughly 20–25% above optimal on average. It is fast and easy to understand — making it an ideal starting point for a course activity.</p>
+            <p style="font-size:0.95rem;max-width:none;color:rgba(245,240,232,0.7)">2-Opt then corrects the most obvious inefficiencies by eliminating route crossings, which are always suboptimal in Euclidean space. Together, they demonstrate the value of combining a fast heuristic with a structured improvement phase.</p>
+            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--gold-dim)">
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:0.8rem">Typical Improvement</div>
+              <div style="display:flex;gap:2rem">
+                <div><span style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold)">~20%</span><br><span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:rgba(245,240,232,0.35);text-transform:uppercase">Route reduction</span></div>
+                <div><span style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold)">O(n²)</span><br><span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:rgba(245,240,232,0.35);text-transform:uppercase">Per 2-opt pass</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE DEMO -->
+      <div class="demo-wrap" style="margin-top:3rem">
+        <div class="demo-toolbar">
+          <span class="demo-toolbar-title">▶ Interactive TSP Solver — 2-Opt Demonstration</span>
+          <button class="btn" onclick="demoAddRandom()">+ Add Cities</button>
+          <button class="btn" onclick="demoSolve()">▶ Run Solver</button>
+          <button class="btn btn-ghost" onclick="demoClear()">✕ Clear</button>
+        </div>
+        <canvas id="demo-canvas"></canvas>
+        <div class="demo-footer">
+          <div class="demo-stat"><span class="ds-val" id="stat-cities">0</span><span class="ds-lbl">Cities</span></div>
+          <div class="demo-stat"><span class="ds-val" id="stat-dist">—</span><span class="ds-lbl">Tour Length</span></div>
+          <div class="demo-stat"><span class="ds-val" id="stat-iter">0</span><span class="ds-lbl">Improvements</span></div>
+          <div class="demo-stat"><span class="ds-val" id="stat-improve">—</span><span class="ds-lbl">% Reduced</span></div>
+          <span id="demo-status">READY</span>
+        </div>
+      </div>
+      <p class="demo-hint">Click the canvas to place cities manually, or use "Add Cities" for random placement. Click "Run Solver" to watch Nearest Neighbor construction followed by 2-Opt improvement.</p>
+
+      <!-- PLACEHOLDERS -->
+      <div style="margin-top:3rem">
+        <div class="section-tag" style="margin-bottom:1.5rem">Activity Results — Replace Placeholders Below</div>
+        <div class="placeholder-grid">
+          <div class="placeholder-card">
+            <span class="ph-icon">📸</span>
+            <div class="ph-label">Screenshot — Initial Route</div>
+            <p class="ph-desc">Replace with a screenshot of the initial Nearest Neighbor tour from your activity</p>
+          </div>
+          <div class="placeholder-card">
+            <span class="ph-icon">📸</span>
+            <div class="ph-label">Screenshot — Optimized Route</div>
+            <p class="ph-desc">Replace with a screenshot of the final 2-Opt optimized tour from your activity</p>
+          </div>
+          <div class="placeholder-card">
+            <span class="ph-icon">📊</span>
+            <div class="ph-label">Results Table</div>
+            <p class="ph-desc">Replace with your before/after distance comparison table or spreadsheet output</p>
+          </div>
+          <div class="placeholder-card">
+            <span class="ph-icon">📄</span>
+            <div class="ph-label">Course Deliverable</div>
+            <p class="ph-desc">Replace with submitted worksheet, report, or graded assignment output</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FINDINGS ─── -->
+<section id="findings">
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">05 — Findings &amp; Observations</div>
+      <h2>What the<br><em>Results Showed</em></h2>
+      <div class="gold-rule"></div>
+      <p>Across the optimization activity, several clear patterns emerged. The following findings summarize the key observations from applying nearest neighbor construction and 2-opt improvement to the TSP.</p>
+
+      <div class="findings-grid">
+        <div class="finding-card">
+          <div class="fc-accent">F1</div>
+          <div class="fc-tag">Finding 01</div>
+          <h3>Optimization Reduces Distance Significantly</h3>
+          <p>The 2-opt improvement phase consistently produced shorter routes than the initial greedy construction — often reducing total tour length by 15–25%, demonstrating that the starting route is rarely the best achievable.</p>
+        </div>
+        <div class="finding-card">
+          <div class="fc-accent">F2</div>
+          <div class="fc-tag">Finding 02</div>
+          <h3>Greedy Is Fast but Leaves Gaps</h3>
+          <p>Nearest Neighbor produces a visually sensible route very quickly, but frequently creates suboptimal crossings that a simple improvement step can fix. The gap between greedy and optimal is real and measurable.</p>
+        </div>
+        <div class="finding-card">
+          <div class="fc-accent">F3</div>
+          <div class="fc-tag">Finding 03</div>
+          <h3>Small Problems Are Manageable</h3>
+          <p>With fewer than 12 cities, multiple solution approaches — including brute force — become feasible. The activity highlighted that problem size is the primary constraint on which methods are practical.</p>
+        </div>
+        <div class="finding-card">
+          <div class="fc-accent">F4</div>
+          <div class="fc-tag">Finding 04</div>
+          <h3>Complexity Grows Faster Than Expected</h3>
+          <p>The route count table made clear how non-intuitive factorial growth is. Adding 5 cities to a 10-city problem multiplied the possible routes by a factor of over 200,000 — a visceral demonstration of combinatorial explosion.</p>
+        </div>
+        <div class="finding-card">
+          <div class="fc-accent">F5</div>
+          <div class="fc-tag">Finding 05</div>
+          <h3>Route Efficiency Has Real Cost Implications</h3>
+          <p>Every unit of unnecessary distance in a route translates to real cost in logistics scenarios. Even a 10% improvement in route length, applied across hundreds of daily deliveries, compounds into substantial operational savings.</p>
+        </div>
+        <div class="finding-card">
+          <div class="fc-accent">F6</div>
+          <div class="fc-tag">Finding 06</div>
+          <h3>Local Optima Are Not Global Optima</h3>
+          <p>2-Opt terminates when no single swap improves the tour — but this locally optimal solution is not necessarily the globally shortest route. This demonstrates a key limitation of local search methods.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REFLECTION ─── -->
+<section id="reflection">
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">06 — What I Learned</div>
+      <h2>Student<br><em>Reflection</em></h2>
+      <div class="gold-rule"></div>
+
+      <div class="reflection-body">
+        <div class="reflection-text">
+          <p>Before this activity, optimization felt abstract — a concept from textbooks rather than something with tangible, practical stakes. Working through the Traveling Salesman Problem changed that. When I generated a set of cities and watched the solver run, the gap between a naively constructed route and the 2-opt improved one was immediately visible. That visual difference is real cost — real fuel, real time, real money.</p>
+          <p>What struck me most was the complexity table. I understood intellectually that factorial growth was fast, but seeing the number of possible routes for 20 cities written out — sixty quadrillion — made it concrete in a way that an equation alone never had. No amount of computing power solves that by checking every option. The only path forward is smarter, not faster.</p>
+          <p>This is what Management Science is really about: recognizing when a problem is too large to solve perfectly, and designing a method that finds a solution good enough to act on — reliably, quickly, and with understood trade-offs. TSP is a model for that broader mindset.</p>
+        </div>
+
+        <div class="learned-list">
+          <div class="learned-item">
+            <span class="li-icon">🧠</span>
+            <div class="li-text">
+              <h4>Combinatorial Optimization</h4>
+              <p>Problems with discrete choices and factorial solution spaces require fundamentally different approaches than continuous optimization.</p>
+            </div>
+          </div>
+          <div class="learned-item">
+            <span class="li-icon">🔍</span>
+            <div class="li-text">
+              <h4>Heuristics vs. Exact Methods</h4>
+              <p>Heuristics sacrifice guaranteed optimality for practical speed — a trade-off that is often not just acceptable but necessary in real applications.</p>
+            </div>
+          </div>
+          <div class="learned-item">
+            <span class="li-icon">📈</span>
+            <div class="li-text">
+              <h4>Complexity Scales Unexpectedly</h4>
+              <p>Factorial growth is deeply non-intuitive. Even small problem sizes rapidly reach the limits of what computation can guarantee.</p>
+            </div>
+          </div>
+          <div class="learned-item">
+            <span class="li-icon">🏭</span>
+            <div class="li-text">
+              <h4>Real-World Relevance</h4>
+              <p>TSP directly models logistics, delivery routing, manufacturing, and network planning — problems every organization with physical operations faces.</p>
+            </div>
+          </div>
+          <div class="learned-item">
+            <span class="li-icon">♻️</span>
+            <div class="li-text">
+              <h4>Iterative Improvement</h4>
+              <p>Starting with a feasible solution and refining it is often more effective than attempting to construct perfection from scratch.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COURSE CONNECTION ─── -->
+<section>
+  <div class="section-inner">
+    <div class="section-backdrop reveal">
+      <div class="section-tag">07 — Course Connection</div>
+      <h2>Management Science<br><em>Relevance</em></h2>
+      <div class="gold-rule"></div>
+      <p>The Traveling Salesman Problem is not just a mathematical curiosity — it is a direct embodiment of the core themes studied in Management Science. This project sits squarely within the discipline's concern for systematic, quantitative approaches to complex real-world decisions.</p>
+
+      <div class="course-pillars">
+        <div class="pillar">
+          <span class="pillar-icon">⚖️</span>
+          <h3>Decision Making</h3>
+          <p>TSP forces structured thinking about choices: which city to visit next, which route to evaluate, when to accept a solution. These are decision frameworks applicable far beyond routing.</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🎯</span>
+          <h3>Optimization</h3>
+          <p>The core objective — minimize total distance — mirrors every optimization problem in operations: minimize cost, maximize throughput, reduce waste. TSP is a prototype of the form.</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">💡</span>
+          <h3>Resource Efficiency</h3>
+          <p>Shorter routes mean lower fuel consumption, fewer labor hours, and reduced vehicle wear. Optimization directly translates to measurable resource savings at scale.</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🌐</span>
+          <h3>Real-World Application</h3>
+          <p>Last-mile delivery, airline routing, PCB manufacturing, warehouse robotics — TSP variants power decisions made billions of times daily across global industries.</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">📐</span>
+          <h3>Quantitative Methods</h3>
+          <p>TSP demonstrates how mathematical modeling — graph theory, distance matrices, algorithmic analysis — enables rigorous, reproducible analysis of complex operational problems.</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🔄</span>
+          <h3>Iterative Reasoning</h3>
+          <p>Management decisions rarely arrive at perfect solutions immediately. TSP illustrates how structured iteration — building, evaluating, improving — leads to better outcomes than intuition alone.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PORTFOLIO PANEL ─── -->
+<section class="portfolio-section">
+  <div class="portfolio-inner">
+    <div class="reveal">
+      <div class="section-tag" style="margin-bottom:1.5rem">08 — Project Metadata</div>
+      <div class="portfolio-panel">
+        <div class="pp-sidebar">
+          <div class="pp-sidebar-title">Portfolio<br>Project</div>
+          <div class="pp-sidebar-sub">Management Science · Coursework</div>
+        </div>
+        <div class="pp-meta">
+          <div class="pp-field">
+            <div class="pp-field-label">Course</div>
+            <div class="pp-field-val">Management Science</div>
+          </div>
+          <div class="pp-field">
+            <div class="pp-field-label">Project Type</div>
+            <div class="pp-field-val">Optimization Activity</div>
+          </div>
+          <div class="pp-field">
+            <div class="pp-field-label">Topic</div>
+            <div class="pp-field-val">Traveling Salesman Problem (TSP)</div>
+          </div>
+          <div class="pp-field">
+            <div class="pp-field-label">Problem Class</div>
+            <div class="pp-field-val">NP-Hard Combinatorial Optimization</div>
+          </div>
+          <div class="pp-field" style="grid-column:1/-1">
+            <div class="pp-field-label">Key Concepts</div>
+            <div class="pp-tags">
+              <span class="tag">Optimization</span>
+              <span class="tag">Routing</span>
+              <span class="tag">Combinatorial Problems</span>
+              <span class="tag">Heuristic Methods</span>
+              <span class="tag">Decision Science</span>
+              <span class="tag">Local Search</span>
+              <span class="tag">Graph Theory</span>
+              <span class="tag">Operations Research</span>
+            </div>
+          </div>
+          <div class="pp-field" style="grid-column:1/-1">
+            <div class="pp-field-label">Methods Applied</div>
+            <div class="pp-field-val" style="font-size:0.95rem;color:rgba(245,240,232,0.7)">Nearest Neighbor Heuristic (construction) · 2-Opt Local Search (improvement) · Brute Force comparison (small instances)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <span class="footer-brand">Management Science — TSP Activity</span>
+  <p>Traveling Salesman Problem · Route Optimization · Combinatorial Complexity · NP-Hard · First Studied 1930s</p>
+</footer>
+
+</div><!-- /content-layer -->
 
 <script>
-// ═══════════════════════════════════════════
-//  BACKGROUND CANVAS — TSP AUTO-SOLVER
-// ═══════════════════════════════════════════
-(function() {
-  const canvas = document.getElementById('tsp-canvas');
-  const ctx = canvas.getContext('2d');
-  const GOLD = 'rgba(201,168,76,';
-  const CREAM = 'rgba(245,240,232,';
-  let W, H, cities = [], bestTour = [], state = { name: 'init', age: 0 };
-  let particles = [];
+/* ═══════════════════════════════════
+   BACKGROUND CANVAS — AUTO TSP SOLVER
+═══════════════════════════════════ */
+(function(){
+  const cv = document.getElementById('tsp-canvas');
+  const cx = cv.getContext('2d');
+  let W,H,cities=[],bestTour=[],bestDist=Infinity,particles=[],t=0;
+  let state={name:'idle',age:0},drawProgress=0;
 
-  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-  window.addEventListener('resize', resize); resize();
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+  addEventListener('resize',resize); resize();
 
-  function randomCities(n) {
-    const margin = Math.min(W, H) * 0.08;
-    return Array.from({ length: n }, () => ({ x: margin + Math.random() * (W - margin * 2), y: margin + Math.random() * (H - margin * 2), r: 2.5 + Math.random() * 1.5 }));
+  function rnd(a,b){return a+Math.random()*(b-a)}
+  function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+
+  function randomCities(n){
+    const m=Math.min(W,H)*0.07,arr=[];
+    for(let i=0;i<n;i++) arr.push({x:rnd(m,W-m),y:rnd(m,H-m),r:rnd(2,3.5)});
+    return arr;
   }
-  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
-  function tourLength(t) { let d = 0; for (let i = 0; i < t.length; i++) d += dist(cities[t[i]], cities[t[(i + 1) % t.length]]); return d; }
-  function nearestNeighbor() {
-    const visited = new Array(cities.length).fill(false);
-    const t = [0]; visited[0] = true;
-    while (t.length < cities.length) {
-      const cur = t[t.length - 1];
-      let best = -1, bestD = Infinity;
-      for (let i = 0; i < cities.length; i++) if (!visited[i] && dist(cities[cur], cities[i]) < bestD) { bestD = dist(cities[cur], cities[i]); best = i; }
-      if (best === -1) break;
-      t.push(best); visited[best] = true;
+
+  function tourLen(t,c){let d=0;for(let i=0;i<t.length;i++)d+=dist(c[t[i]],c[t[(i+1)%t.length]]);return d}
+
+  function nnTour(c){
+    const v=new Array(c.length).fill(false),t=[0];v[0]=true;
+    while(t.length<c.length){
+      const cur=t[t.length-1];let best=-1,bd=Infinity;
+      for(let i=0;i<c.length;i++){if(!v[i]){const d=dist(c[cur],c[i]);if(d<bd){bd=d;best=i}}}
+      t.push(best);v[best]=true;
     }
     return t;
   }
-  function twoOptStep(t) {
-    for (let i = 0; i < t.length - 2; i++) {
-      for (let k = i + 2; k < t.length; k++) {
-        const before = dist(cities[t[i]], cities[t[i + 1]]) + dist(cities[t[k]], cities[t[(k + 1) % t.length]]);
-        const after = dist(cities[t[i]], cities[t[k]]) + dist(cities[t[i + 1]], cities[t[(k + 1) % t.length]]);
-        if (after < before - 0.001) return [...t.slice(0, i + 1), ...t.slice(i + 1, k + 1).reverse(), ...t.slice(k + 1)];
+
+  function twoOptStep(t,c){
+    let bd=Infinity,bi=-1,bk=-1;
+    for(let i=0;i<t.length-1;i++){
+      for(let k=i+1;k<t.length;k++){
+        const d=dist(c[t[i]],c[t[k]])+dist(c[t[i+1]],c[t[(k+1)%t.length]])-dist(c[t[i]],c[t[i+1]])-dist(c[t[k]],c[t[(k+1)%t.length]]);
+        if(d<bd){bd=d;bi=i;bk=k}
       }
+    }
+    if(bd<-0.001){
+      return[...t.slice(0,bi+1),...t.slice(bi+1,bk+1).reverse(),...t.slice(bk+1)];
     }
     return null;
   }
-  function spawnParticle(x, y) { particles.push({ x: x + (Math.random() - 0.5) * 10, y: y + (Math.random() - 0.5) * 10, vx: (Math.random() - 0.5) * 2, vy: -1 - Math.random() * 2, life: 1, size: 2 + Math.random() * 3 }); }
-  function initRound() { cities = randomCities(7 + Math.floor(Math.random() * 9)); bestTour = nearestNeighbor(); state = { name: 'drawing', age: 0, progress: 0 }; }
 
-  let lastTime = 0;
-  function animate(ts) {
-    const dt = Math.min((ts - (lastTime || ts)) / 1000, 0.05);
-    lastTime = ts;
-    if (state.name !== 'init') state.age += dt;
-    ctx.clearRect(0, 0, W, H);
-    ctx.strokeStyle = 'rgba(201,168,76,0.02)';
-    for (let g = 70; g < W + H; g += 70) { ctx.beginPath(); ctx.moveTo(g, 0); ctx.lineTo(g, H); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, g); ctx.lineTo(W, g); ctx.stroke(); }
-    if (!cities.length) initRound();
+  function spawnParticle(x,y){particles.push({x,y,vx:rnd(-1.5,1.5),vy:-1-Math.random(),life:1,size:rnd(1.5,3)})}
 
-    if (state.name === 'drawing') {
-      state.progress = Math.min(1, state.age * 0.8);
-      if (bestTour.length > 1) {
-        const edges = Math.floor(state.progress * bestTour.length);
-        ctx.strokeStyle = GOLD + '0.5)'; ctx.lineWidth = 1.2;
-        for (let i = 0; i < edges; i++) { const a = cities[bestTour[i]], b = cities[bestTour[(i + 1) % bestTour.length]]; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
-        if (edges < bestTour.length && state.progress < 1) {
-          const f = (state.progress * bestTour.length) - edges;
-          const a = cities[bestTour[edges]], b = cities[bestTour[(edges + 1) % bestTour.length]];
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f); ctx.stroke();
-        }
+  function initRound(){
+    const n=8+Math.floor(Math.random()*10);
+    cities=randomCities(n);
+    bestTour=nnTour(cities);
+    bestDist=tourLen(bestTour,cities);
+    drawProgress=0;
+    state={name:'draw_nn',age:0};
+  }
+
+  let last=0;
+  function loop(ts){
+    const dt=Math.min((ts-last)/1000,0.05);last=ts;state.age+=dt;
+    cx.clearRect(0,0,W,H);
+
+    // grid
+    cx.strokeStyle='rgba(201,168,76,0.02)';cx.lineWidth=1;
+    const gs=80;
+    for(let x=0;x<W;x+=gs){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke()}
+    for(let y=0;y<H;y+=gs){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke()}
+
+    if(state.name==='idle') initRound();
+
+    if(state.name==='draw_nn'){
+      drawProgress=Math.min(1,state.age*0.5);
+      drawPartial(bestTour,cities,drawProgress,'rgba(201,168,76,0.3)',1.2);
+      drawDots(cities,'rgba(245,240,232,0.5)');
+      if(drawProgress>=1) state={name:'improving',age:0,maxTime:7};
+    }
+
+    if(state.name==='improving'){
+      drawFull(bestTour,cities,'rgba(201,168,76,0.12)',0.8);
+      if(state.age%0.3<dt*2&&state.age<state.maxTime){
+        const imp=twoOptStep(bestTour,cities);
+        if(imp){bestTour=imp;bestDist=tourLen(bestTour,cities);const ci=cities[bestTour[Math.floor(Math.random()*bestTour.length)]];for(let i=0;i<3;i++)spawnParticle(ci.x,ci.y)}
       }
-      cities.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = GOLD + '0.6)'; ctx.fill(); });
-      if (state.progress >= 1) state = { name: 'optimizing', age: 0, lastImp: 0 };
-    } else if (state.name === 'optimizing') {
-      ctx.strokeStyle = GOLD + '0.8)'; ctx.lineWidth = 1.6;
-      ctx.beginPath(); ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
-      for (let i = 1; i < bestTour.length; i++) ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
-      ctx.closePath(); ctx.stroke();
-      cities.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.r + 1, 0, Math.PI * 2); ctx.fillStyle = CREAM + '0.9)'; ctx.fill(); });
-      if (state.age - state.lastImp > 0.15) {
-        const improved = twoOptStep(bestTour);
-        if (improved) { bestTour = improved; state.lastImp = state.age; spawnParticle(cities[bestTour[0]].x, cities[bestTour[0]].y); }
-      }
-      if (state.age > 5) state = { name: 'showcase', age: 0 };
-    } else if (state.name === 'showcase') {
-      const pulse = 0.6 + 0.3 * Math.sin(state.age * 4);
-      ctx.strokeStyle = GOLD + pulse + ')'; ctx.lineWidth = 2.2;
-      ctx.beginPath(); ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
-      for (let i = 1; i < bestTour.length; i++) ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
-      ctx.closePath(); ctx.stroke();
-      cities.forEach(c => { ctx.shadowBlur = 10; ctx.shadowColor = GOLD + '0.8)'; ctx.beginPath(); ctx.arc(c.x, c.y, c.r + 1.5, 0, Math.PI * 2); ctx.fillStyle = CREAM + '0.95)'; ctx.fill(); ctx.shadowBlur = 0; });
-      if (state.age > 2.5) state = { name: 'reset', age: 0 };
-    } else if (state.name === 'reset') {
-      const fade = Math.max(0, 1 - state.age * 1.8);
-      ctx.strokeStyle = GOLD + (fade * 0.7) + ')'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(cities[bestTour[0]].x, cities[bestTour[0]].y);
-      for (let i = 1; i < bestTour.length; i++) ctx.lineTo(cities[bestTour[i]].x, cities[bestTour[i]].y);
-      ctx.closePath(); ctx.stroke();
-      cities.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = CREAM + fade + ')'; ctx.fill(); });
-      if (fade <= 0.05) initRound();
+      drawFull(bestTour,cities,'rgba(201,168,76,0.72)',1.6);
+      drawDots(cities,'rgba(245,240,232,0.8)');
+      if(state.age>state.maxTime) state={name:'showcase',age:0};
     }
-    particles = particles.filter(p => p.life > 0);
-    particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life -= dt * 1.8; ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fillStyle = GOLD + (p.life * 0.8) + ')'; ctx.fill(); });
-    requestAnimationFrame(animate);
-  }
-  initRound(); requestAnimationFrame(animate);
-})();
 
-// ─── MINI CANVAS ───
-(function() {
-  const canvas = document.getElementById('mini-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, t = 0;
-  const pts = [[0.2,0.15],[0.75,0.2],[0.88,0.55],[0.65,0.85],[0.35,0.82],[0.12,0.6],[0.5,0.5],[0.8,0.35]];
-  const tour = [0,1,7,2,3,4,5,6];
-  function resize() { const rect = canvas.parentElement.getBoundingClientRect(); canvas.width = rect.width; canvas.height = rect.width; W = canvas.width; H = canvas.height; }
-  function draw() {
-    if (!W || !H) return;
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(14,13,11,0.7)'; ctx.fillRect(0, 0, W, H);
-    const progress = (Math.sin(t * 0.35) * 0.5 + 0.5);
-    const edges = Math.floor(progress * tour.length);
-    ctx.strokeStyle = `rgba(201,168,76,${0.4 + progress * 0.5})`; ctx.lineWidth = 1.8;
-    for (let i = 0; i < edges; i++) { const a = pts[tour[i]], b = pts[tour[(i+1)%tour.length]]; ctx.beginPath(); ctx.moveTo(a[0]*W, a[1]*H); ctx.lineTo(b[0]*W, b[1]*H); ctx.stroke(); }
-    if (edges < tour.length) { const f = progress * tour.length - edges; const a = pts[tour[edges]], b = pts[tour[(edges+1)%tour.length]]; ctx.beginPath(); ctx.moveTo(a[0]*W, a[1]*H); ctx.lineTo(a[0]*W + (b[0]-a[0])*W*f, a[1]*H + (b[1]-a[1])*H*f); ctx.stroke(); }
-    pts.forEach((p,i) => { ctx.beginPath(); ctx.arc(p[0]*W, p[1]*H, 5, 0, Math.PI*2); ctx.fillStyle = '#E2C97E'; ctx.fill(); ctx.fillStyle = '#C9A84C'; ctx.font = `${Math.max(10, Math.round(W*0.035))}px 'DM Mono'`; ctx.fillText(String.fromCharCode(65+i), p[0]*W+6, p[1]*H-8); });
-    t += 0.016; requestAnimationFrame(draw);
-  }
-  const obs = new ResizeObserver(() => resize()); if (canvas.parentElement) obs.observe(canvas.parentElement);
-  resize(); draw();
-})();
+    if(state.name==='showcase'){
+      const p=0.6+0.28*Math.sin(state.age*3);
+      drawFull(bestTour,cities,`rgba(201,168,76,${p})`,2.2);
+      drawDots(cities,'rgba(245,240,232,1)',true);
+      if(state.age>3.5) state={name:'fadeout',age:0,snap:{tour:[...bestTour],cities:[...cities]}};
+    }
 
-// ═══════════════════════════════════════════
-//  INTERACTIVE DEMO with WALKING SALESMAN & COMPARE
-// ═══════════════════════════════════════════
-(function() {
-  const canvas = document.getElementById('demo-canvas');
-  const ctx = canvas.getContext('2d');
-  
-  let cities = [];
-  let currentTour = [];      // current displayed tour (can be before or after)
-  let originalTour = [];     // original unsolved order (before solving)
-  let solvedTour = [];       // solved optimal tour
-  let isShowingSolved = false;
-  let solving = false;
-  let iterCount = 0;
-  let solveTimeout = null;
-  
-  // Walking salesman animation
-  let walking = false;
-  let walkStep = 0;
-  let walkProgress = 0;
-  let walkAnimFrame = null;
-  let salesmanPos = null;
-  
-  function resizeCanvas() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = 500;
-    render();
-  }
-  window.addEventListener('resize', resizeCanvas);
-  
-  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
-  
-  function tourLength(t) {
-    if (!t || t.length < 2) return 0;
-    let d = 0;
-    for (let i = 0; i < t.length; i++) d += dist(cities[t[i]], cities[t[(i+1)%t.length]]);
-    return d;
-  }
-  
-  function updateStats() {
-    document.getElementById('stat-cities').textContent = cities.length;
-    const len = tourLength(currentTour);
-    document.getElementById('stat-dist').textContent = currentTour.length > 1 ? Math.round(len) : '—';
-    document.getElementById('stat-iter').textContent = iterCount;
-  }
-  
-  function render() {
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(14,13,11,0.85)'; ctx.fillRect(0, 0, W, H);
-    
-    // Grid
-    ctx.strokeStyle = 'rgba(201,168,76,0.06)'; ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-    for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-    
-    if (cities.length === 0) {
-      ctx.fillStyle = 'rgba(201,168,76,0.35)'; ctx.font = "14px 'DM Mono'"; ctx.textAlign = 'center';
-      ctx.fillText('⤹ CLICK TO ADD CITIES ⤸', W/2, H/2);
-      ctx.textAlign = 'left';
-      return;
+    if(state.name==='fadeout'){
+      const a=Math.max(0,1-state.age*1.4);
+      drawFull(state.snap.tour,state.snap.cities,`rgba(201,168,76,${a*0.65})`,1.5);
+      drawDots(state.snap.cities,`rgba(245,240,232,${a})`);
+      if(a<=0) state={name:'idle',age:0};
     }
-    
-    // Draw tour edges
-    if (currentTour.length > 1) {
-      ctx.strokeStyle = isShowingSolved ? '#6BAE8C' : '#C9A84C';
-      ctx.lineWidth = 2;
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.moveTo(cities[currentTour[0]].x, cities[currentTour[0]].y);
-      for (let i = 1; i < currentTour.length; i++) ctx.lineTo(cities[currentTour[i]].x, cities[currentTour[i]].y);
-      ctx.closePath();
-      ctx.stroke();
-    }
-    
-    // Draw cities
-    cities.forEach((c, i) => {
-      const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, 14);
-      grad.addColorStop(0, 'rgba(201,168,76,0.3)'); grad.addColorStop(1, 'transparent');
-      ctx.beginPath(); ctx.arc(c.x, c.y, 14, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-      ctx.beginPath(); ctx.arc(c.x, c.y, 6, 0, Math.PI*2); ctx.fillStyle = '#F5F0E8'; ctx.fill();
-      ctx.strokeStyle = '#C9A84C'; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.fillStyle = '#C9A84C'; ctx.font = "11px 'DM Mono'"; ctx.fillText(i+1, c.x+8, c.y-7);
+
+    // particles
+    particles=particles.filter(p=>p.life>0);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.045;p.life-=dt*1.6;
+      cx.beginPath();cx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+      cx.fillStyle=`rgba(201,168,76,${p.life*0.7})`;cx.fill();
     });
-    
-    // Draw walking salesman
-    if (walking && salesmanPos) {
-      ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(201,168,76,0.8)';
-      ctx.beginPath(); ctx.arc(salesmanPos.x, salesmanPos.y, 12, 0, Math.PI*2);
-      ctx.fillStyle = '#E2C97E'; ctx.fill();
-      ctx.beginPath(); ctx.arc(salesmanPos.x, salesmanPos.y, 8, 0, Math.PI*2);
-      ctx.fillStyle = '#C9A84C'; ctx.fill();
-      ctx.fillStyle = '#0E0D0B'; ctx.font = "bold 14px 'DM Mono'"; ctx.textAlign = 'center'; ctx.fillText('👤', salesmanPos.x, salesmanPos.y+5);
-      ctx.textAlign = 'left';
-      ctx.shadowBlur = 0;
+
+    requestAnimationFrame(loop);
+  }
+
+  function drawPartial(t,c,prog,col,lw){
+    const e=t.length,ed=Math.floor(prog*e);
+    cx.strokeStyle=col;cx.lineWidth=lw;cx.lineJoin='round';
+    for(let i=0;i<ed;i++){
+      const a=c[t[i]],b=c[t[(i+1)%e]];
+      cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();
     }
-    
-    // Show comparison badge
-    if (solvedTour.length > 0 && originalTour.length > 0) {
-      ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fillRect(10, 10, 180, 28);
-      ctx.fillStyle = isShowingSolved ? '#6BAE8C' : '#C9A84C';
-      ctx.font = "10px 'DM Mono'";
-      ctx.fillText(isShowingSolved ? '✓ AFTER (OPTIMIZED)' : '📋 BEFORE (UNSOLVED)', 18, 30);
+    if(ed<e){
+      const fr=prog*e-ed,a=c[t[ed]],b=c[t[(ed+1)%e]];
+      cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(a.x+(b.x-a.x)*fr,a.y+(b.y-a.y)*fr);cx.stroke();
     }
   }
-  
-  function nearestNeighborDemo() {
-    if (cities.length < 2) return cities.map((_,i)=>i);
-    const visited = new Array(cities.length).fill(false);
-    const t = [0]; visited[0] = true;
-    while (t.length < cities.length) {
-      const cur = t[t.length-1];
-      let best = -1, bestD = Infinity;
-      for (let i = 0; i < cities.length; i++) if (!visited[i] && dist(cities[cur], cities[i]) < bestD) { bestD = dist(cities[cur], cities[i]); best = i; }
-      if (best === -1) break;
-      t.push(best); visited[best] = true;
-    }
-    return t;
+
+  function drawFull(t,c,col,lw){
+    cx.strokeStyle=col;cx.lineWidth=lw;cx.lineJoin='round';
+    cx.beginPath();cx.moveTo(c[t[0]].x,c[t[0]].y);
+    for(let i=1;i<t.length;i++) cx.lineTo(c[t[i]].x,c[t[i]].y);
+    cx.closePath();cx.stroke();
   }
-  
-  function twoOptStepDemo(t) {
-    for (let i = 0; i < t.length - 2; i++) {
-      for (let k = i + 2; k < t.length; k++) {
-        const before = dist(cities[t[i]], cities[t[i+1]]) + dist(cities[t[k]], cities[t[(k+1)%t.length]]);
-        const after = dist(cities[t[i]], cities[t[k]]) + dist(cities[t[i+1]], cities[t[(k+1)%t.length]]);
-        if (after < before - 0.001) return [...t.slice(0, i+1), ...t.slice(i+1, k+1).reverse(), ...t.slice(k+1)];
-      }
-    }
-    return null;
+
+  function drawDots(c,col,glow){
+    c.forEach(city=>{
+      if(glow){cx.shadowColor='rgba(201,168,76,0.8)';cx.shadowBlur=8}
+      cx.beginPath();cx.arc(city.x,city.y,city.r+1,0,Math.PI*2);
+      cx.fillStyle=col;cx.fill();cx.shadowBlur=0;
+    });
   }
-  
-  function solveStep() {
-    if (!solving) return;
-    const improved = twoOptStepDemo(currentTour);
-    if (improved) {
-      currentTour = improved;
-      iterCount++;
-      updateStats();
-      render();
-      solveTimeout = setTimeout(solveStep, 70);
-    } else {
-      solving = false;
-      solvedTour = [...currentTour];
-      isShowingSolved = true;
-      document.getElementById('demo-status').textContent = '✓ OPTIMIZED';
-      document.getElementById('demo-status').style.color = '#6BAE8C';
-      render();
-      setTimeout(() => { if (!solving) document.getElementById('demo-status').style.color = ''; }, 2000);
-    }
-  }
-  
-  function startSolving() {
-    if (solving || cities.length < 3) return;
-    if (walking) stopWalking();
-    solving = true;
-    iterCount = 0;
-    document.getElementById('demo-status').textContent = '⟳ SOLVING...';
-    document.getElementById('demo-status').style.color = '#8A7EC9';
-    
-    // Save original unsolved order
-    originalTour = [...currentTour];
-    isShowingSolved = false;
-    
-    // Start with nearest neighbor
-    currentTour = nearestNeighborDemo();
-    render();
-    updateStats();
-    solveTimeout = setTimeout(solveStep, 100);
-  }
-  
-  function startWalking() {
-    if (solving) {
-      document.getElementById('demo-status').textContent = 'Wait for solver!';
-      return;
-    }
-    if (currentTour.length < 2) return;
-    if (walking) stopWalking();
-    
-    walking = true;
-    walkStep = 0;
-    walkProgress = 0;
-    
-    function walkAnimation() {
-      if (!walking || currentTour.length < 2) return;
-      
-      const totalSegments = currentTour.length;
-      const segmentIndex = Math.floor(walkProgress);
-      const segmentT = walkProgress - segmentIndex;
-      
-      if (segmentIndex >= totalSegments) {
-        stopWalking();
-        return;
-      }
-      
-      const from = cities[currentTour[segmentIndex % currentTour.length]];
-      const to = cities[currentTour[(segmentIndex + 1) % currentTour.length]];
-      
-      salesmanPos = {
-        x: from.x + (to.x - from.x) * segmentT,
-        y: from.y + (to.y - from.y) * segmentT
-      };
-      
-      render();
-      
-      walkProgress += 0.008;
-      walkAnimFrame = requestAnimationFrame(walkAnimation);
-    }
-    
-    walkAnimation();
-    document.getElementById('demo-status').textContent = '🚶 WALKING...';
-    document.getElementById('demo-status').style.color = '#C9A84C';
-  }
-  
-  function stopWalking() {
-    walking = false;
-    if (walkAnimFrame) cancelAnimationFrame(walkAnimFrame);
-    salesmanPos = null;
-    render();
-    if (!solving) document.getElementById('demo-status').textContent = 'READY';
-    document.getElementById('demo-status').style.color = '';
-  }
-  
-  function toggleCompare() {
-    if (solving || walking) return;
-    if (originalTour.length === 0 || solvedTour.length === 0) {
-      document.getElementById('demo-status').textContent = 'Run solver first!';
-      setTimeout(() => { if (!solving) document.getElementById('demo-status').textContent = 'READY'; }, 1500);
-      return;
-    }
-    isShowingSolved = !isShowingSolved;
-    currentTour = isShowingSolved ? [...solvedTour] : [...originalTour];
-    render();
-    document.getElementById('demo-status').textContent = isShowingSolved ? 'SHOWING: OPTIMIZED' : 'SHOWING: ORIGINAL';
-    setTimeout(() => { if (!solving && !walking) document.getElementById('demo-status').textContent = 'READY'; }, 1500);
-  }
-  
-  // Event handlers
-  canvas.addEventListener('click', e => {
-    if (solving || walking) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    cities.push({ x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY });
-    currentTour = cities.map((_, i) => i);
-    originalTour = [...currentTour];
-    solvedTour = [];
-    isShowingSolved = false;
-    iterCount = 0;
-    updateStats();
-    render();
-  });
-  
-  document.getElementById('btn-add-random').addEventListener('click', () => {
-    if (solving || walking) return;
-    const W = canvas.width, H = canvas.height;
-    const margin = 60;
-    const n = 4 + Math.floor(Math.random() * 6);
-    for (let i = 0; i < n; i++) cities.push({ x: margin + Math.random() * (W - margin * 2), y: margin + Math.random() * (H - margin * 2) });
-    currentTour = cities.map((_, i) => i);
-    originalTour = [...currentTour];
-    solvedTour = [];
-    isShowingSolved = false;
-    iterCount = 0;
-    updateStats();
-    render();
-    document.getElementById('demo-status').textContent = 'READY';
-  });
-  
-  document.getElementById('btn-clear').addEventListener('click', () => {
-    if (solving) { solving = false; if (solveTimeout) clearTimeout(solveTimeout); }
-    if (walking) stopWalking();
-    cities = [];
-    currentTour = [];
-    originalTour = [];
-    solvedTour = [];
-    isShowingSolved = false;
-    iterCount = 0;
-    updateStats();
-    render();
-    document.getElementById('demo-status').textContent = 'READY';
-  });
-  
-  document.getElementById('btn-solve').addEventListener('click', startSolving);
-  document.getElementById('btn-walk').addEventListener('click', startWalking);
-  document.getElementById('btn-compare').addEventListener('click', toggleCompare);
-  
-  resizeCanvas();
-  updateStats();
-  render();
+
+  initRound();requestAnimationFrame(loop);
 })();
 
-// Scroll reveal
-(function() {
-  const reveals = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
-  reveals.forEach(el => obs.observe(el));
+/* ═══════════════════════════════════
+   MINI CANVAS — Problem section
+═══════════════════════════════════ */
+(function(){
+  const cv=document.getElementById('mini-canvas');if(!cv)return;
+  const cx=cv.getContext('2d');let W,H,t=0;
+  const pts=[[0.2,0.15],[0.75,0.2],[0.88,0.55],[0.65,0.85],[0.35,0.82],[0.12,0.6],[0.5,0.5],[0.8,0.35]];
+  const tour=[0,1,7,2,3,4,5,6];
+
+  function resize(){const r=cv.parentElement.getBoundingClientRect();W=cv.width=r.width;H=cv.height=r.width}
+  new ResizeObserver(resize).observe(cv.parentElement);resize();
+
+  function draw(){
+    cx.clearRect(0,0,W,H);
+    cx.fillStyle='rgba(0,0,0,0.65)';cx.fillRect(0,0,W,H);
+    const prog=Math.sin(t*0.38)*0.5+0.5,fade=Math.max(0,Math.sin(t*0.38));
+    const e=tour.length,ed=Math.floor(prog*e);
+    cx.strokeStyle=`rgba(201,168,76,${0.28+fade*0.55})`;cx.lineWidth=1.8;cx.beginPath();
+    for(let i=0;i<ed;i++){
+      const a=pts[tour[i]],b=pts[tour[(i+1)%e]];
+      if(i===0) cx.moveTo(a[0]*W,a[1]*H);
+      cx.lineTo(b[0]*W,b[1]*H);
+    }
+    if(ed<e){const fr=prog*e-ed,a=pts[tour[ed]],b=pts[tour[(ed+1)%e]];cx.lineTo(a[0]*W+(b[0]-a[0])*W*fr,a[1]*H+(b[1]-a[1])*H*fr)}
+    cx.stroke();
+    pts.forEach((p,i)=>{
+      cx.beginPath();cx.arc(p[0]*W,p[1]*H,5,0,Math.PI*2);
+      cx.fillStyle='rgba(245,240,232,0.88)';cx.fill();
+      cx.strokeStyle='rgba(201,168,76,0.85)';cx.lineWidth=1.2;cx.stroke();
+      cx.fillStyle='rgba(201,168,76,0.75)';cx.font=`${Math.round(W*0.038)}px 'DM Mono',monospace`;
+      cx.fillText(String.fromCharCode(65+i),p[0]*W+8,p[1]*H-6);
+    });
+    cx.fillStyle='rgba(201,168,76,0.35)';cx.font=`${Math.round(W*0.036)}px 'DM Mono',monospace`;
+    cx.fillText('TOUR EXPLORATION',W*0.05,H*0.96);
+    t+=0.016;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════════════════════════════
+   INTERACTIVE DEMO CANVAS
+═══════════════════════════════════ */
+(function(){
+  const cv=document.getElementById('demo-canvas');if(!cv)return;
+  const cx=cv.getContext('2d');
+  let cities=[],tour=[],solving=false,iters=0,initDist=0;
+
+  function resize(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;render()}
+  addEventListener('resize',resize);resize();
+
+  cv.addEventListener('click',e=>{
+    if(solving)return;
+    const r=cv.getBoundingClientRect();
+    cities.push({x:e.clientX-r.left,y:e.clientY-r.top});
+    tour=cities.map((_,i)=>i);iters=0;initDist=0;
+    updateStats();render();
+  });
+
+  function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+  function tLen(){let d=0;for(let i=0;i<tour.length;i++)d+=dist(cities[tour[i]],cities[tour[(i+1)%tour.length]]);return d}
+
+  function updateStats(){
+    document.getElementById('stat-cities').textContent=cities.length;
+    const l=tour.length>1?Math.round(tLen()):null;
+    document.getElementById('stat-dist').textContent=l??'—';
+    document.getElementById('stat-iter').textContent=iters;
+    if(initDist>0&&l){
+      const pct=Math.round((1-l/initDist)*100);
+      document.getElementById('stat-improve').textContent=pct>0?pct+'%':'0%';
+    } else { document.getElementById('stat-improve').textContent='—'; }
+  }
+
+  function render(){
+    const W=cv.width,H=cv.height;
+    cx.clearRect(0,0,W,H);
+    cx.fillStyle='rgba(0,0,0,0.5)';cx.fillRect(0,0,W,H);
+    cx.strokeStyle='rgba(201,168,76,0.04)';cx.lineWidth=1;
+    for(let x=0;x<W;x+=60){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke()}
+    for(let y=0;y<H;y+=60){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke()}
+    if(cities.length===0){
+      cx.fillStyle='rgba(201,168,76,0.18)';cx.font="13px 'DM Mono',monospace";cx.textAlign='center';
+      cx.fillText('CLICK TO ADD CITIES — OR USE THE BUTTON ABOVE',W/2,H/2);cx.textAlign='left';return;
+    }
+    if(tour.length>1){
+      cx.strokeStyle='rgba(201,168,76,0.72)';cx.lineWidth=1.6;cx.lineJoin='round';
+      cx.beginPath();cx.moveTo(cities[tour[0]].x,cities[tour[0]].y);
+      for(let i=1;i<tour.length;i++) cx.lineTo(cities[tour[i]].x,cities[tour[i]].y);
+      cx.closePath();cx.stroke();
+    }
+    cities.forEach((c,i)=>{
+      const g=cx.createRadialGradient(c.x,c.y,0,c.x,c.y,14);
+      g.addColorStop(0,'rgba(201,168,76,0.25)');g.addColorStop(1,'transparent');
+      cx.beginPath();cx.arc(c.x,c.y,14,0,Math.PI*2);cx.fillStyle=g;cx.fill();
+      cx.beginPath();cx.arc(c.x,c.y,5,0,Math.PI*2);
+      cx.fillStyle='rgba(245,240,232,0.92)';cx.fill();
+      cx.strokeStyle='rgba(201,168,76,1)';cx.lineWidth=1.5;cx.stroke();
+      cx.fillStyle='rgba(201,168,76,0.82)';cx.font="11px 'DM Mono',monospace";
+      cx.fillText(i+1,c.x+9,c.y-7);
+    });
+  }
+
+  window.demoAddRandom=function(){
+    if(solving)return;
+    const W=cv.width,H=cv.height,m=60,n=4+Math.floor(Math.random()*6);
+    for(let i=0;i<n;i++) cities.push({x:m+Math.random()*(W-m*2),y:m+Math.random()*(H-m*2)});
+    tour=cities.map((_,i)=>i);iters=0;initDist=0;
+    updateStats();render();
+  };
+
+  window.demoClear=function(){
+    solving=false;cities=[];tour=[];iters=0;initDist=0;
+    updateStats();render();
+    document.getElementById('demo-status').textContent='READY';
+  };
+
+  window.demoSolve=function(){
+    if(solving||cities.length<3)return;
+    solving=true;iters=0;
+    document.getElementById('demo-status').textContent='BUILDING NN TOUR...';
+
+    // Nearest Neighbor
+    const vis=new Array(cities.length).fill(false);
+    tour=[0];vis[0]=true;
+    while(tour.length<cities.length){
+      const cur=tour[tour.length-1];let best=-1,bd=Infinity;
+      for(let i=0;i<cities.length;i++){if(!vis[i]&&dist(cities[cur],cities[i])<bd){bd=dist(cities[cur],cities[i]);best=i}}
+      tour.push(best);vis[best]=true;
+    }
+    initDist=tLen();
+    updateStats();render();
+
+    setTimeout(()=>{
+      document.getElementById('demo-status').textContent='RUNNING 2-OPT...';
+      function step(){
+        if(!solving)return;
+        let imp=false;
+        outer:for(let i=0;i<tour.length-1;i++){
+          for(let k=i+1;k<tour.length;k++){
+            const before=dist(cities[tour[i]],cities[tour[i+1]])+dist(cities[tour[k]],cities[tour[(k+1)%tour.length]]);
+            const after=dist(cities[tour[i]],cities[tour[k]])+dist(cities[tour[i+1]],cities[tour[(k+1)%tour.length]]);
+            if(after<before-0.001){
+              tour=[...tour.slice(0,i+1),...tour.slice(i+1,k+1).reverse(),...tour.slice(k+1)];
+              iters++;imp=true;break outer;
+            }
+          }
+        }
+        updateStats();render();
+        if(imp) setTimeout(step,55);
+        else{solving=false;document.getElementById('demo-status').textContent='LOCALLY OPTIMAL ✓'}
+      }
+      step();
+    },500);
+  };
+
+  updateStats();
+})();
+
+/* ═══════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════ */
+(function(){
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 })();
 </script>
 </body>
