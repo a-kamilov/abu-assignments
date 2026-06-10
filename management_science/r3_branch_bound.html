@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branch & Bound Explorer — Integer Optimization</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #130B14;
+    --section-bg: #1E1321;
+    --card-bg: #27182D;
+    --primary: #D94F8A;
+    --secondary: #F07DB1;
+    --highlight: #FFB3D1;
+    --text: #F6F1F4;
+    --muted: #BCAEB8;
+    --border: rgba(217,79,138,0.18);
+    --glow: rgba(217,79,138,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(19,11,20,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 62px;
+  }
+
+  .nav-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--primary); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--secondary); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    align-items: center;
+    padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem);
+    overflow: hidden;
+  }
+
+  .hero-bg-num {
+    position: absolute;
+    right: -2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(18rem, 30vw, 34rem);
+    color: rgba(217,79,138,0.055);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.4rem, 5.5vw, 5rem);
+    font-weight: 700;
+    line-height: 1.08;
+    max-width: 780px;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--secondary);
+  }
+
+  .hero-desc {
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .tag {
+    padding: 0.3rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--card-bg);
+    letter-spacing: 0.04em;
+  }
+
+  .tag-accent {
+    border-color: rgba(217,79,138,0.5);
+    color: var(--secondary);
+    background: rgba(217,79,138,0.08);
+  }
+
+  /* ── SECTION SHELL ── */
+  section {
+    padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem);
+  }
+
+  section:nth-child(even) { background: var(--section-bg); }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
+  .section-line {
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--primary);
+    opacity: 0.4;
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 580px;
+    margin-bottom: 3rem;
+  }
+
+  /* ── OVERVIEW GRID ── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.4rem;
+    margin-top: 2.5rem;
+  }
+
+  .concept-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.8rem;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+
+  .concept-card:hover {
+    border-color: rgba(217,79,138,0.45);
+    transform: translateY(-2px);
+  }
+
+  .concept-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(217,79,138,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .concept-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+
+  .concept-card p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+    margin-top: 2.5rem;
+  }
+
+  .metric-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.6rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .metric-badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary);
+    background: rgba(217,79,138,0.1);
+    border-radius: 8px;
+    padding: 0.3rem 0.6rem;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .metric-card h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .metric-card p {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── DEMO SECTION ── */
+  .demo-wrapper {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  .demo-problem {
+    background: rgba(217,79,138,0.06);
+    border: 1px solid rgba(217,79,138,0.2);
+    border-radius: 12px;
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .demo-problem h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.8rem;
+  }
+
+  .demo-problem .math {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.94rem;
+    color: var(--text);
+    line-height: 1.9;
+  }
+
+  .math-line { display: block; }
+
+  .math-em { color: var(--secondary); font-weight: 600; }
+
+  .demo-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-box {
+    background: rgba(19,11,20,0.6);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+
+  .stat-box.updated { border-color: var(--primary); }
+
+  .stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--secondary);
+    transition: color 0.3s;
+  }
+
+  .stat-box.best .stat-value { color: #6be585; }
+  .stat-box.gap .stat-value { color: var(--highlight); }
+
+  /* SVG Tree */
+  #tree-svg-container {
+    width: 100%;
+    overflow-x: auto;
+    min-height: 340px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.8rem;
+  }
+
+  #tree-svg {
+    max-width: 100%;
+  }
+
+  .tree-node {
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+
+  .tree-node:hover { filter: brightness(1.18); }
+
+  /* Step Log */
+  .step-log {
+    background: rgba(19,11,20,0.7);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    min-height: 86px;
+    margin-bottom: 1.6rem;
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .step-log-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.4rem;
+  }
+
+  .step-log-msg { color: var(--text); }
+  .step-log-msg em { color: var(--secondary); font-style: normal; font-weight: 600; }
+
+  /* Demo Controls */
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #e8609a; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--secondary);
+    border: 1px solid rgba(217,79,138,0.4);
+  }
+
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: rgba(217,79,138,0.06); }
+  .btn-outline:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  .step-indicator {
+    margin-left: auto;
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+  }
+
+  /* Legend */
+  .tree-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── EVIDENCE ── */
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .evidence-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+
+  .evidence-card:hover {
+    border-color: rgba(217,79,138,0.45);
+    transform: translateY(-3px);
+  }
+
+  .evidence-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(217,79,138,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .evidence-img svg { opacity: 0.5; }
+
+  .evidence-img-label {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.8rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: rgba(19,11,20,0.7);
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+  }
+
+  .evidence-body {
+    padding: 1.2rem 1.4rem;
+  }
+
+  .evidence-body h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.94rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .evidence-body p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .evidence-tag {
+    display: inline-block;
+    margin-top: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    background: rgba(217,79,138,0.1);
+    color: var(--secondary);
+    border: 1px solid rgba(217,79,138,0.2);
+  }
+
+  /* ── LEARN CARDS ── */
+  .learn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.8rem;
+  }
+
+  .learn-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: border-color 0.25s;
+  }
+
+  .learn-card:hover { border-color: rgba(217,79,138,0.45); }
+
+  .learn-card-type {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+
+  .learn-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .learn-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .learn-tag {
+    padding: 0.3rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    background: rgba(217,79,138,0.1);
+    color: var(--highlight);
+    border: 1px solid rgba(217,79,138,0.2);
+  }
+
+  .learn-insight {
+    border-left: 2px solid var(--primary);
+    padding-left: 1rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer p {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  footer span { color: var(--primary); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .demo-stats { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+    .stat-value { font-size: 1.1rem; }
+    .demo-controls { gap: 0.6rem; }
+    .btn { padding: 0.55rem 1rem; font-size: 0.82rem; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(217,79,138,0.3)); }
+    50% { filter: drop-shadow(0 0 10px rgba(217,79,138,0.65)); }
+  }
+
+  .animate-up {
+    animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.22s; }
+  .delay-3 { animation-delay: 0.34s; }
+
+  .node-pulse { animation: pulse-glow 2.2s infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo">MS<span>.</span>Portfolio</a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#evidence">Evidence</a></li>
+    <li><a href="#learn">Reflections</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-bg-num">03</div>
+  <div>
+    <p class="hero-eyebrow animate-up">Chapter 7 · Integer Programming</p>
+    <h1 class="animate-up delay-1">Branch <em>&</em> Bound<br>Explorer</h1>
+    <p class="hero-desc animate-up delay-2">
+      Visualizing how integer optimization systematically hunts for whole-number solutions — branching through possibilities, bounding the search, and fathoming paths that lead nowhere.
+    </p>
+    <div class="hero-tags animate-up delay-3">
+      <span class="tag tag-accent">Integer Programming</span>
+      <span class="tag">Branch & Bound</span>
+      <span class="tag">Bounding</span>
+      <span class="tag">Fathoming</span>
+      <span class="tag">Optimality Gap</span>
+      <span class="tag">Decision Trees</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 01 OVERVIEW ── -->
+<section id="overview">
+  <div class="section-eyebrow">
+    <span class="section-num">01</span>
+    <span class="section-line"></span>
+  </div>
+  <h2 class="section-title">Project Overview</h2>
+  <p class="section-sub">From fractional relaxations to guaranteed integer optima — understanding the mechanics of Branch &amp; Bound.</p>
+
+  <div class="overview-grid">
+    <div class="concept-card">
+      <div class="concept-icon">🔢</div>
+      <h3>What is Integer Programming?</h3>
+      <p>Integer programming (IP) is a type of optimization where some or all decision variables must be whole numbers — no fractions allowed. Think of deciding how many full trucks to send or how many whole units to produce. Standard linear programming ignores this constraint, which leads to impractical answers like "send 3.7 trucks."</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-icon">🧩</div>
+      <h3>Why Do Relaxations Give Fractions?</h3>
+      <p>When we drop the "integers only" rule, we solve a simpler version called the LP relaxation. The mathematics becomes continuous, so the solver can freely choose any value — including 2.6 or 0.4. The LP relaxation gives an upper bound on the best possible integer answer, but it's not a valid solution by itself.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-icon">🌿</div>
+      <h3>Why Branch &amp; Bound?</h3>
+      <p>Checking every integer combination is computationally explosive — even small problems have billions of possibilities. Branch &amp; Bound is smarter: it breaks the problem into sub-problems (branching) while using math to prove that entire groups of solutions can't possibly beat the best answer found so far (bounding). This way, most of the search space is never explored.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-icon">🌲</div>
+      <h3>How Branching Works</h3>
+      <p>When a fractional variable appears — say x₁ = 2.3 — we create two child problems: one where x₁ ≤ 2 and one where x₁ ≥ 3. Each branch restricts the feasible region. We keep splitting until every open node either yields integer values or proves hopeless. This systematic splitting forms a decision tree.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-icon">📊</div>
+      <h3>How Bounding Works</h3>
+      <p>At each node, we solve the LP relaxation to get an upper bound on the best integer solution attainable in that subtree. If a node's bound is already worse than the best integer solution we've found, exploring it further is pointless. Bounding turns the search from "check everything" to "check only what matters."</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-icon">✂️</div>
+      <h3>Fathoming — Pruning Dead Ends</h3>
+      <p>A node is fathomed (pruned) when: (1) it's infeasible — no solution exists; (2) it's already integer-valued — it's a candidate solution; or (3) its LP bound is no better than the current best integer solution. Fathomed nodes are closed forever, dramatically reducing the tree size.</p>
+    </div>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-badge">BB</div>
+      <div>
+        <h4>Best Bound</h4>
+        <p>The highest LP relaxation value across all active (open) nodes. This is the theoretical ceiling — no integer solution lurking undiscovered can beat it.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-badge">BI</div>
+      <div>
+        <h4>Best Incumbent</h4>
+        <p>The best integer-feasible solution found so far. It improves over time as better integer nodes are discovered. We keep this as our running "best answer."</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-badge">OG</div>
+      <div>
+        <h4>Optimality Gap</h4>
+        <p>OG = (BB − BI) / BB × 100%. It measures how far from optimal we might still be. When OG reaches 0%, the algorithm terminates with a guaranteed optimal solution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 DEMO ── -->
+<section id="demo">
+  <div class="section-eyebrow">
+    <span class="section-num">02</span>
+    <span class="section-line"></span>
+  </div>
+  <h2 class="section-title">Interactive Explorer</h2>
+  <p class="section-sub">Step through Branch &amp; Bound one node at a time. Watch the tree grow, bounds update, and the optimality gap close.</p>
+
+  <div class="demo-wrapper">
+
+    <div class="demo-problem">
+      <h4>Sample Problem</h4>
+      <div class="math">
+        <span class="math-line"><span class="math-em">Maximize:</span> Z = 5x₁ + 4x₂</span>
+        <span class="math-line">Subject to: 6x₁ + 4x₂ ≤ 24</span>
+        <span class="math-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x₁ + 2x₂ ≤ 6</span>
+        <span class="math-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x₁, x₂ ≥ 0 and <span class="math-em">integer</span></span>
+      </div>
+    </div>
+
+    <div class="demo-stats">
+      <div class="stat-box" id="stat-bb">
+        <div class="stat-label">Best Bound (BB)</div>
+        <div class="stat-value" id="val-bb">—</div>
+      </div>
+      <div class="stat-box best" id="stat-bi">
+        <div class="stat-label">Best Incumbent (BI)</div>
+        <div class="stat-value" id="val-bi">—</div>
+      </div>
+      <div class="stat-box gap" id="stat-og">
+        <div class="stat-label">Optimality Gap</div>
+        <div class="stat-value" id="val-og">—</div>
+      </div>
+    </div>
+
+    <div class="tree-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#D94F8A"></div> Active node</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9B59D6"></div> Current node</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6BE585"></div> Integer solution</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E55A5A"></div> Fathomed / pruned</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4A3A55"></div> Pending</div>
+    </div>
+
+    <div id="tree-svg-container">
+      <svg id="tree-svg" viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="font-family:'Space Grotesk',sans-serif;">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#4A3A55"/>
+          </marker>
+        </defs>
+        <!-- edges drawn by JS -->
+        <g id="edges-layer"></g>
+        <!-- nodes drawn by JS -->
+        <g id="nodes-layer"></g>
+      </svg>
+    </div>
+
+    <div class="step-log">
+      <div class="step-log-title">Step Log</div>
+      <div class="step-log-msg" id="step-log-msg">Press <em>Start Exploration</em> to begin the Branch &amp; Bound walkthrough.</div>
+    </div>
+
+    <div class="demo-controls">
+      <button class="btn btn-primary" id="btn-start" onclick="startDemo()">▶ Start Exploration</button>
+      <button class="btn btn-outline" id="btn-prev" onclick="prevStep()" disabled>← Previous</button>
+      <button class="btn btn-outline" id="btn-next" onclick="nextStep()" disabled>Next →</button>
+      <button class="btn btn-ghost" id="btn-restart" onclick="restartDemo()">↺ Restart</button>
+      <span class="step-indicator" id="step-indicator">Step 0 / 7</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 EVIDENCE ── -->
+<section id="evidence">
+  <div class="section-eyebrow">
+    <span class="section-num">03</span>
+    <span class="section-line"></span>
+  </div>
+  <h2 class="section-title">Evidence Gallery</h2>
+  <p class="section-sub">Research notes, worked examples, and diagrams compiled during the study of Branch &amp; Bound methods.</p>
+
+  <div class="evidence-grid">
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Reading Notes</span>
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <rect x="15" y="10" width="50" height="60" rx="4" stroke="#D94F8A" stroke-width="2"/>
+          <line x1="24" y1="25" x2="56" y2="25" stroke="#D94F8A" stroke-width="1.5"/>
+          <line x1="24" y1="33" x2="56" y2="33" stroke="#D94F8A" stroke-width="1.5"/>
+          <line x1="24" y1="41" x2="46" y2="41" stroke="#D94F8A" stroke-width="1.5"/>
+          <line x1="24" y1="49" x2="50" y2="49" stroke="#D94F8A" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Chapter 7 Reading Notes</h4>
+        <p>Annotated summary of the Branch &amp; Bound algorithm from the management science textbook, including node selection rules and branching strategies.</p>
+        <span class="evidence-tag">Theory</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Tree Diagram</span>
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <circle cx="50" cy="14" r="10" stroke="#D94F8A" stroke-width="1.8"/>
+          <line x1="42" y1="22" x2="28" y2="46" stroke="#4A3A55" stroke-width="1.5"/>
+          <line x1="58" y1="22" x2="72" y2="46" stroke="#4A3A55" stroke-width="1.5"/>
+          <circle cx="28" cy="56" r="9" stroke="#6BE585" stroke-width="1.8"/>
+          <circle cx="72" cy="56" r="9" stroke="#E55A5A" stroke-width="1.8"/>
+          <text x="50" y="17" fill="#D94F8A" text-anchor="middle" font-size="8">LP</text>
+          <text x="28" y="59" fill="#6BE585" text-anchor="middle" font-size="7">INT</text>
+          <text x="72" y="59" fill="#E55A5A" text-anchor="middle" font-size="7">✗</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Decision Tree Example</h4>
+        <p>Hand-drawn and typed decision trees illustrating root node relaxation, branching decisions, and node classification outcomes.</p>
+        <span class="evidence-tag">Diagram</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Bounds Tracking</span>
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <rect x="12" y="52" width="14" height="22" fill="#D94F8A" opacity="0.6" rx="2"/>
+          <rect x="32" y="38" width="14" height="36" fill="#F07DB1" opacity="0.6" rx="2"/>
+          <rect x="52" y="28" width="14" height="46" fill="#FFB3D1" opacity="0.6" rx="2"/>
+          <rect x="72" y="18" width="14" height="56" fill="#6BE585" opacity="0.7" rx="2"/>
+          <line x1="8" y1="74" x2="92" y2="74" stroke="#BCAEB8" stroke-width="1"/>
+          <text x="50" y="12" fill="#BCAEB8" text-anchor="middle" font-size="8">BB vs BI Progress</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Best Bound &amp; Best Incumbent</h4>
+        <p>Worked examples tracking how BB tightens and BI improves through successive nodes until the optimality gap closes to zero.</p>
+        <span class="evidence-tag">Worked Example</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Formula</span>
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <text x="50" y="28" fill="#D94F8A" text-anchor="middle" font-size="9" font-weight="bold">OG = (BB − BI)</text>
+          <line x1="20" y1="36" x2="80" y2="36" stroke="#D94F8A" stroke-width="1.5"/>
+          <text x="50" y="50" fill="#D94F8A" text-anchor="middle" font-size="9" font-weight="bold">BB</text>
+          <text x="50" y="66" fill="#BCAEB8" text-anchor="middle" font-size="8">× 100%</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Optimality Gap Formula</h4>
+        <p>Reference card showing the OG formula, how to interpret the result, and example calculations at various stages of the search tree.</p>
+        <span class="evidence-tag">Formula Reference</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Fathoming Rules</span>
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <circle cx="50" cy="28" r="18" stroke="#9B59D6" stroke-width="1.8" stroke-dasharray="4 2"/>
+          <line x1="36" y1="14" x2="64" y2="42" stroke="#E55A5A" stroke-width="2.5"/>
+          <line x1="64" y1="14" x2="36" y2="42" stroke="#E55A5A" stroke-width="2.5"/>
+          <text x="50" y="68" fill="#BCAEB8" text-anchor="middle" font-size="8">Node Closed</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Fathoming Rule Examples</h4>
+        <p>Three fathoming criteria illustrated: infeasible nodes, integer-valued solutions, and nodes whose LP bound falls below the current incumbent.</p>
+        <span class="evidence-tag">Rules</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Strategy</span>
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <circle cx="50" cy="12" r="8" fill="#D94F8A" opacity="0.7"/>
+          <line x1="44" y1="19" x2="24" y2="38" stroke="#4A3A55" stroke-width="1.5"/>
+          <line x1="56" y1="19" x2="76" y2="38" stroke="#4A3A55" stroke-width="1.5"/>
+          <circle cx="24" cy="46" r="8" fill="#4A3A55"/>
+          <circle cx="76" cy="46" r="8" fill="#4A3A55"/>
+          <text x="22" y="70" fill="#BCAEB8" text-anchor="middle" font-size="7">x₁≤2</text>
+          <text x="78" y="70" fill="#BCAEB8" text-anchor="middle" font-size="7">x₁≥3</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Branching Strategy Diagrams</h4>
+        <p>Diagrams comparing breadth-first vs. best-first node selection and how the branching variable is chosen from fractional LP solutions.</p>
+        <span class="evidence-tag">Strategy</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Case Study</span>
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <ellipse cx="40" cy="42" rx="28" ry="20" stroke="#D94F8A" stroke-width="1.8"/>
+          <ellipse cx="40" cy="36" rx="22" ry="14" stroke="#F07DB1" stroke-width="1.5"/>
+          <line x1="40" y1="22" x2="40" y2="12" stroke="#BCAEB8" stroke-width="1.5"/>
+          <text x="40" y="44" fill="#D94F8A" text-anchor="middle" font-size="8">🍕</text>
+          <text x="40" y="9" fill="#BCAEB8" text-anchor="middle" font-size="7">Order Count</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Pizza Optimization Example</h4>
+        <p>A worked Branch &amp; Bound problem using pizza orders: maximizing revenue with whole-pizza constraints, showing the full search tree and optimal integer solution.</p>
+        <span class="evidence-tag">Case Study</span>
+      </div>
+    </div>
+
+    <div class="evidence-card">
+      <div class="evidence-img">
+        <span class="evidence-img-label">Concept Map</span>
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <rect x="10" y="30" width="22" height="16" rx="4" fill="#D94F8A" opacity="0.25" stroke="#D94F8A" stroke-width="1"/>
+          <rect x="39" y="10" width="22" height="16" rx="4" fill="#9B59D6" opacity="0.25" stroke="#9B59D6" stroke-width="1"/>
+          <rect x="39" y="52" width="22" height="16" rx="4" fill="#6BE585" opacity="0.25" stroke="#6BE585" stroke-width="1"/>
+          <rect x="68" y="30" width="22" height="16" rx="4" fill="#E55A5A" opacity="0.25" stroke="#E55A5A" stroke-width="1"/>
+          <line x1="32" y1="38" x2="39" y2="20" stroke="#BCAEB8" stroke-width="1"/>
+          <line x1="32" y1="40" x2="39" y2="60" stroke="#BCAEB8" stroke-width="1"/>
+          <line x1="61" y1="20" x2="68" y2="36" stroke="#BCAEB8" stroke-width="1"/>
+          <line x1="61" y1="60" x2="68" y2="42" stroke="#BCAEB8" stroke-width="1"/>
+          <text x="21" y="40" fill="#D94F8A" text-anchor="middle" font-size="6">Root</text>
+          <text x="50" y="20" fill="#9B59D6" text-anchor="middle" font-size="6">Branch</text>
+          <text x="50" y="62" fill="#6BE585" text-anchor="middle" font-size="6">Bound</text>
+          <text x="79" y="40" fill="#E55A5A" text-anchor="middle" font-size="6">Fathom</text>
+        </svg>
+      </div>
+      <div class="evidence-body">
+        <h4>Concept Relationship Map</h4>
+        <p>Mind-map connecting LP relaxation, branching decisions, bound computation, and fathoming rules into the unified Branch &amp; Bound framework.</p>
+        <span class="evidence-tag">Concept Map</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── 04 LEARN ── -->
+<section id="learn">
+  <div class="section-eyebrow">
+    <span class="section-num">04</span>
+    <span class="section-line"></span>
+  </div>
+  <h2 class="section-title">What Did I Learn?</h2>
+  <p class="section-sub">Knowledge built, skills sharpened, and insights that changed how I think about optimization.</p>
+
+  <div class="learn-grid">
+
+    <div class="learn-card">
+      <div class="learn-card-type">Knowledge</div>
+      <h3>Concepts Understood</h3>
+      <div class="learn-tags">
+        <span class="learn-tag">Integer Programming</span>
+        <span class="learn-tag">Branch &amp; Bound</span>
+        <span class="learn-tag">Branching</span>
+        <span class="learn-tag">Bounding</span>
+        <span class="learn-tag">Fathoming</span>
+        <span class="learn-tag">Optimality Gap</span>
+      </div>
+      <div class="learn-insight">
+        I learned that Integer Programming isn't just a stricter version of linear programming — it's a fundamentally harder problem class. The B&amp;B algorithm is a structured workaround: instead of solving the hard problem directly, it decomposes it into solvable sub-problems and discards hopeless regions using mathematical bounds.
+      </div>
+    </div>
+
+    <div class="learn-card">
+      <div class="learn-card-type">Skills</div>
+      <h3>Capabilities Developed</h3>
+      <div class="learn-tags">
+        <span class="learn-tag">Optimization Reasoning</span>
+        <span class="learn-tag">Tree Analysis</span>
+        <span class="learn-tag">Algorithm Visualization</span>
+        <span class="learn-tag">Systematic Problem Solving</span>
+      </div>
+      <div class="learn-insight">
+        Building this explorer forced me to trace through each step manually first, which deepened my understanding far beyond reading alone. I can now trace a Branch &amp; Bound tree by hand, identify which nodes to fathom, and interpret the optimality gap as a live convergence signal.
+      </div>
+    </div>
+
+    <div class="learn-card">
+      <div class="learn-card-type">Reflection</div>
+      <h3>How My Thinking Shifted</h3>
+      <div class="learn-tags">
+        <span class="learn-tag">Efficiency Over Exhaustion</span>
+        <span class="learn-tag">Smart Search</span>
+      </div>
+      <div class="learn-insight">
+        The biggest insight: solving every possible solution is almost always impractical. Branch &amp; Bound succeeds by eliminating regions that cannot improve the answer. The order in which nodes are explored can massively affect runtime efficiency. Good optimization is often more about reducing search effort than checking everything — a lesson that extends well beyond math.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>Management Science Portfolio · <span>Project 03</span> · Branch &amp; Bound Explorer</p>
+  <p>Chapter 7 · Integer Optimization · Spring 2025</p>
+</footer>
+
+<!-- ── SCRIPT ── -->
+<script>
+(function() {
+
+  // ─── DATA: Steps define the B&B walkthrough ───────────────────────────────
+
+  const STEPS = [
+    // step 0: initial state (start pressed)
+    {
+      nodes: [
+        { id: 0, x: 350, y: 48, label: "N0", sub: "LP Root", val: "Z=21.0\nx₁=3.0, x₂=1.5", status: "current" }
+      ],
+      edges: [],
+      bb: "21.0", bi: "—", og: "—",
+      log: "We start at the <em>Root Node (N0)</em>. Solving the LP relaxation (ignoring integrality) gives Z = 21.0, with x₁ = 3.0 and x₂ = 1.5. Since x₂ is fractional, this is not a valid integer solution. The LP value becomes our first Best Bound."
+    },
+    // step 1: branch on x₂
+    {
+      nodes: [
+        { id: 0, x: 350, y: 48,  label: "N0", sub: "LP Root", val: "Z=21.0", status: "active" },
+        { id: 1, x: 180, y: 160, label: "N1", sub: "x₂ ≤ 1",  val: "Pending…", status: "pending" },
+        { id: 2, x: 520, y: 160, label: "N2", sub: "x₂ ≥ 2",  val: "Pending…", status: "pending" },
+      ],
+      edges: [
+        { from: 0, to: 1, label: "x₂ ≤ 1" },
+        { from: 0, to: 2, label: "x₂ ≥ 2" },
+      ],
+      bb: "21.0", bi: "—", og: "—",
+      log: "<em>Branching on x₂.</em> Because x₂ = 1.5 is fractional, we create two child problems: <em>N1 (x₂ ≤ 1)</em> and <em>N2 (x₂ ≥ 2)</em>. These two branches cover all integer possibilities — no valid solution is discarded. Both nodes are open (active) and need to be explored."
+    },
+    // step 2: solve N1
+    {
+      nodes: [
+        { id: 0, x: 350, y: 48,  label: "N0", sub: "LP Root", val: "Z=21.0", status: "active" },
+        { id: 1, x: 180, y: 160, label: "N1", sub: "x₂ ≤ 1",  val: "Z=20.0\nx₁=3.33, x₂=1", status: "current" },
+        { id: 2, x: 520, y: 160, label: "N2", sub: "x₂ ≥ 2",  val: "Pending…", status: "pending" },
+      ],
+      edges: [
+        { from: 0, to: 1, label: "x₂ ≤ 1" },
+        { from: 0, to: 2, label: "x₂ ≥ 2" },
+      ],
+      bb: "21.0", bi: "—", og: "—",
+      log: "Solving <em>N1 (x₂ ≤ 1)</em>: LP relaxation gives Z = 20.0 with x₁ = 3.33, x₂ = 1. x₂ is now integer but <em>x₁ is still fractional</em>. This node cannot be fathomed yet — we must branch further on x₁. N1's bound is 20.0."
+    },
+    // step 3: branch N1 into N3, N4 and solve N2
+    {
+      nodes: [
+        { id: 0, x: 350, y: 48,  label: "N0", sub: "LP Root",  val: "Z=21.0",          status: "active" },
+        { id: 1, x: 180, y: 160, label: "N1", sub: "x₂ ≤ 1",   val: "Z=20.0",          status: "active" },
+        { id: 2, x: 520, y: 160, label: "N2", sub: "x₂ ≥ 2",   val: "Z=18.0\nx₁=2, x₂=2", status: "integer" },
+        { id: 3, x: 80,  y: 285, label: "N3", sub: "x₁ ≤ 3",   val: "Pending…",         status: "pending" },
+        { id: 4, x: 280, y: 285, label: "N4", sub: "x₁ ≥ 4",   val: "Pending…",         status: "pending" },
+      ],
+      edges: [
+        { from: 0, to: 1, label: "x₂ ≤ 1" },
+        { from: 0, to: 2, label: "x₂ ≥ 2" },
+        { from: 1, to: 3, label: "x₁ ≤ 3" },
+        { from: 1, to: 4, label: "x₁ ≥ 4" },
+      ],
+      bb: "21.0", bi: "18", og: "14.3%",
+      log: "<em>N2 yields an integer solution!</em> x₁ = 2, x₂ = 2, Z = 18.0. This is our first Best Incumbent (BI = 18). Meanwhile, N1 branches on x₁: children <em>N3 (x₁ ≤ 3)</em> and <em>N4 (x₁ ≥ 4)</em> are created. OG = (21 − 18)/21 = 14.3% — we haven't proved optimality yet."
+    },
+    // step 4: solve N3 → integer!
+    {
+      nodes: [
+        { id: 0, x: 350, y: 48,  label: "N0", sub: "LP Root",  val: "Z=21.0",          status: "active" },
+        { id: 1, x: 180, y: 160, label: "N1", sub: "x₂ ≤ 1",   val: "Z=20.0",          status: "active" },
+        { id: 2, x: 520, y: 160, label: "N2", sub: "x₂ ≥ 2",   val: "Z=18\nBI",        status: "integer" },
+        { id: 3, x: 80,  y: 285, label: "N3", sub: "x₁ ≤ 3",   val: "Z=19\nx₁=3,x₂=1", status: "integer" },
+        { id: 4, x: 280, y: 285, label: "N4", sub: "x₁ ≥ 4",   val: "Pending…",         status: "pending" },
+      ],
+      edges: [
+        { from: 0, to: 1, label: "x₂ ≤ 1" },
+        { from: 0, to: 2, label: "x₂ ≥ 2" },
+        { from: 1, to: 3, label: "x₁ ≤ 3" },
+        { from: 1, to: 4, label: "x₁ ≥ 4" },
+      ],
+      bb: "21.0", bi: "19", og: "9.5%",
+      log: "<em>N3 is integer-feasible!</em> x₁ = 3, x₂ = 1, Z = 19. This beats our incumbent of 18, so <em>BI updates to 19</em>. Optimality Gap shrinks to 9.5%. Only N4 remains open — if its LP bound ≤ 19, we can fathom it immediately."
+    },
+    // step 5: solve N4 → infeasible
+    {
+      nodes: [
+        { id: 0, x: 350, y: 48,  label: "N0", sub: "LP Root",  val: "Z=21.0",          status: "active" },
+        { id: 1, x: 180, y: 160, label: "N1", sub: "x₂ ≤ 1",   val: "Z=20.0",          status: "active" },
+        { id: 2, x: 520, y: 160, label: "N2", sub: "x₂ ≥ 2",   val: "Z=18\n✓",         status: "integer" },
+        { id: 3, x: 80,  y: 285, label: "N3", sub: "x₁ ≤ 3",   val: "Z=19 ★",          status: "integer" },
+        { id: 4, x: 280, y: 285, label: "N4", sub: "x₁ ≥ 4",   val: "Infeasible\n✗",   status: "fathomed" },
+      ],
+      edges: [
+        { from: 0, to: 1, label: "x₂ ≤ 1" },
+        { from: 0, to: 2, label: "x₂ ≥ 2" },
+        { from: 1, to: 3, label: "x₁ ≤ 3" },
+        { from: 1, to: 4, label: "x₁ ≥ 4" },
+      ],
+      bb: "19", bi: "19", og: "0%",
+      log: "<em>N4 is infeasible!</em> With x₁ ≥ 4 and the existing constraints, no feasible point exists. Node fathomed by infeasibility. All nodes are now closed. <em>Best Bound = Best Incumbent = 19</em>. Optimality Gap = 0% — the algorithm terminates. The optimal integer solution is x₁ = 3, x₂ = 1, Z = 19. ✓"
+    },
+  ];
+
+  const TOTAL = STEPS.length;
+  let current = -1; // -1 = not started
+
+  function getNodeColor(status) {
+    switch(status) {
+      case 'current':  return '#9B59D6';
+      case 'active':   return '#D94F8A';
+      case 'integer':  return '#6BE585';
+      case 'fathomed': return '#E55A5A';
+      case 'pending':  return '#4A3A55';
+      default:         return '#4A3A55';
+    }
+  }
+
+  function getNodeTextColor(status) {
+    return (status === 'pending') ? '#BCAEB8' : '#fff';
+  }
+
+  function renderStep(stepIdx) {
+    const step = STEPS[stepIdx];
+    const svg = document.getElementById('tree-svg');
+    const edgesLayer = document.getElementById('edges-layer');
+    const nodesLayer = document.getElementById('nodes-layer');
+
+    edgesLayer.innerHTML = '';
+    nodesLayer.innerHTML = '';
+
+    // Position lookup
+    const posMap = {};
+    step.nodes.forEach(n => { posMap[n.id] = { x: n.x, y: n.y }; });
+
+    // Edges
+    step.edges.forEach(e => {
+      const from = posMap[e.from];
+      const to = posMap[e.to];
+      if (!from || !to) return;
+
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const r = 36;
+      const sx = from.x + (dx/len)*r;
+      const sy = from.y + (dy/len)*r;
+      const ex = to.x - (dx/len)*r;
+      const ey = to.y - (dy/len)*r;
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+      line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+      line.setAttribute('stroke', '#4A3A55');
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('marker-end', 'url(#arrow)');
+      edgesLayer.appendChild(line);
+
+      // Edge label
+      if (e.label) {
+        const mx = (from.x + to.x) / 2;
+        const my = (from.y + to.y) / 2;
+        const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lbl.setAttribute('x', mx + (dx > 0 ? 10 : -10));
+        lbl.setAttribute('y', my - 4);
+        lbl.setAttribute('fill', '#BCAEB8');
+        lbl.setAttribute('font-size', '10');
+        lbl.setAttribute('text-anchor', 'middle');
+        lbl.textContent = e.label;
+        edgesLayer.appendChild(lbl);
+      }
+    });
+
+    // Nodes
+    step.nodes.forEach(n => {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'tree-node');
+      if (n.status === 'current') g.setAttribute('class', 'tree-node node-pulse');
+
+      const color = getNodeColor(n.status);
+      const textColor = getNodeTextColor(n.status);
+
+      // Outer circle
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', n.x);
+      circle.setAttribute('cy', n.y);
+      circle.setAttribute('r', 36);
+      circle.setAttribute('fill', color);
+      circle.setAttribute('fill-opacity', '0.18');
+      circle.setAttribute('stroke', color);
+      circle.setAttribute('stroke-width', n.status === 'current' ? '2.5' : '1.8');
+      g.appendChild(circle);
+
+      // Node ID
+      const idTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      idTxt.setAttribute('x', n.x);
+      idTxt.setAttribute('y', n.y - 12);
+      idTxt.setAttribute('fill', color);
+      idTxt.setAttribute('font-size', '11');
+      idTxt.setAttribute('font-weight', '700');
+      idTxt.setAttribute('text-anchor', 'middle');
+      idTxt.textContent = n.label;
+      g.appendChild(idTxt);
+
+      // Sub-label
+      const subTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      subTxt.setAttribute('x', n.x);
+      subTxt.setAttribute('y', n.y + 1);
+      subTxt.setAttribute('fill', textColor);
+      subTxt.setAttribute('font-size', '8');
+      subTxt.setAttribute('text-anchor', 'middle');
+      subTxt.setAttribute('opacity', '0.75');
+      subTxt.textContent = n.sub;
+      g.appendChild(subTxt);
+
+      // Value (first line only if multiline)
+      const valLine = (n.val || '').split('\n')[0];
+      const valTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      valTxt.setAttribute('x', n.x);
+      valTxt.setAttribute('y', n.y + 16);
+      valTxt.setAttribute('fill', textColor);
+      valTxt.setAttribute('font-size', '8');
+      valTxt.setAttribute('text-anchor', 'middle');
+      valTxt.setAttribute('opacity', '0.88');
+      valTxt.textContent = valLine;
+      g.appendChild(valTxt);
+
+      // Tooltip title
+      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      title.textContent = n.label + ': ' + (n.val || '');
+      g.appendChild(title);
+
+      nodesLayer.appendChild(g);
+    });
+
+    // Update stats
+    updateStat('val-bb', 'stat-bb', step.bb);
+    updateStat('val-bi', 'stat-bi', step.bi);
+    updateStat('val-og', 'stat-og', step.og);
+
+    // Log
+    document.getElementById('step-log-msg').innerHTML = step.log;
+
+    // Indicator
+    document.getElementById('step-indicator').textContent = `Step ${stepIdx + 1} / ${TOTAL}`;
+  }
+
+  function updateStat(valId, boxId, val) {
+    const el = document.getElementById(valId);
+    const box = document.getElementById(boxId);
+    el.textContent = val;
+    box.classList.add('updated');
+    setTimeout(() => box.classList.remove('updated'), 600);
+  }
+
+  function startDemo() {
+    document.getElementById('btn-start').style.display = 'none';
+    current = 0;
+    renderStep(current);
+    syncButtons();
+  }
+
+  function nextStep() {
+    if (current < TOTAL - 1) {
+      current++;
+      renderStep(current);
+      syncButtons();
+    }
+  }
+
+  function prevStep() {
+    if (current > 0) {
+      current--;
+      renderStep(current);
+      syncButtons();
+    }
+  }
+
+  function restartDemo() {
+    document.getElementById('btn-start').style.display = 'inline-flex';
+    current = -1;
+    document.getElementById('edges-layer').innerHTML = '';
+    document.getElementById('nodes-layer').innerHTML = '';
+    document.getElementById('step-log-msg').innerHTML = 'Press <em>Start Exploration</em> to begin the Branch &amp; Bound walkthrough.';
+    document.getElementById('val-bb').textContent = '—';
+    document.getElementById('val-bi').textContent = '—';
+    document.getElementById('val-og').textContent = '—';
+    document.getElementById('step-indicator').textContent = `Step 0 / ${TOTAL}`;
+    syncButtons();
+  }
+
+  function syncButtons() {
+    document.getElementById('btn-prev').disabled = current <= 0;
+    document.getElementById('btn-next').disabled = current >= TOTAL - 1 || current < 0;
+  }
+
+  // Expose to global
+  window.startDemo = startDemo;
+  window.nextStep = nextStep;
+  window.prevStep = prevStep;
+  window.restartDemo = restartDemo;
+
+  // Init
+  syncButtons();
+
+  // Scroll-triggered fade-in for cards
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.concept-card, .evidence-card, .learn-card, .metric-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+
+})();
+</script>
+</body>
+</html>
