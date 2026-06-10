@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>From Problem to Model — Interactive Mathematical Modeling Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:#130B14;color:#F6F1F4;font-family:'Inter',sans-serif;line-height:1.7;min-height:100vh;overflow-x:hidden}
+img{display:block;max-width:100%}
+button{cursor:pointer;font-family:inherit}
+a{color:inherit;text-decoration:none}
+
+/* ── CSS VARIABLES ────────────────────────────────────────── */
+:root{
+  --bg:#130B14;
+  --section-bg:#1E1321;
+  --card-bg:#27182D;
+  --accent:#D94F8A;
+  --accent2:#F07DB1;
+  --highlight:#FFB3D1;
+  --text:#F6F1F4;
+  --muted:#BCAEB8;
+  --border:rgba(217,79,138,0.18);
+  --glow:rgba(217,79,138,0.12);
+  --radius:12px;
+  --radius-lg:20px;
+  --transition:0.3s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+/* ── TYPOGRAPHY ───────────────────────────────────────────── */
+h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;line-height:1.2}
+h1{font-size:clamp(2.4rem,6vw,4.8rem);font-weight:700}
+h2{font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:600}
+h3{font-size:clamp(1.1rem,2vw,1.5rem);font-weight:600}
+h4{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em}
+p{color:var(--muted);font-size:0.97rem;line-height:1.8}
+
+/* ── UTILITY ──────────────────────────────────────────────── */
+.accent{color:var(--accent)}
+.accent2{color:var(--accent2)}
+.highlight{color:var(--highlight)}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+.section-label{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);margin-bottom:1rem}
+.section-label::before{content:'';display:inline-block;width:20px;height:2px;background:var(--accent)}
+.tag{display:inline-block;padding:0.25rem 0.75rem;border-radius:50px;font-size:0.72rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;border:1px solid var(--border);color:var(--accent2);background:rgba(217,79,138,0.07)}
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:2px;margin:1.5rem 0}
+.math{font-family:'Courier New',monospace;font-size:0.9em;color:var(--highlight);background:rgba(255,179,209,0.08);padding:0.1em 0.4em;border-radius:4px}
+
+/* ── NAV ──────────────────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;width:100%;z-index:100;padding:1rem 0;transition:background var(--transition),box-shadow var(--transition)}
+nav.scrolled{background:rgba(19,11,20,0.92);backdrop-filter:blur(16px);box-shadow:0 1px 0 var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.06em;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:0.25rem;list-style:none}
+.nav-links a{padding:0.4rem 0.9rem;border-radius:50px;font-size:0.8rem;font-weight:500;color:var(--muted);transition:color var(--transition),background var(--transition)}
+.nav-links a:hover{color:var(--text);background:rgba(217,79,138,0.1)}
+.nav-links a.active{color:var(--accent2);background:rgba(217,79,138,0.12)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--muted);border-radius:2px;transition:var(--transition)}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(19,11,20,0.97);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:600;color:var(--muted);transition:color var(--transition)}
+.mobile-menu a:hover{color:var(--accent)}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Space Grotesk',sans-serif;font-size:clamp(14rem,35vw,28rem);font-weight:700;color:rgba(217,79,138,0.04);user-select:none;pointer-events:none;white-space:nowrap;line-height:1}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:1}
+.hero-eyebrow{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem}
+.hero-eyebrow-line{width:32px;height:2px;background:var(--accent)}
+.hero-eyebrow-text{font-size:0.75rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent)}
+.hero-title{margin-bottom:1.5rem}
+.hero-title .line2{color:var(--accent)}
+.hero-desc{max-width:480px;margin-bottom:2.5rem;font-size:1.02rem}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{padding:0.75rem 1.75rem;background:linear-gradient(135deg,var(--accent),#B03472);color:#fff;border:none;border-radius:50px;font-size:0.85rem;font-weight:600;letter-spacing:0.04em;transition:transform var(--transition),box-shadow var(--transition)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(217,79,138,0.4)}
+.btn-ghost{padding:0.75rem 1.75rem;background:transparent;color:var(--accent2);border:1px solid var(--border);border-radius:50px;font-size:0.85rem;font-weight:600;letter-spacing:0.04em;transition:all var(--transition)}
+.btn-ghost:hover{background:rgba(217,79,138,0.08);border-color:var(--accent)}
+.hero-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(217,79,138,0.15),transparent 70%)}
+.hero-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem}
+.hero-stat{text-align:center;padding:1rem;background:rgba(255,255,255,0.03);border-radius:var(--radius);border:1px solid rgba(217,79,138,0.1)}
+.hero-stat-num{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:var(--accent)}
+.hero-stat-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:0.25rem}
+
+/* ── SECTIONS ─────────────────────────────────────────────── */
+section{padding:6rem 0;position:relative}
+section:nth-child(even){background:var(--section-bg)}
+.section-header{margin-bottom:4rem}
+.section-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(5rem,12vw,10rem);font-weight:700;color:rgba(217,79,138,0.06);line-height:1;position:absolute;top:-1rem;right:2rem;user-select:none;pointer-events:none}
+
+/* ── SECTION 01: PROJECT OVERVIEW ─────────────────────────── */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-bottom:4rem;align-items:start}
+.overview-intro p+p{margin-top:1rem}
+.overview-why{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem}
+.overview-why h3{margin-bottom:1.5rem}
+.why-list{list-style:none;display:flex;flex-direction:column;gap:0.75rem}
+.why-list li{display:flex;align-items:flex-start;gap:0.75rem;font-size:0.9rem;color:var(--muted)}
+.why-list li::before{content:'→';color:var(--accent);flex-shrink:0;margin-top:0.05rem}
+.steps-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:600;margin-bottom:2rem}
+.steps-container{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;position:relative}
+.steps-container::before{content:'';position:absolute;top:40px;left:10%;width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--border),var(--border),var(--border),transparent);z-index:0}
+.step-card{position:relative;z-index:1;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1rem;text-align:center;transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition)}
+.step-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 12px 40px var(--glow)}
+.step-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8B1A52);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;margin:0 auto 1rem}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:0.5rem}
+.step-desc{font-size:0.75rem;color:var(--muted);line-height:1.5}
+
+/* ── SECTION 02: DEMONSTRATION ───────────────────────────── */
+#demonstration{background:var(--bg)}
+.scenario-tabs{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.tab-btn{padding:0.65rem 1.4rem;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--muted);font-size:0.82rem;font-weight:600;letter-spacing:0.03em;transition:all var(--transition)}
+.tab-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.tab-btn.active{background:linear-gradient(135deg,var(--accent),#B03472);border-color:transparent;color:#fff;box-shadow:0 4px 20px rgba(217,79,138,0.35)}
+.scenario-panel{display:none;animation:fadeIn 0.4s ease}
+.scenario-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.scenario-info{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
+.info-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem}
+.info-card h4{color:var(--accent2);margin-bottom:1rem;font-size:0.8rem}
+.constraint-list{list-style:none;display:flex;flex-direction:column;gap:0.5rem}
+.constraint-list li{font-size:0.87rem;color:var(--muted);padding:0.5rem 0.75rem;background:rgba(255,255,255,0.03);border-radius:6px;border-left:2px solid var(--accent)}
+.build-btn{display:flex;align-items:center;gap:0.5rem;padding:0.85rem 2rem;background:linear-gradient(135deg,var(--accent),#8B1A52);color:#fff;border:none;border-radius:50px;font-size:0.9rem;font-weight:600;letter-spacing:0.04em;margin-bottom:2.5rem;transition:transform var(--transition),box-shadow var(--transition)}
+.build-btn:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(217,79,138,0.45)}
+.build-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.build-btn svg{transition:transform var(--transition)}
+.build-btn:hover svg{transform:rotate(90deg)}
+.model-steps{display:flex;flex-direction:column;gap:1rem}
+.model-step-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease,border-color var(--transition);display:none}
+.model-step-card.revealed{opacity:1;transform:translateY(0);display:block}
+.model-step-card.final-card{border-color:var(--accent);background:rgba(217,79,138,0.05)}
+.step-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem}
+.step-badge{padding:0.2rem 0.6rem;background:linear-gradient(135deg,var(--accent),#8B1A52);border-radius:50px;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff}
+.model-code{background:rgba(0,0,0,0.3);border:1px solid rgba(217,79,138,0.12);border-radius:8px;padding:1.25rem;font-family:'Courier New',monospace;font-size:0.82rem;color:var(--highlight);line-height:1.8;overflow-x:auto;margin-top:0.75rem;white-space:pre-line}
+.model-code .kw{color:var(--accent2)}
+.model-code .comment{color:var(--muted);font-style:italic}
+
+/* ── SECTION 03: EVIDENCE ─────────────────────────────────── */
+#evidence{background:var(--section-bg)}
+.evidence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.evidence-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition)}
+.evidence-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(217,79,138,0.12);border-color:rgba(217,79,138,0.3)}
+.evidence-img{height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.evidence-img-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem}
+.evidence-icon{font-size:2.5rem;opacity:0.8}
+.evidence-img-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);font-family:'Space Grotesk',sans-serif}
+.ev1{background:linear-gradient(135deg,rgba(217,79,138,0.15),rgba(139,26,82,0.25))}
+.ev2{background:linear-gradient(135deg,rgba(108,58,139,0.2),rgba(217,79,138,0.1))}
+.ev3{background:linear-gradient(135deg,rgba(217,79,138,0.08),rgba(48,15,60,0.4))}
+.ev4{background:linear-gradient(135deg,rgba(48,15,60,0.5),rgba(217,79,138,0.12))}
+.ev5{background:linear-gradient(135deg,rgba(139,26,82,0.2),rgba(217,79,138,0.08))}
+.ev6{background:linear-gradient(135deg,rgba(217,79,138,0.1),rgba(108,58,139,0.2))}
+.evidence-body{padding:1.5rem}
+.evidence-cat{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+.evidence-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:0.5rem;line-height:1.4}
+.evidence-desc{font-size:0.8rem;color:var(--muted);line-height:1.6}
+.evidence-meta{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+.evidence-date{font-size:0.72rem;color:var(--muted)}
+.evidence-ref{font-size:0.72rem;font-weight:600;color:var(--accent2)}
+
+/* ── SECTION 04: WHAT DID I LEARN ─────────────────────────── */
+#learning{background:var(--bg)}
+.learning-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.learning-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition);cursor:default}
+.learning-card:hover{transform:translateY(-5px);box-shadow:0 18px 50px var(--glow)}
+.learning-card.knowledge:hover{border-color:var(--accent)}
+.learning-card.skills:hover{border-color:var(--accent2)}
+.learning-card.reflection:hover{border-color:var(--highlight)}
+.learning-icon{width:52px;height:52px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.5rem}
+.learning-card.knowledge .learning-icon{background:rgba(217,79,138,0.12)}
+.learning-card.skills .learning-icon{background:rgba(240,125,177,0.12)}
+.learning-card.reflection .learning-icon{background:rgba(255,179,209,0.12)}
+.learning-card h3{margin-bottom:1.25rem;font-size:1.15rem}
+.learning-card.knowledge h3{color:var(--accent)}
+.learning-card.skills h3{color:var(--accent2)}
+.learning-card.reflection h3{color:var(--highlight)}
+.learn-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.87rem;color:var(--muted)}
+.learn-item:last-child{border-bottom:none}
+.learn-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:0.45rem}
+.knowledge .learn-dot{background:var(--accent)}
+.skills .learn-dot{background:var(--accent2)}
+.reflection .learn-dot{background:var(--highlight)}
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer{padding:3rem 0;border-top:1px solid var(--border);text-align:center}
+.footer-logo{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem}
+.footer-logo span{color:var(--accent)}
+footer p{font-size:0.8rem;color:var(--muted)}
+
+/* ── SCROLL REVEAL ────────────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s cubic-bezier(.4,0,.2,1),transform 0.7s cubic-bezier(.4,0,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media(max-width:1024px){
+  .steps-container{grid-template-columns:repeat(3,1fr)}
+  .steps-container::before{display:none}
+  .overview-grid{grid-template-columns:1fr}
+  .evidence-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-card{display:none}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .scenario-info{grid-template-columns:1fr}
+  .learning-grid{grid-template-columns:1fr}
+  .evidence-grid{grid-template-columns:1fr}
+  .steps-container{grid-template-columns:repeat(2,1fr)}
+  section{padding:4rem 0}
+}
+@media(max-width:480px){
+  .steps-container{grid-template-columns:1fr}
+  .container{padding:0 1.25rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <div class="nav-logo">MGMT<span>·</span>SCI</div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#overview">01 Overview</a></li>
+      <li><a href="#demonstration">02 Lab</a></li>
+      <li><a href="#evidence">03 Evidence</a></li>
+      <li><a href="#learning">04 Learning</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#hero" class="close-menu">Home</a>
+  <a href="#overview" class="close-menu">01 Overview</a>
+  <a href="#demonstration" class="close-menu">02 Lab</a>
+  <a href="#evidence" class="close-menu">03 Evidence</a>
+  <a href="#learning" class="close-menu">04 Learning</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-num">01</div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-line"></div>
+          <span class="hero-eyebrow-text">Chapter 4 · Management Science Portfolio</span>
+        </div>
+        <h1 class="hero-title">From Problem<br><span class="line2">to Model</span></h1>
+        <p class="hero-desc">An interactive lab exploring how real-world management decisions are translated into precise mathematical structures — sets, parameters, variables, objectives, and constraints.</p>
+        <div class="hero-cta">
+          <a href="#demonstration" class="btn-primary">Open Model Builder</a>
+          <a href="#overview" class="btn-ghost">Read Overview</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="section-label">Core Framework</div>
+        <h3>The Modeling Process</h3>
+        <div class="hero-stat-grid">
+          <div class="hero-stat">
+            <div class="hero-stat-num">5</div>
+            <div class="hero-stat-label">Process Steps</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">3</div>
+            <div class="hero-stat-label">Live Scenarios</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">6</div>
+            <div class="hero-stat-label">Model Components</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">∞</div>
+            <div class="hero-stat-label">Applications</div>
+          </div>
+        </div>
+        <p style="margin-top:1.5rem;font-size:0.8rem">"All models are wrong, but some are useful."<br><span style="color:var(--accent2)">— George Box</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 01: PROJECT OVERVIEW -->
+<section id="overview">
+  <div class="container" style="position:relative">
+    <div class="section-num">01</div>
+    <div class="section-header reveal">
+      <div class="section-label">01 Project Overview</div>
+      <h2>What Is Mathematical Modeling?</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="overview-grid reveal">
+      <div class="overview-intro">
+        <p>A <strong style="color:var(--text)">mathematical model</strong> is a formal representation of a real-world situation using mathematical language — equations, inequalities, and symbols. Rather than capturing every detail of reality, models deliberately simplify a system to focus on the variables and relationships that matter most for a specific decision.</p>
+        <p style="margin-top:1rem">In management and operations, models translate business problems — resource allocation, scheduling, logistics — into structures that can be analyzed, optimized, and communicated with precision. They are the bridge between intuition and rigorous decision-making.</p>
+        <p style="margin-top:1rem">Models are not perfect replicas of reality. Their power lies precisely in what they leave out: by stripping away noise, a model illuminates the core trade-offs that decision-makers must navigate.</p>
+      </div>
+      <div class="overview-why">
+        <h3>Why Managers Use Models</h3>
+        <ul class="why-list">
+          <li>Clarify objectives and surface hidden trade-offs</li>
+          <li>Evaluate many alternatives rapidly and systematically</li>
+          <li>Communicate decisions transparently to stakeholders</li>
+          <li>Identify binding constraints before committing resources</li>
+          <li>Provide defensible, reproducible justifications for choices</li>
+          <li>Scale analysis from small pilots to enterprise operations</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <p class="steps-title">The Five-Step Modeling Process</p>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Understand the Problem</div>
+          <div class="step-desc">Define scope, identify the decision to be made, and state what constitutes a "good" outcome.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Identify Sets, Parameters &amp; Variables</div>
+          <div class="step-desc">Name the collections, fixed data, and controllable quantities that describe the problem.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Build the Objective Function</div>
+          <div class="step-desc">Formulate the mathematical expression that captures what must be maximized or minimized.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Build the Constraints</div>
+          <div class="step-desc">Write the inequalities and equalities that represent real-world limits and requirements.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-title">Assemble the Complete Model</div>
+          <div class="step-desc">Combine all components into a cohesive model ready for analysis or optimization.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 02: DEMONSTRATION -->
+<section id="demonstration">
+  <div class="container" style="position:relative">
+    <div class="section-num">02</div>
+    <div class="section-header reveal">
+      <div class="section-label">02 Demonstration</div>
+      <h2>Model Builder Lab</h2>
+      <div class="divider"></div>
+      <p style="max-width:560px">Select a real-world scenario and watch a mathematical model take shape — one component at a time. This lab illustrates how structure emerges from a business problem.</p>
+    </div>
+
+    <div class="scenario-tabs reveal">
+      <button class="tab-btn active" data-tab="coffee">☕ Coffee Shop Production</button>
+      <button class="tab-btn" data-tab="delivery">🚚 Delivery Route Optimization</button>
+      <button class="tab-btn" data-tab="club">🎓 Student Club Budget</button>
+    </div>
+
+    <!-- COFFEE SHOP -->
+    <div class="scenario-panel active" id="panel-coffee">
+      <div class="scenario-info reveal">
+        <div class="info-card">
+          <h4>Problem Description</h4>
+          <p>A campus coffee shop produces two products: <strong style="color:var(--text)">Espresso Shots</strong> and <strong style="color:var(--text)">Latte Drinks</strong>. Each requires different amounts of coffee beans, milk, and barista time. The shop has a fixed supply of each resource per day. The manager wants to decide how many of each drink to prepare in order to maximize daily revenue.</p>
+        </div>
+        <div class="info-card">
+          <h4>Objective &amp; Constraints</h4>
+          <p style="margin-bottom:1rem"><strong style="color:var(--text)">Objective:</strong> Maximize total daily revenue.</p>
+          <ul class="constraint-list">
+            <li>Coffee beans ≤ 400g per day</li>
+            <li>Milk ≤ 3,000 mL per day</li>
+            <li>Barista time ≤ 480 minutes per day</li>
+            <li>Production quantities must be non-negative</li>
+            <li>Cannot produce fractional drinks</li>
+          </ul>
+        </div>
+      </div>
+      <button class="build-btn" id="build-coffee" onclick="buildModel('coffee')">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+        Build Mathematical Model
+      </button>
+      <div class="model-steps" id="steps-coffee"></div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="scenario-panel" id="panel-delivery">
+      <div class="scenario-info reveal">
+        <div class="info-card">
+          <h4>Problem Description</h4>
+          <p>A local delivery company must assign <strong style="color:var(--text)">three drivers</strong> to <strong style="color:var(--text)">four delivery zones</strong> each day. Each driver has different efficiency levels across zones (deliveries per hour). The company wants to maximize the total deliveries completed in an 8-hour shift while respecting that each driver covers exactly one zone and each zone is served.</p>
+        </div>
+        <div class="info-card">
+          <h4>Objective &amp; Constraints</h4>
+          <p style="margin-bottom:1rem"><strong style="color:var(--text)">Objective:</strong> Maximize total deliveries completed.</p>
+          <ul class="constraint-list">
+            <li>Each driver assigned to exactly one zone</li>
+            <li>Each zone covered by at most one driver</li>
+            <li>One zone may remain unserved if drivers &lt; zones</li>
+            <li>Assignment variables must be binary (0 or 1)</li>
+            <li>Total assignments = number of drivers</li>
+          </ul>
+        </div>
+      </div>
+      <button class="build-btn" id="build-delivery" onclick="buildModel('delivery')">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+        Build Mathematical Model
+      </button>
+      <div class="model-steps" id="steps-delivery"></div>
+    </div>
+
+    <!-- CLUB BUDGET -->
+    <div class="scenario-panel" id="panel-club">
+      <div class="scenario-info reveal">
+        <div class="info-card">
+          <h4>Problem Description</h4>
+          <p>A student club has a semester budget of <strong style="color:var(--text)">$2,400</strong> to allocate across five activity categories: Social Events, Academic Workshops, Guest Speaker Series, Marketing, and Equipment. Each category has a minimum required spend (per club charter) and an estimated benefit score that reflects member satisfaction and engagement per dollar spent.</p>
+        </div>
+        <div class="info-card">
+          <h4>Objective &amp; Constraints</h4>
+          <p style="margin-bottom:1rem"><strong style="color:var(--text)">Objective:</strong> Maximize total benefit score.</p>
+          <ul class="constraint-list">
+            <li>Total spending ≤ $2,400 budget</li>
+            <li>Each category receives its minimum allocation</li>
+            <li>Marketing spend ≤ 20% of total budget</li>
+            <li>Academic + Speaker ≥ 40% of total budget</li>
+            <li>All allocations must be non-negative</li>
+          </ul>
+        </div>
+      </div>
+      <button class="build-btn" id="build-club" onclick="buildModel('club')">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+        Build Mathematical Model
+      </button>
+      <div class="model-steps" id="steps-club"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 03: EVIDENCE -->
+<section id="evidence">
+  <div class="container" style="position:relative">
+    <div class="section-num">03</div>
+    <div class="section-header reveal">
+      <div class="section-label">03 Evidence</div>
+      <h2>Research Archive</h2>
+      <div class="divider"></div>
+      <p style="max-width:520px">Primary references and worked examples from Chapter 4 that informed the modeling approach demonstrated in this lab.</p>
+    </div>
+    <div class="evidence-grid">
+
+      <div class="evidence-card reveal">
+        <div class="evidence-img ev1">
+          <div class="evidence-img-inner">
+            <div class="evidence-icon">📖</div>
+            <div class="evidence-img-label">Source Material</div>
+          </div>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-cat">Primary Reading</div>
+          <div class="evidence-title">Chapter 4: Introduction to Mathematical Modeling</div>
+          <div class="evidence-desc">Core theoretical framework covering the definition of mathematical models, their role in management science, and the structured five-step process for translating business problems into formal mathematical expressions.</div>
+          <div class="evidence-meta">
+            <span class="evidence-date">Reading 1 · Chapter Notes</span>
+            <span class="evidence-ref">Ch. 4</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="evidence-card reveal">
+        <div class="evidence-img ev2">
+          <div class="evidence-img-inner">
+            <div class="evidence-icon">🌱</div>
+            <div class="evidence-img-label">Production Example</div>
+          </div>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-cat">Worked Example</div>
+          <div class="evidence-title">Fertilizer Production Optimization</div>
+          <div class="evidence-desc">A canonical linear programming example demonstrating how a manufacturing firm decides the optimal mix of two fertilizer grades given raw material limits, production capacity, and per-unit profit margins. Introduces resource constraint formulation.</div>
+          <div class="evidence-meta">
+            <span class="evidence-date">LP Example · Production</span>
+            <span class="evidence-ref">Ex. 4.1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="evidence-card reveal">
+        <div class="evidence-img ev3">
+          <div class="evidence-img-inner">
+            <div class="evidence-icon">🎒</div>
+            <div class="evidence-img-label">Combinatorial Example</div>
+          </div>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-cat">Worked Example</div>
+          <div class="evidence-title">Backpack Capacity Optimization</div>
+          <div class="evidence-desc">An integer programming illustration where items of varying weight and value must be selected to fit within a backpack's weight limit while maximizing total value. Introduces binary decision variables and knapsack-type constraints.</div>
+          <div class="evidence-meta">
+            <span class="evidence-date">IP Example · Combinatorial</span>
+            <span class="evidence-ref">Ex. 4.2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="evidence-card reveal">
+        <div class="evidence-img ev4">
+          <div class="evidence-img-inner">
+            <div class="evidence-icon">∑</div>
+            <div class="evidence-img-label">Notation Reference</div>
+          </div>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-cat">Reference Material</div>
+          <div class="evidence-title">Mathematical Notation &amp; Symbology</div>
+          <div class="evidence-desc">Comprehensive guide to standard notation used in operations research: summation notation, set membership, subset relations, index-based parameter definitions, and the conventions for naming decision variables in linear and integer programs.</div>
+          <div class="evidence-meta">
+            <span class="evidence-date">Notation Guide · Chapter 4</span>
+            <span class="evidence-ref">Appendix</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="evidence-card reveal">
+        <div class="evidence-img ev5">
+          <div class="evidence-img-inner">
+            <div class="evidence-icon">max</div>
+            <div class="evidence-img-label">Objective Functions</div>
+          </div>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-cat">Concept Notes</div>
+          <div class="evidence-title">Objective Function Construction</div>
+          <div class="evidence-desc">Detailed notes on how to build objective functions for both maximization (revenue, profit, satisfaction) and minimization (cost, distance, time) problems. Covers linear and weighted-sum formulations with practical coefficient estimation methods.</div>
+          <div class="evidence-meta">
+            <span class="evidence-date">Concept Notes · Section 4.3</span>
+            <span class="evidence-ref">Sec. 4.3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="evidence-card reveal">
+        <div class="evidence-img ev6">
+          <div class="evidence-img-inner">
+            <div class="evidence-icon">≤</div>
+            <div class="evidence-img-label">Constraint Library</div>
+          </div>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-cat">Formulation Reference</div>
+          <div class="evidence-title">Constraint Formulation Patterns</div>
+          <div class="evidence-desc">A catalog of constraint types encountered in management science: capacity constraints, demand satisfaction, budget limits, logical (either/or) constraints, balance equations, and non-negativity conditions. Each type illustrated with a brief formulation example.</div>
+          <div class="evidence-meta">
+            <span class="evidence-date">Formulation Guide · Section 4.4</span>
+            <span class="evidence-ref">Sec. 4.4</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 04: WHAT DID I LEARN -->
+<section id="learning">
+  <div class="container" style="position:relative">
+    <div class="section-num">04</div>
+    <div class="section-header reveal">
+      <div class="section-label">04 What Did I Learn?</div>
+      <h2>Knowledge, Skills &amp; Reflection</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="learning-grid">
+
+      <div class="learning-card knowledge reveal">
+        <div class="learning-icon">🧠</div>
+        <h3>Knowledge</h3>
+        <div class="learn-item"><span class="learn-dot"></span>Mathematical modeling as a structured translation process</div>
+        <div class="learn-item"><span class="learn-dot"></span>Sets — collections of indices that organize model elements</div>
+        <div class="learn-item"><span class="learn-dot"></span>Parameters — fixed, known data values that define the context</div>
+        <div class="learn-item"><span class="learn-dot"></span>Decision variables — the quantities a model controls</div>
+        <div class="learn-item"><span class="learn-dot"></span>Objective functions — the mathematical goal to optimize</div>
+        <div class="learn-item"><span class="learn-dot"></span>Constraints — inequalities encoding real-world limits</div>
+      </div>
+
+      <div class="learning-card skills reveal">
+        <div class="learning-icon">⚙️</div>
+        <h3>Skills</h3>
+        <div class="learn-item"><span class="learn-dot"></span>Problem abstraction — distilling a situation to its essential features</div>
+        <div class="learn-item"><span class="learn-dot"></span>Analytical thinking — decomposing complexity into tractable components</div>
+        <div class="learn-item"><span class="learn-dot"></span>Model formulation — writing formal mathematical representations</div>
+        <div class="learn-item"><span class="learn-dot"></span>Structured problem solving — applying a repeatable five-step framework</div>
+        <div class="learn-item"><span class="learn-dot"></span>Constraint identification — recognizing binding limitations in context</div>
+        <div class="learn-item"><span class="learn-dot"></span>Variable definition — naming and scoping controllable quantities</div>
+      </div>
+
+      <div class="learning-card reflection reveal">
+        <div class="learning-icon">💡</div>
+        <h3>Reflection</h3>
+        <div class="learn-item"><span class="learn-dot"></span>Translating real-world situations into models is harder than solving the resulting equations</div>
+        <div class="learn-item"><span class="learn-dot"></span>Small modeling assumptions can greatly affect what solutions are even considered</div>
+        <div class="learn-item"><span class="learn-dot"></span>Mathematical models support better decision-making precisely because they force clarity</div>
+        <div class="learn-item"><span class="learn-dot"></span>The choice of objective function encodes values, not just math</div>
+        <div class="learn-item"><span class="learn-dot"></span>A model's usefulness depends on how well it captures the right constraints</div>
+        <div class="learn-item"><span class="learn-dot"></span>Formal notation removes ambiguity that natural language cannot</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">MGMT<span>·</span>SCI</div>
+    <p>Management Science Portfolio · Chapter 4: Introduction to Mathematical Modeling</p>
+    <p style="margin-top:0.35rem">From Problem to Model — Interactive Mathematical Modeling Lab</p>
+  </div>
+</footer>
+
+<script>
+/* ── NAV SCROLL EFFECT ──────────────────────────────────────── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+  // highlight active link
+  const sections = ['hero','overview','demonstration','evidence','learning'];
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if(el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+current);
+  });
+});
+
+/* ── MOBILE MENU ────────────────────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+document.querySelectorAll('.close-menu').forEach(a => {
+  a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+});
+
+/* ── SCENARIO TABS ──────────────────────────────────────────── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ── MODEL DATA ─────────────────────────────────────────────── */
+const models = {
+  coffee: [
+    {
+      badge: 'Step 1', title: 'Sets',
+      desc: 'Define the index collections that organize all model elements.',
+      code: `<span class="kw">Sets:</span>
+P = {Espresso, Latte}    <span class="comment">// Set of products</span>
+R = {Beans, Milk, Time}  <span class="comment">// Set of resources</span>`
+    },
+    {
+      badge: 'Step 2', title: 'Parameters',
+      desc: 'Assign fixed numerical values known before the decision is made.',
+      code: `<span class="kw">Parameters:</span>
+r[Espresso] = $2.50       <span class="comment">// Revenue per espresso shot ($)</span>
+r[Latte]    = $4.75       <span class="comment">// Revenue per latte ($)</span>
+
+<span class="comment">// Resource requirements per unit (g, mL, min)</span>
+a[Beans,  Espresso] = 8,   a[Beans,  Latte] = 12
+a[Milk,   Espresso] = 30,  a[Milk,   Latte] = 200
+a[Time,   Espresso] = 1.5, a[Time,   Latte] = 3.5
+
+<span class="comment">// Available resources</span>
+b[Beans] = 400,  b[Milk] = 3000,  b[Time] = 480`
+    },
+    {
+      badge: 'Step 3', title: 'Decision Variables',
+      desc: 'Name the quantities the decision-maker controls.',
+      code: `<span class="kw">Decision Variables:</span>
+x[p]  ∈ ℤ⁺   for p ∈ P
+
+x[Espresso] = number of espresso shots to produce
+x[Latte]    = number of lattes to produce`
+    },
+    {
+      badge: 'Step 4', title: 'Objective Function',
+      desc: 'Build the expression that captures the goal — here, maximize revenue.',
+      code: `<span class="kw">Maximize:</span>
+  Z = Σ r[p] · x[p]   for p ∈ P
+
+<span class="comment">// Expanded form:</span>
+  Z = 2.50 · x[Espresso] + 4.75 · x[Latte]`
+    },
+    {
+      badge: 'Step 5', title: 'Constraints',
+      desc: 'Write the inequalities that represent resource limits.',
+      code: `<span class="kw">Subject to:</span>
+  Σ a[r,p] · x[p] ≤ b[r]   for all r ∈ R
+
+<span class="comment">// Expanded constraints:</span>
+  8·x[E]  + 12·x[L]  ≤ 400   <span class="comment">// Beans (g)</span>
+  30·x[E] + 200·x[L] ≤ 3000  <span class="comment">// Milk (mL)</span>
+  1.5·x[E]+ 3.5·x[L] ≤ 480   <span class="comment">// Barista time (min)</span>
+
+<span class="comment">// Non-negativity & integrality:</span>
+  x[p] ∈ ℤ⁺   for all p ∈ P`
+    },
+    {
+      badge: 'Step 6', title: 'Complete Mathematical Model', isFinal: true,
+      desc: 'The assembled model is self-contained, unambiguous, and ready for analysis.',
+      code: `<span class="kw">COFFEE SHOP PRODUCTION MODEL</span>
+<span class="comment">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+Sets:     P = {Espresso, Latte},  R = {Beans, Milk, Time}
+
+Params:   r[p], a[r,p], b[r]   (as defined above)
+
+Vars:     x[p] ∈ ℤ⁺   for p ∈ P
+
+<span class="kw">Maximize:</span>
+  Z = 2.50 x[E] + 4.75 x[L]
+
+<span class="kw">Subject to:</span>
+  8 x[E]   + 12  x[L]  ≤ 400    (Beans)
+  30 x[E]  + 200 x[L]  ≤ 3000   (Milk)
+  1.5 x[E] + 3.5 x[L]  ≤ 480    (Time)
+  x[E], x[L] ≥ 0,  integer`
+    }
+  ],
+
+  delivery: [
+    {
+      badge: 'Step 1', title: 'Sets',
+      desc: 'Define the index collections — drivers and zones.',
+      code: `<span class="kw">Sets:</span>
+I = {1, 2, 3}          <span class="comment">// Set of drivers</span>
+J = {A, B, C, D}       <span class="comment">// Set of delivery zones</span>`
+    },
+    {
+      badge: 'Step 2', title: 'Parameters',
+      desc: 'Fixed data: efficiency of each driver in each zone.',
+      code: `<span class="kw">Parameters:</span>
+<span class="comment">// e[i,j] = deliveries/hour for driver i in zone j</span>
+         A    B    C    D
+Driver 1: 12   8   10   15
+Driver 2:  9  14   11    7
+Driver 3: 11  10   13    9
+
+h = 8   <span class="comment">// shift length in hours</span>`
+    },
+    {
+      badge: 'Step 3', title: 'Decision Variables',
+      desc: 'Binary variables that represent assignment decisions.',
+      code: `<span class="kw">Decision Variables:</span>
+x[i,j] ∈ {0, 1}   for i ∈ I, j ∈ J
+
+x[i,j] = 1  if driver i is assigned to zone j
+x[i,j] = 0  otherwise
+
+<span class="comment">// 3 drivers × 4 zones = 12 binary variables</span>`
+    },
+    {
+      badge: 'Step 4', title: 'Objective Function',
+      desc: 'Maximize total deliveries completed across all assignments.',
+      code: `<span class="kw">Maximize:</span>
+  Z = Σᵢ Σⱼ h · e[i,j] · x[i,j]
+
+<span class="comment">// h · e[i,j] = total deliveries by driver i in zone j over shift</span>`
+    },
+    {
+      badge: 'Step 5', title: 'Constraints',
+      desc: 'Assignment rules: each driver to exactly one zone; each zone to at most one driver.',
+      code: `<span class="kw">Subject to:</span>
+  Σⱼ x[i,j] = 1    for all i ∈ I    <span class="comment">// each driver assigned once</span>
+  Σᵢ x[i,j] ≤ 1    for all j ∈ J    <span class="comment">// each zone covered at most once</span>
+  x[i,j] ∈ {0,1}   for all i,j      <span class="comment">// binary</span>`
+    },
+    {
+      badge: 'Step 6', title: 'Complete Mathematical Model', isFinal: true,
+      desc: 'A binary assignment model ready for integer programming solution.',
+      code: `<span class="kw">DELIVERY ASSIGNMENT MODEL</span>
+<span class="comment">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+Sets:     I = {1,2,3},  J = {A,B,C,D}
+
+Params:   e[i,j]  (efficiency table above),  h = 8
+
+Vars:     x[i,j] ∈ {0,1}   for i ∈ I, j ∈ J
+
+<span class="kw">Maximize:</span>
+  Z = Σᵢ Σⱼ 8 · e[i,j] · x[i,j]
+
+<span class="kw">Subject to:</span>
+  Σⱼ x[i,j] = 1   for all i ∈ I
+  Σᵢ x[i,j] ≤ 1   for all j ∈ J
+  x[i,j] ∈ {0,1}`
+    }
+  ],
+
+  club: [
+    {
+      badge: 'Step 1', title: 'Sets',
+      desc: 'Define the collection of budget categories.',
+      code: `<span class="kw">Sets:</span>
+C = {Social, Workshop, Speaker, Marketing, Equipment}
+<span class="comment">// Set of budget allocation categories</span>`
+    },
+    {
+      badge: 'Step 2', title: 'Parameters',
+      desc: 'Known values: benefit scores, minimums, and total budget.',
+      code: `<span class="kw">Parameters:</span>
+B = 2400                  <span class="comment">// Total semester budget ($)</span>
+
+<span class="comment">// Benefit score (satisfaction per $1 spent)</span>
+b[Social] = 3.2,   b[Workshop] = 4.5
+b[Speaker]= 4.1,   b[Marketing]= 2.8,  b[Equip] = 3.6
+
+<span class="comment">// Minimum required allocation ($)</span>
+m[Social] = 200,   m[Workshop] = 300
+m[Speaker]= 250,   m[Marketing]= 100,  m[Equip] = 150`
+    },
+    {
+      badge: 'Step 3', title: 'Decision Variables',
+      desc: 'Continuous variables representing dollars allocated to each category.',
+      code: `<span class="kw">Decision Variables:</span>
+x[c]  ≥ 0   for c ∈ C
+
+x[Social]    = dollars allocated to Social Events
+x[Workshop]  = dollars allocated to Workshops
+x[Speaker]   = dollars allocated to Speaker Series
+x[Marketing] = dollars allocated to Marketing
+x[Equip]     = dollars allocated to Equipment`
+    },
+    {
+      badge: 'Step 4', title: 'Objective Function',
+      desc: 'Maximize total weighted benefit across all spending categories.',
+      code: `<span class="kw">Maximize:</span>
+  Z = Σc b[c] · x[c]
+
+<span class="comment">// Expanded:</span>
+  Z = 3.2·x[So] + 4.5·x[Wo] + 4.1·x[Sp]
+      + 2.8·x[Ma] + 3.6·x[Eq]`
+    },
+    {
+      badge: 'Step 5', title: 'Constraints',
+      desc: 'Budget ceiling, category minimums, and policy-based proportion limits.',
+      code: `<span class="kw">Subject to:</span>
+  Σc x[c] ≤ 2400                  <span class="comment">// Total budget</span>
+  x[c] ≥ m[c]    for all c ∈ C    <span class="comment">// Category minimums</span>
+  x[Marketing] ≤ 0.20 · 2400      <span class="comment">// Marketing ≤ 20%</span>
+  x[Workshop] + x[Speaker] ≥ 0.40 · 2400  <span class="comment">// Academic ≥ 40%</span>
+  x[c] ≥ 0      for all c ∈ C     <span class="comment">// Non-negativity</span>`
+    },
+    {
+      badge: 'Step 6', title: 'Complete Mathematical Model', isFinal: true,
+      desc: 'A linear program capturing the club\'s budget allocation decision.',
+      code: `<span class="kw">STUDENT CLUB BUDGET MODEL</span>
+<span class="comment">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+Sets:     C = {Social, Workshop, Speaker, Marketing, Equip}
+
+Params:   b[c], m[c],  B = 2400
+
+Vars:     x[c] ≥ 0   for c ∈ C
+
+<span class="kw">Maximize:</span>
+  Z = 3.2x[So] + 4.5x[Wo] + 4.1x[Sp] + 2.8x[Ma] + 3.6x[Eq]
+
+<span class="kw">Subject to:</span>
+  x[So]+x[Wo]+x[Sp]+x[Ma]+x[Eq] ≤ 2400
+  x[c] ≥ m[c]              for all c
+  x[Ma] ≤ 480
+  x[Wo]+x[Sp] ≥ 960
+  x[c] ≥ 0`
+    }
+  ]
+};
+
+/* ── BUILD MODEL ────────────────────────────────────────────── */
+function buildModel(key) {
+  const btn = document.getElementById('build-' + key);
+  const container = document.getElementById('steps-' + key);
+  btn.disabled = true;
+  btn.textContent = 'Building…';
+  container.innerHTML = '';
+
+  const steps = models[key];
+  steps.forEach((step, i) => {
+    const card = document.createElement('div');
+    card.className = 'model-step-card' + (step.isFinal ? ' final-card' : '');
+    card.innerHTML = `
+      <div class="step-header">
+        <span class="step-badge">${step.badge}</span>
+        <h3 style="font-size:1rem;margin:0">${step.title}</h3>
+      </div>
+      <p style="margin-bottom:1rem">${step.desc}</p>
+      <div class="model-code">${step.code}</div>
+    `;
+    container.appendChild(card);
+    setTimeout(() => card.classList.add('revealed'), 200 + i * 500);
+  });
+
+  setTimeout(() => {
+    btn.textContent = '✓ Model Built';
+    btn.style.background = 'linear-gradient(135deg,#2E7D32,#1B5E20)';
+  }, 200 + steps.length * 500 + 200);
+}
+
+/* ── SCROLL REVEAL ──────────────────────────────────────────── */
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, idx) => {
+    if(entry.isIntersecting) {
+      entry.target.style.transitionDelay = '0ms';
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
