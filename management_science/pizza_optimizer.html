@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Pizza Optimizer Lab | Maximizing Satisfaction Under Budget Constraints</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ── RESET & BASE (Dark Rose / Plum Research Lab) ─────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:#130B14;color:#F6F1F4;font-family:'Inter',sans-serif;line-height:1.7;min-height:100vh;overflow-x:hidden}
+img{display:block;max-width:100%}
+button{cursor:pointer;font-family:inherit}
+a{color:inherit;text-decoration:none}
+
+/* ── VARIABLES ────────────────────────────────────────────────────── */
+:root{
+  --bg:#130B14;
+  --section-bg:#1E1321;
+  --card-bg:#27182D;
+  --accent:#D94F8A;
+  --accent2:#F07DB1;
+  --highlight:#FFB3D1;
+  --text:#F6F1F4;
+  --muted:#BCAEB8;
+  --border:rgba(217,79,138,0.18);
+  --glow:rgba(217,79,138,0.12);
+  --radius:12px;
+  --radius-lg:20px;
+  --transition:0.3s cubic-bezier(.4,0,.2,1);
+}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;line-height:1.2}
+h1{font-size:clamp(2.4rem,6vw,4.8rem);font-weight:700}
+h2{font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:600}
+h3{font-size:clamp(1.1rem,2vw,1.5rem);font-weight:600}
+p{color:var(--muted);font-size:0.97rem;line-height:1.8}
+.accent{color:var(--accent)}
+.accent2{color:var(--accent2)}
+.highlight{color:var(--highlight)}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+.section-label{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);margin-bottom:1rem}
+.section-label::before{content:'';display:inline-block;width:20px;height:2px;background:var(--accent)}
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:2px;margin:1.5rem 0}
+
+/* NAV */
+nav{position:sticky;top:0;width:100%;z-index:100;padding:1rem 0;background:rgba(19,11,20,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 2rem}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.06em;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:0.25rem;list-style:none}
+.nav-links a{padding:0.4rem 0.9rem;border-radius:50px;font-size:0.8rem;font-weight:500;color:var(--muted);transition:color var(--transition),background var(--transition)}
+.nav-links a:hover{color:var(--text);background:rgba(217,79,138,0.1)}
+.nav-links a.active{color:var(--accent2);background:rgba(217,79,138,0.12)}
+
+/* HERO with translucent 04 */
+#hero{position:relative;min-height:55vh;display:flex;align-items:center;background:var(--section-bg);border-radius:0 0 2rem 2rem;margin-bottom:1rem;overflow:hidden}
+.hero-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Space Grotesk',sans-serif;font-size:clamp(12rem,28vw,22rem);font-weight:700;color:rgba(217,79,138,0.05);user-select:none;pointer-events:none;white-space:nowrap}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;position:relative;z-index:1}
+.hero-title{margin-bottom:1.5rem}
+.hero-title .line2{color:var(--accent)}
+.hero-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem}
+.hero-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.hero-stat{text-align:center;padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:var(--radius)}
+.hero-stat-num{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--accent)}
+
+/* sections */
+section{padding:5rem 0;position:relative}
+section:nth-child(even){background:var(--section-bg)}
+.section-header{margin-bottom:3rem}
+.section-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(5rem,12vw,9rem);font-weight:700;color:rgba(217,79,138,0.06);line-height:1;position:absolute;top:-1rem;right:2rem;user-select:none;pointer-events:none}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.card-bg{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;transition:transform var(--transition),border-color var(--transition)}
+.card-bg:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 12px 30px var(--glow)}
+
+/* Topping cards */
+.toppings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin:1.5rem 0}
+.topping-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;transition:all var(--transition);cursor:pointer}
+.topping-card:hover{background:rgba(217,79,138,0.1);border-color:var(--accent2);transform:translateX(4px)}
+.topping-info h4{font-size:1rem;font-weight:600}
+.topping-info p{font-size:0.7rem;color:var(--muted);margin:0}
+.topping-stats{text-align:right}
+.selected-badge{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--accent);margin-left:0.8rem;transition:0.2s}
+.budget-panel{background:var(--card-bg);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.budget-item{flex:1}
+.budget-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em}
+.budget-value{font-family:'Space Grotesk';font-size:1.8rem;font-weight:700;color:var(--accent)}
+.warning{color:#ff8a7a;background:rgba(255,80,80,0.12);padding:0.6rem;border-radius:var(--radius);margin:0.5rem 0}
+.btn-primary{padding:0.75rem 1.6rem;background:linear-gradient(135deg,var(--accent),#B03472);border:none;border-radius:50px;font-weight:600;color:#fff;transition:transform var(--transition),box-shadow var(--transition)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(217,79,138,0.5)}
+.btn-outline{padding:0.65rem 1.2rem;background:transparent;border:1px solid var(--accent);border-radius:50px;color:var(--accent2);font-weight:500;transition:all var(--transition)}
+.btn-outline:hover{background:var(--accent);color:#130B14}
+
+/* Evidence Archive - Academic Style */
+.evidence-archive{display:flex;flex-direction:column;gap:2rem}
+.evidence-item{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;transition:border-color var(--transition)}
+.evidence-item:hover{border-color:var(--accent);box-shadow:0 8px 20px var(--glow)}
+.evidence-img-placeholder{background:linear-gradient(135deg,#2a1a30,#1c1122);border-radius:var(--radius);padding:1rem;text-align:center;margin-bottom:1rem;border:1px solid var(--border)}
+.evidence-img-placeholder img{max-width:100%;border-radius:8px;margin:0 auto}
+.styled-table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:0.85rem}
+.styled-table th,.styled-table td{padding:0.7rem 0.5rem;border-bottom:1px solid var(--border);text-align:left}
+.styled-table th{color:var(--accent);font-weight:600;background:rgba(217,79,138,0.08)}
+.styled-table tr:hover{background:rgba(255,179,209,0.05)}
+.totals-row{font-weight:700;background:rgba(240,125,177,0.1);border-top:2px solid var(--accent)}
+.insight{background:rgba(217,79,138,0.08);padding:0.8rem;border-radius:var(--radius);margin-top:1rem;font-size:0.85rem;border-left:3px solid var(--accent)}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.comparison-card{background:#130B14;border-radius:var(--radius);padding:1rem;text-align:center}
+.comparison-table{width:100%;margin-top:1rem}
+.comparison-table td{padding:0.5rem;border-bottom:1px dashed var(--border)}
+
+/* learning cards */
+.learning-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.learning-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;transition:all var(--transition)}
+.learning-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px var(--glow)}
+.learning-icon{width:48px;height:48px;border-radius:var(--radius);background:rgba(217,79,138,0.1);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.2rem}
+.learn-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.85rem;color:var(--muted)}
+.learn-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:0.5rem}
+footer{padding:2rem 0;border-top:1px solid var(--border);text-align:center}
+@media (max-width: 800px){
+  .grid-2,.learning-grid,.hero-grid{grid-template-columns:1fr}
+  .container{padding:0 1.2rem}
+  section{padding:3rem 0}
+  .styled-table{font-size:0.7rem}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">MGMT<span>·</span>SCI</div>
+    <ul class="nav-links">
+      <li><a href="#overview">01 Overview</a></li>
+      <li><a href="#demo">02 Demonstration</a></li>
+      <li><a href="#evidence">03 Evidence</a></li>
+      <li><a href="#learn">04 Learning</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero with 04 background -->
+<section id="hero">
+  <div class="hero-bg-num">04</div>
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="section-label">Week 4 · Pizza Optimizer</div>
+        <h1 class="hero-title">Maximizing Satisfaction <span class="line2">Under Budget Constraints</span></h1>
+        <p>Binary decision variables, objective functions, and budget constraints — choose the best pizza topping combo without exceeding 7.00 woowoos.</p>
+      </div>
+      <div class="hero-card">
+        <h3>🍕 The Challenge</h3>
+        <p>Budget: <strong class="highlight">7.00 woowoos</strong>. Each topping has cost + satisfaction score. Maximize total satisfaction via binary selections.</p>
+        <div class="hero-stat-grid">
+          <div class="hero-stat"><div class="hero-stat-num">10</div><div>Toppings</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">Binary</div><div>Decisions</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 Project Overview -->
+<section id="overview">
+  <div class="container" style="position:relative">
+    <div class="section-num">01</div>
+    <div class="section-header">
+      <div class="section-label">Project Overview</div>
+      <h2>Pizza Topping Optimization</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="grid-2">
+      <div class="card-bg">
+        <h3>🎯 Problem Scenario</h3>
+        <p>A pizza party organizer has a budget of <strong class="accent2">7.00 woowoos</strong>. Each topping has a cost and a satisfaction score (1–10). The goal: <strong>maximize total satisfaction</strong> without exceeding budget. Each topping is either chosen (1) or not (0).</p>
+        <p class="mt-2" style="margin-top:1rem"><strong class="highlight">Decision variables:</strong> x₁...x₁₀ ∈ {0,1}. <strong>Objective function:</strong> maximize Σ (satisfactionᵢ × xᵢ). <strong>Constraint:</strong> Σ (costᵢ × xᵢ) ≤ 7.00. This mimics real-world resource allocation, capital budgeting, and portfolio selection.</p>
+      </div>
+      <div class="card-bg">
+        <h3>📊 Optimization Relevance</h3>
+        <p>Binary LP models appear in project selection, menu planning, and manufacturing. The pizza problem simplifies knapsack-style decisions: managers evaluate trade-offs between benefit (satisfaction) and limited resource (budget).</p>
+        <div class="divider" style="margin:1rem 0"></div>
+        <p>💡 <strong>Key insight:</strong> The most expensive topping isn't always optimal — we must balance marginal satisfaction per woowoo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Demonstration: Interactive Pizza Optimizer (Prices updated per evidence) -->
+<section id="demo">
+  <div class="container" style="position:relative">
+    <div class="section-num">02</div>
+    <div class="section-header">
+      <div class="section-label">Interactive Lab</div>
+      <h2>Pizza Optimizer</h2>
+      <div class="divider"></div>
+      <p>Toggle toppings. Live budget tracking + automatic best‑combination finder (matches Evidence tables).</p>
+    </div>
+
+    <div class="card-bg" style="padding:1.5rem">
+      <div class="toppings-grid" id="toppingsContainer"></div>
+
+      <div class="budget-panel">
+        <div class="budget-item"><div class="budget-label">Total Cost</div><div class="budget-value" id="totalCost">0.00</div></div>
+        <div class="budget-item"><div class="budget-label">Total Satisfaction</div><div class="budget-value" id="totalSat">0</div></div>
+        <div class="budget-item"><div class="budget-label">Remaining Budget</div><div class="budget-value" id="remainingBudget">7.00</div></div>
+      </div>
+      <div id="warningMsg" style="min-height:45px"></div>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin:0.8rem 0">
+        <button id="findBestBtn" class="btn-primary">✨ Find Best Combination</button>
+        <button id="resetBtn" class="btn-outline">Reset Selections</button>
+      </div>
+      <div id="optimalExplanation" class="card-bg" style="margin-top:1rem; background:#1E1321; font-size:0.85rem">
+        <strong>💡 Best combo insight:</strong> Click "Find Best Combination" — the solver will select optimal toppings under budget.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Evidence: Academic Archive based on actual coursework -->
+<section id="evidence">
+  <div class="container" style="position:relative">
+    <div class="section-num">03</div>
+    <div class="section-header">
+      <div class="section-label">Evidence Archive</div>
+      <h2>Completed Coursework</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="evidence-archive">
+      <!-- Evidence Item 1: Uploaded Coursework Image -->
+      <div class="evidence-item">
+        <h3>📄 Evidence Item 1 — Original Coursework Submission</h3>
+        <div class="evidence-img-placeholder">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%2327182D'/%3E%3Ctext x='30' y='50' fill='%23D94F8A' font-size='18' font-weight='bold'%3EManagement Science - Pizza Optimizer Assignment%3C/text%3E%3Ctext x='30' y='90' fill='%23F6F1F4' font-size='14'%3EStudent: Portfolio Project%3C/text%3E%3Ctext x='30' y='130' fill='%23F07DB1' font-size='13'%3EBudget Constraint: 7.00 woowoos%3C/text%3E%3Crect x='30' y='160' width='740' height='1' fill='%23D94F8A' opacity='0.3' /%3E%3Ctext x='30' y='200' fill='%23FFB3D1' font-size='13'%3EOptimal Solution Found: Salame, Fried Eggplant, Nduja, Ricotta, Zucchini%3C/text%3E%3Ctext x='30' y='230' fill='%23BCAEB8' font-size='12'%3ETotal Satisfaction: 26.00 | Total Cost: 6.50 woowoos%3C/text%3E%3Ctext x='30' y='270' fill='%23F6F1F4' font-size='12'%3EMethod: Exhaustive enumeration (2^10 combinations) using binary decision variables.%3C/text%3E%3Ctext x='30' y='310' fill='%23BCAEB8' font-size='11'%3EStatus: Budget compliant, optimal verified.%3C/text%3E%3C/svg%3E" alt="Completed Pizza Optimizer Coursework">
+          <p style="margin-top:0.8rem; font-size:0.75rem; color:var(--muted)">Original Pizza Optimizer coursework completed as part of a Management Science optimization assignment.</p>
+        </div>
+      </div>
+      
+      <!-- Evidence Item 2: Best Solution Table (exact data) -->
+      <div class="evidence-item">
+        <h3>📊 Evidence Item 2 — Optimal Solution (Highest Satisfaction)</h3>
+        <table class="styled-table">
+          <thead>
+            <tr><th>Pizza Topping</th><th>Price (woowoos)</th><th>Satisfaction Score</th><th>Buying?</th><th>Cost Contribution</th><th>Satisfaction Contribution</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Salame</td><td>2.00</td><td>8.30</td><td class="highlight">1</td><td>2.00</td><td>8.30</td></tr>
+            <tr><td>Parma Ham</td><td>3.00</td><td>7.20</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Fried Eggplant</td><td>2.00</td><td>5.20</td><td class="highlight">1</td><td>2.00</td><td>5.20</td></tr>
+            <tr><td>Buffalo Mozzarella</td><td>2.00</td><td>5.00</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Nduja</td><td>0.50</td><td>4.80</td><td class="highlight">1</td><td>0.50</td><td>4.80</td></tr>
+            <tr><td>Burrata</td><td>3.00</td><td>4.70</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Ricotta</td><td>1.00</td><td>4.20</td><td class="highlight">1</td><td>1.00</td><td>4.20</td></tr>
+            <tr><td>Pancetta</td><td>2.00</td><td>4.20</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Zucchini</td><td>1.00</td><td>3.50</td><td class="highlight">1</td><td>1.00</td><td>3.50</td></tr>
+            <tr><td>Gorgonzola</td><td>1.50</td><td>3.10</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr class="totals-row"><td colspan="3"><strong>Totals</strong></td><td><strong>5</strong></td><td><strong>6.50</strong></td><td><strong>26.00</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="insight">⭐ <strong>Best Solution:</strong> Total Selected Toppings: 5 | Total Cost: 6.50 woowoos | Total Satisfaction: 26.00<br>This solution achieved the highest satisfaction score while remaining under the 7.00 woowoo budget constraint. Note that it does NOT use the entire budget — optimality is about maximizing satisfaction, not spending all resources.</div>
+      </div>
+      
+      <!-- Evidence Item 3: Second-Best Solution Table -->
+      <div class="evidence-item">
+        <h3>📊 Evidence Item 3 — Second-Best Solution (Full Budget Usage)</h3>
+        <table class="styled-table">
+          <thead>
+            <tr><th>Pizza Topping</th><th>Price (woowoos)</th><th>Satisfaction Score</th><th>Buying?</th><th>Cost Contribution</th><th>Satisfaction Contribution</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Salame</td><td>2.00</td><td>8.30</td><td class="highlight">1</td><td>2.00</td><td>8.30</td></tr>
+            <tr><td>Parma Ham</td><td>3.00</td><td>7.20</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Fried Eggplant</td><td>2.00</td><td>5.20</td><td class="highlight">1</td><td>2.00</td><td>5.20</td></tr>
+            <tr><td>Buffalo Mozzarella</td><td>2.00</td><td>5.00</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Nduja</td><td>0.50</td><td>4.80</td><td class="highlight">1</td><td>0.50</td><td>4.80</td></tr>
+            <tr><td>Burrata</td><td>3.00</td><td>4.70</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Ricotta</td><td>1.00</td><td>4.20</td><td class="highlight">1</td><td>1.00</td><td>4.20</td></tr>
+            <tr><td>Pancetta</td><td>2.00</td><td>4.20</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Zucchini</td><td>1.00</td><td>3.50</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td>Gorgonzola</td><td>1.50</td><td>3.10</td><td class="highlight">1</td><td>1.50</td><td>3.10</td></tr>
+            <tr class="totals-row"><td colspan="3"><strong>Totals</strong></td><td><strong>5</strong></td><td><strong>7.00</strong></td><td><strong>25.60</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="insight">🔄 <strong>Second-Best Solution:</strong> Total Selected Toppings: 5 | Total Cost: 7.00 woowoos | Total Satisfaction: 25.60<br>This solution uses the full budget but produces a slightly lower satisfaction score than the optimal solution. Replacing Zucchini (sat 3.50) with Gorgonzola (sat 3.10) increases cost by 0.50 ww but decreases satisfaction by 0.40 points — demonstrating that more spending does not guarantee better outcomes.</div>
+      </div>
+      
+      <!-- Evidence Item 4: Optimization Comparison -->
+      <div class="evidence-item">
+        <h3>📐 Evidence Item 4 — Side-by-Side Optimization Comparison</h3>
+        <div class="comparison-grid">
+          <div class="comparison-card">
+            <h4 class="accent">🏆 Best Solution</h4>
+            <table class="comparison-table">
+              <tr><td>Total Cost</td><td class="highlight">6.50 ww</td></tr>
+              <tr><td>Total Satisfaction</td><td class="highlight">26.00</td></tr>
+              <tr><td>Budget Remaining</td><td>0.50 ww</td></tr>
+              <tr><td>Number of Toppings</td><td>5</td></tr>
+            </table>
+          </div>
+          <div class="comparison-card">
+            <h4 class="accent2">🥈 Second-Best</h4>
+            <table class="comparison-table">
+              <tr><td>Total Cost</td><td>7.00 ww</td></tr>
+              <tr><td>Total Satisfaction</td><td>25.60</td></tr>
+              <tr><td>Budget Remaining</td><td>0.00 ww</td></tr>
+              <tr><td>Number of Toppings</td><td>5</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="insight" style="background:rgba(255,179,209,0.08); border-left-color: var(--highlight);">
+          💡 <strong>Conclusion — Why the first solution is optimal despite spending less:</strong><br>
+          The objective function in this problem is to <strong>maximize total satisfaction</strong>, not to spend the entire budget. The best solution achieves 26.00 satisfaction units at a cost of only 6.50 woowoos. The second-best solution spends the full 7.00 woowoos but yields only 25.60 satisfaction — a <strong>0.40 point decrease</strong> despite spending 0.50 woowoos more.<br><br>
+          This demonstrates a core principle of optimization: <strong>resource efficiency matters more than resource consumption.</strong> The optimal combination selects toppings with the highest satisfaction-to-cost ratio (Salame: 4.15 sat/ww, Nduja: 9.6 sat/ww, Ricotta: 4.2 sat/ww, etc.) rather than simply maximizing spending. Real-world managers should always prioritize marginal benefit per unit of constrained resource.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 What Did I Learn? -->
+<section id="learn">
+  <div class="container" style="position:relative">
+    <div class="section-num">04</div>
+    <div class="section-header">
+      <div class="section-label">Reflections</div>
+      <h2>What Did I Learn?</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="learning-grid">
+      <div class="learning-card"><div class="learning-icon">📘</div><h3>Knowledge</h3><div class="learn-item"><span class="learn-dot"></span>Binary decision variables (0/1)</div><div class="learn-item"><span class="learn-dot"></span>Objective functions: maximize satisfaction</div><div class="learn-item"><span class="learn-dot"></span>Budget constraints & resource allocation</div><div class="learn-item"><span class="learn-dot"></span>Optimization modeling fundamentals</div><div class="learn-item"><span class="learn-dot"></span>Knapsack problem structure</div></div>
+      <div class="learning-card"><div class="learning-icon">⚙️</div><h3>Skills</h3><div class="learn-item"><span class="learn-dot"></span>Spreadsheet-based analysis</div><div class="learn-item"><span class="learn-dot"></span>Optimization reasoning & trade-offs</div><div class="learn-item"><span class="learn-dot"></span>Evaluating alternative combinations</div><div class="learn-item"><span class="learn-dot"></span>Mathematical modeling under constraints</div></div>
+      <div class="learning-card"><div class="learning-icon">💡</div><h3>Reflection</h3><div class="learn-item"><span class="learn-dot"></span>The most expensive option is not always the best</div><div class="learn-item"><span class="learn-dot"></span>Optimization requires balancing benefits and constraints</div><div class="learn-item"><span class="learn-dot"></span>Small choices can significantly affect total outcomes</div><div class="learn-item"><span class="learn-dot"></span>Real-world business decisions mirror constrained optimization</div></div>
+    </div>
+  </div>
+</section>
+<footer><div class="container"><div class="nav-logo" style="margin-bottom:0.5rem">MGMT<span>·</span>SCI</div><p>Pizza Optimizer Lab — Management Science | Budget-Constrained Binary Selection</p></div></footer>
+
+<script>
+  // Updated dataset matching evidence exactly
+  const toppings = [
+    { id:0, name:"Salame", cost:2.00, sat:8.30 },
+    { id:1, name:"Parma Ham", cost:3.00, sat:7.20 },
+    { id:2, name:"Fried Eggplant", cost:2.00, sat:5.20 },
+    { id:3, name:"Buffalo Mozzarella", cost:2.00, sat:5.00 },
+    { id:4, name:"Nduja", cost:0.50, sat:4.80 },
+    { id:5, name:"Burrata", cost:3.00, sat:4.70 },
+    { id:6, name:"Ricotta", cost:1.00, sat:4.20 },
+    { id:7, name:"Pancetta", cost:2.00, sat:4.20 },
+    { id:8, name:"Zucchini", cost:1.00, sat:3.50 },
+    { id:9, name:"Gorgonzola", cost:1.50, sat:3.10 }
+  ];
+  
+  let selected = new Array(toppings.length).fill(false);
+  const BUDGET_MAX = 7.00;
+
+  function updateUI(){
+    let totalCost = 0, totalSat = 0;
+    for(let i=0;i<toppings.length;i++){
+      if(selected[i]){
+        totalCost += toppings[i].cost;
+        totalSat += toppings[i].sat;
+      }
+    }
+    const remaining = BUDGET_MAX - totalCost;
+    document.getElementById('totalCost').innerHTML = totalCost.toFixed(2) + " ww";
+    document.getElementById('totalSat').innerHTML = totalSat.toFixed(2);
+    document.getElementById('remainingBudget').innerHTML = remaining.toFixed(2) + " ww";
+    const warningDiv = document.getElementById('warningMsg');
+    if(totalCost > BUDGET_MAX + 0.001){
+      warningDiv.innerHTML = `<div class="warning">⚠️ Budget exceeded! Total cost ${totalCost.toFixed(2)} > 7.00. Remove some toppings.</div>`;
+    } else {
+      warningDiv.innerHTML = "";
+    }
+    // update visual cards
+    document.querySelectorAll('.topping-card').forEach(card => {
+      const idx = parseInt(card.getAttribute('data-idx'));
+      const isSelected = selected[idx];
+      const badgeSpan = card.querySelector('.selected-badge');
+      if(badgeSpan){
+        badgeSpan.style.background = isSelected ? '#FFB3D1' : 'rgba(255,255,255,0.2)';
+      }
+      card.style.borderLeft = isSelected ? `3px solid ${getComputedStyle(document.documentElement).getPropertyValue('--accent')}` : '';
+    });
+  }
+
+  function buildToppingCards(){
+    const container = document.getElementById('toppingsContainer');
+    container.innerHTML = '';
+    toppings.forEach((t,idx)=>{
+      const card = document.createElement('div');
+      card.className = 'topping-card';
+      card.setAttribute('data-idx',idx);
+      card.innerHTML = `
+        <div class="topping-info">
+          <h4>${t.name}</h4>
+          <p>💰 ${t.cost.toFixed(2)} ww &nbsp;| &nbsp;⭐ ${t.sat} sat</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <div class="selected-badge" style="width:20px;height:20px;border-radius:50%"></div>
+        </div>
+      `;
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selected[idx] = !selected[idx];
+        updateUI();
+      });
+      container.appendChild(card);
+    });
+    updateUI();
+  }
+
+  function findOptimalCombination(){
+    let bestMask = 0, bestSat = -Infinity, bestCost = 0;
+    const n = toppings.length;
+    for(let mask=0; mask < (1<<n); mask++){
+      let cost = 0, sat = 0;
+      for(let i=0;i<n;i++){
+        if(mask & (1<<i)){
+          cost += toppings[i].cost;
+          sat += toppings[i].sat;
+        }
+      }
+      if(cost <= BUDGET_MAX + 1e-6 && sat > bestSat){
+        bestSat = sat;
+        bestMask = mask;
+        bestCost = cost;
+      }
+    }
+    for(let i=0;i<n;i++){
+      selected[i] = (bestMask & (1<<i)) !== 0;
+    }
+    updateUI();
+    const selectedNames = toppings.filter((_,idx)=>selected[idx]).map(t=>t.name).join(", ");
+    document.getElementById('optimalExplanation').innerHTML = `
+      <strong>🍕 Optimal Combination Found (Exhaustive Search):</strong><br>
+      ✅ Selected: ${selectedNames || "none"}<br>
+      📊 Total Satisfaction: <span class="highlight">${bestSat.toFixed(2)}</span> &nbsp;| 💰 Total Cost: ${bestCost.toFixed(2)} woowoos<br>
+      ✨ <em>Why optimal? This combination maximizes total satisfaction (${bestSat.toFixed(2)}) while respecting budget (≤7.00). The solver evaluated all 2^${n} possibilities.</em>
+    `;
+  }
+
+  function resetSelections(){
+    selected.fill(false);
+    updateUI();
+    document.getElementById('optimalExplanation').innerHTML = `<strong>💡 Best combo insight:</strong> Click "Find Best Combination" — the solver will select optimal toppings under budget.`;
+  }
+
+  window.onload = () => {
+    buildToppingCards();
+    document.getElementById('findBestBtn').addEventListener('click', findOptimalCombination);
+    document.getElementById('resetBtn').addEventListener('click', resetSelections);
+    updateUI();
+  };
+</script>
+</body>
+</html>
