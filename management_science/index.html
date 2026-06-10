@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Management Science Portfolio | Abdurakhmon Komilov</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ── RESET & BASE (Dark Rose / Plum Research Lab) ─────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px
+    }
+
+    body {
+      background: #130B14;
+      color: #F6F1F4;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden
+    }
+
+    img {
+      display: block;
+      max-width: 100%
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    /* ── VARIABLES ────────────────────────────────────────────────────── */
+    :root {
+      --bg: #130B14;
+      --section-bg: #1E1321;
+      --card-bg: #27182D;
+      --accent: #D94F8A;
+      --accent2: #F07DB1;
+      --highlight: #FFB3D1;
+      --text: #F6F1F4;
+      --muted: #BCAEB8;
+      --border: rgba(217, 79, 138, 0.18);
+      --glow: rgba(217, 79, 138, 0.12);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -0.02em;
+      line-height: 1.2
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 700
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 600
+    }
+
+    h3 {
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+      font-weight: 600
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.7
+    }
+
+    .accent {
+      color: var(--accent)
+    }
+
+    .accent2 {
+      color: var(--accent2)
+    }
+
+    .highlight {
+      color: var(--highlight)
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 1rem
+    }
+
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 2px;
+      background: var(--accent)
+    }
+
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      border-radius: 2px;
+      margin: 1.2rem 0 1.5rem 0
+    }
+
+    /* ── STICKY NAVIGATION ───────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 0.9rem 0;
+      background: rgba(19, 11, 20, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--text)
+    }
+
+    .nav-logo span {
+      color: var(--accent)
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none
+    }
+
+    .nav-links a {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all var(--transition)
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(217, 79, 138, 0.12)
+    }
+
+    .nav-links a.active {
+      color: var(--accent2);
+      background: rgba(217, 79, 138, 0.12)
+    }
+
+    /* ── HERO with translucent 00 ────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      background: var(--section-bg);
+      border-radius: 0 0 2rem 2rem;
+      margin-bottom: 1rem;
+      overflow: hidden
+    }
+
+    .hero-bg-num {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(12rem, 28vw, 24rem);
+      font-weight: 700;
+      color: rgba(217, 79, 138, 0.04);
+      user-select: none;
+      pointer-events: none;
+      white-space: nowrap
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      position: relative;
+      z-index: 1
+    }
+
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      transition: transform var(--transition), border-color var(--transition)
+    }
+
+    .hero-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent)
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(217, 79, 138, 0.15);
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin-bottom: 1rem
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.5rem
+    }
+
+    .stat {
+      text-align: center
+    }
+
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: 'Space Grotesk'
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────────────────── */
+    section {
+      padding: 5rem 0;
+      position: relative
+    }
+
+    section:nth-child(even) {
+      background: var(--section-bg)
+    }
+
+    .section-header {
+      margin-bottom: 3rem
+    }
+
+    .section-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 700;
+      color: rgba(217, 79, 138, 0.05);
+      line-height: 1;
+      position: absolute;
+      top: -1rem;
+      right: 1.5rem;
+      user-select: none;
+      pointer-events: none
+    }
+
+    /* concept grid (badges) */
+    .concept-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.5rem
+    }
+
+    .concept-badge {
+      background: rgba(217, 79, 138, 0.08);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent2);
+      transition: all var(--transition)
+    }
+
+    .concept-badge:hover {
+      background: rgba(217, 79, 138, 0.2);
+      border-color: var(--accent);
+      transform: translateY(-2px)
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem
+    }
+
+    .project-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      transition: all var(--transition)
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 20px 35px var(--glow)
+    }
+
+    .project-number {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem
+    }
+
+    .project-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem
+    }
+
+    .project-desc {
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem
+    }
+
+    .btn-view {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent2);
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem
+    }
+
+    .btn-view:hover {
+      background: var(--accent);
+      color: #130B14;
+      border-color: var(--highlight);
+      transform: translateX(4px)
+    }
+
+    /* Reflection Cards */
+    .reflection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem
+    }
+
+    .reflection-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: all var(--transition)
+    }
+
+    .reflection-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent2)
+    }
+
+    .reflection-card h4 {
+      color: var(--highlight);
+      margin-bottom: 0.6rem;
+      font-size: 1rem
+    }
+
+    .reflection-card p {
+      font-size: 0.85rem
+    }
+
+    .skills-badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem
+    }
+
+    .skill-badge {
+      background: rgba(240, 125, 177, 0.08);
+      border: 1px solid var(--border);
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--muted)
+    }
+
+    footer {
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      margin-top: 1rem
+    }
+
+    footer p {
+      font-size: 0.75rem
+    }
+
+    /* responsive */
+    @media (max-width: 800px) {
+
+      .hero-grid,
+      .projects-grid,
+      .reflection-grid {
+        grid-template-columns: 1fr
+      }
+
+      .container {
+        padding: 0 1.25rem
+      }
+
+      section {
+        padding: 3rem 0
+      }
+
+      .nav-links a {
+        padding: 0.3rem 0.7rem
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">MS<span>·</span>portfolio</div>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#overview">Course Overview</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#reflection">Final Reflection</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- SECTION 00 — Home Hero with "00" background -->
+  <section id="hero">
+    <div class="hero-bg-num">00</div>
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-badge">Graduate Portfolio</div>
+          <h1>Management Science<br><span class="accent">Portfolio</span></h1>
+          <div class="divider" style="margin:0.8rem 0 1rem 0"></div>
+          <p style="margin-bottom:1.2rem"><strong class="highlight">Abdurakhmon Komilov</strong><br>Dong-A University · Management Science
+          </p>
+          <p>This portfolio presents five projects developed throughout a Management Science course. The projects
+            explore mathematical modeling, optimization, decision-making, and transportation networks through
+            interactive demonstrations, evidence, and reflection. Together they demonstrate how analytical methods can
+            be used to understand problems and support better decisions.</p>
+          <div class="stat-row">
+            <div class="stat">
+              <div class="stat-num">5</div>
+              <div class="stat-label" style="font-size:0.7rem">Projects</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">6+</div>
+              <div class="stat-label" style="font-size:0.7rem">Methods</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <h3>📊 Portfolio Highlights</h3>
+          <p>From linear programming feasibility to TSP route optimization — each project contains interactive labs,
+            evidence archives, and critical reflections.</p>
+          <div class="stat-row" style="margin-top:1rem">
+            <div class="stat">
+              <div class="stat-num">LP</div>
+              <div class="stat-label">Feasibility</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">B&B</div>
+              <div class="stat-label">Branch & Bound</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">TSP</div>
+              <div class="stat-label">Networks</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — Course Overview -->
+  <section id="overview">
+    <div class="container" style="position:relative">
+      <div class="section-num">01</div>
+      <div class="section-header">
+        <div class="section-label">Course Overview</div>
+        <h2>Analytical Methods & Decision Science</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:2rem">
+        <div class="card-bg" style="background:var(--card-bg); border-radius:var(--radius-lg); padding:1.5rem">
+          <p>Management Science focuses on using analytical methods, mathematical models, optimization techniques, and
+            structured decision-making processes to solve complex problems. Throughout this course, topics included
+            mathematical modeling, linear programming, branch-and-bound methods, binary optimization, and transportation
+            networks.</p>
+        </div>
+        <div class="card-bg" style="background:var(--card-bg); border-radius:var(--radius-lg); padding:1.5rem">
+          <p>Each project translates theoretical concepts into interactive demonstrations — showing how constraints
+            shape feasible regions, how search algorithms prune branches, and how to maximize satisfaction under budget
+            limits. The portfolio integrates evidence-based learning with hands-on exploration.</p>
+        </div>
+      </div>
+      <div class="concept-grid">
+        <span class="concept-badge">Mathematical Modeling</span>
+        <span class="concept-badge">Linear Programming</span>
+        <span class="concept-badge">Branch & Bound</span>
+        <span class="concept-badge">Binary Optimization</span>
+        <span class="concept-badge">Transportation Networks</span>
+        <span class="concept-badge">Decision Analysis</span>
+        <span class="concept-badge">Optimization</span>
+        <span class="concept-badge">Network Modeling</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — Portfolio Projects -->
+  <section id="projects">
+    <div class="container" style="position:relative">
+      <div class="section-num">02</div>
+      <div class="section-header">
+        <div class="section-label">Portfolio Projects</div>
+        <h2>Interactive Management Science Labs</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="projects-grid">
+        <!-- Project 01 -->
+        <div class="project-card">
+          <div class="project-number">PROJECT 01</div>
+          <div class="project-title">From Problem to Model · Reading 1</div>
+          <div class="project-desc">Explores how real-world management problems are transformed into mathematical models
+            using sets, parameters, decision variables, objective functions, and constraints.</div><a
+            href="https://a-kamilov.github.io/abu-assignments/management_science/r1_mathematical_modeling.html" class="btn-view">View Project →</a>
+        </div>
+        <!-- Project 02 -->
+        <div class="project-card">
+          <div class="project-number">PROJECT 02</div>
+          <div class="project-title">Feasible Region Explorer · Reading 2</div>
+          <div class="project-desc">Demonstrates how constraints create feasible regions and how optimal solutions are
+            identified within linear programming models.</div><a href="https://a-kamilov.github.io/abu-assignments/management_science/r2_fregion_explorer.html" class="btn-view">View Project
+            →</a>
+        </div>
+        <!-- Project 03 -->
+        <div class="project-card">
+          <div class="project-number">PROJECT 03</div>
+          <div class="project-title">Branch & Bound Explorer · Reading 3</div>
+          <div class="project-desc">Visualizes the branch-and-bound process used to solve integer optimization problems
+            efficiently by eliminating unnecessary solution paths.</div><a href="https://a-kamilov.github.io/abu-assignments/management_science/r3_branch_bound.html" class="btn-view">View
+            Project →</a>
+        </div>
+        <!-- Project 04 -->
+        <div class="project-card">
+          <div class="project-number">PROJECT 04</div>
+          <div class="project-title">Pizza Optimizer Lab · Class activity</div>
+          <div class="project-desc">A practical optimization assignment focused on maximizing satisfaction while staying
+            within a fixed budget using binary decision variables.</div><a href="https://a-kamilov.github.io/abu-assignments/management_science/p4_pizza_optimizer.html" class="btn-view">View
+            Project →</a>
+        </div>
+        <!-- Project 05 -->
+        <div class="project-card">
+          <div class="project-number">PROJECT 05</div>
+          <div class="project-title">Route Explorer: TSP · Class activity</div>
+          <div class="project-desc">Investigates transportation network optimization by identifying efficient routes
+            while minimizing total travel distance.</div><a href="https://a-kamilov.github.io/abu-assignments/management_science/p5_traveling_salesman.html" class="btn-view">View Project →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — Final Reflection -->
+  <section id="reflection">
+    <div class="container" style="position:relative">
+      <div class="section-num">03</div>
+      <div class="section-header">
+        <div class="section-label">Final Reflection</div>
+        <h2>Insights & Intellectual Growth</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="reflection-grid">
+        <div class="reflection-card">
+          <h4>⭐ Most Interesting Project</h4>
+          <p><strong>Branch & Bound Explorer</strong> — This project was the most interesting because it demonstrated
+            how optimization algorithms intelligently eliminate large portions of the search space instead of checking
+            every possible solution.</p>
+        </div>
+        <div class="reflection-card">
+          <h4>⚡ Most Challenging Project</h4>
+          <p><strong>Feasible Region Explorer</strong> — Understanding how multiple constraints interact and how small
+            changes affect feasible regions required careful analysis and interpretation.</p>
+        </div>
+        <div class="reflection-card">
+          <h4>🎯 Most Valuable Project</h4>
+          <p><strong>Pizza Optimizer Lab</strong> — This project showed how mathematical optimization can support
+            practical decision-making by balancing objectives and limitations.</p>
+        </div>
+        <div class="reflection-card">
+          <h4>🔄 How My Understanding Changed</h4>
+          <p>At the beginning of the course, optimization appeared to be mainly equations and calculations. Through
+            these projects, I learned that Management Science is fundamentally about structuring decisions, analyzing
+            alternatives, and improving outcomes through systematic reasoning.</p>
+        </div>
+      </div>
+      <div class="card-bg"
+        style="margin-top:2rem; background:var(--card-bg); border-radius:var(--radius-lg); padding:1.5rem">
+        <h3 style="margin-bottom:0.75rem">🔧 Skills Developed</h3>
+        <div class="skills-badge-group">
+          <span class="skill-badge">Mathematical Modeling</span>
+          <span class="skill-badge">Optimization</span>
+          <span class="skill-badge">Problem Solving</span>
+          <span class="skill-badge">Decision Analysis</span>
+          <span class="skill-badge">Constraint Analysis</span>
+          <span class="skill-badge">Network Modeling</span>
+          <span class="skill-badge">Critical Thinking</span>
+          <span class="skill-badge">Analytical Reasoning</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="nav-logo" style="margin-bottom:0.5rem">MS<span>·</span>portfolio</div>
+      <p>Management Science Portfolio · Abdurakhmon </p>
+      <p>Dong-A University · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    // smooth scrolling + active nav highlight
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  function updateActiveNav() {
+    let current = '';
+    const scrollPos = window.scrollY + 120;
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      if(scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight){
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      const href = link.getAttribute('href').substring(1);
+      if(href === current || (current === 'hero' && href === 'hero')) link.classList.add('active');
+    });
+  }
+  window.addEventListener('scroll', updateActiveNav);
+  window.addEventListener('load', updateActiveNav);
+  // smooth scroll for all internal links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e){
+      const targetId = this.getAttribute('href').substring(1);
+      if(targetId === '') return;
+      const targetElement = document.getElementById(targetId);
+      if(targetElement){
+        e.preventDefault();
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, null, `#${targetId}`);
+        updateActiveNav();
+      }
+    });
+  });
+  // fix for hero bg and ensure cards have consistent borders
+  console.log("Homepage — Management Science Portfolio ready");
+  </script>
+</body>
+
+</html>
